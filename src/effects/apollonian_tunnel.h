@@ -32,9 +32,8 @@ struct ApollonianTunnelConfig {
 
   // Glow
   float glowIntensity =
-      1.5e-4f;               // Volumetric glow gain, log scale (1e-5 to 1e-2)
-  float fogDensity = 0.025f; // Depth fog thickness (0.0-0.2, higher = thicker)
-  float depthCycle = 12.6f;  // Gradient/FFT cycle period along depth (2.0-50.0)
+      1.0f; // Output brightness gain (0.0-5.0, higher = brighter)
+  float depthCycle = 12.6f; // Gradient/FFT cycle period along depth (2.0-50.0)
 
   // Audio (FFT)
   float baseFreq = 55.0f;   // Lowest mapped pitch (27.5-440)
@@ -54,8 +53,8 @@ struct ApollonianTunnelConfig {
 #define APOLLONIAN_TUNNEL_CONFIG_FIELDS                                        \
   enabled, marchSteps, fractalIters, preScale, verticalOffset, tunnelRadius,   \
       pathAmplitude, pathFreq, flySpeed, rollSpeed, rollAmount, glowIntensity, \
-      fogDensity, depthCycle, baseFreq, maxFreq, gain, curve, baseBright,      \
-      gradient, blendMode, blendIntensity
+      depthCycle, baseFreq, maxFreq, gain, curve, baseBright, gradient,        \
+      blendMode, blendIntensity
 
 typedef struct ColorLUT ColorLUT;
 
@@ -79,7 +78,6 @@ typedef struct ApollonianTunnelEffect {
   int pathFreqLoc;
   int rollAmountLoc;
   int glowIntensityLoc;
-  int fogDensityLoc;
   int depthCycleLoc;
   int baseFreqLoc;
   int maxFreqLoc;

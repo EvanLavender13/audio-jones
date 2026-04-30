@@ -41,7 +41,6 @@ bool ApollonianTunnelEffectInit(ApollonianTunnelEffect *e,
   e->pathFreqLoc = GetShaderLocation(e->shader, "pathFreq");
   e->rollAmountLoc = GetShaderLocation(e->shader, "rollAmount");
   e->glowIntensityLoc = GetShaderLocation(e->shader, "glowIntensity");
-  e->fogDensityLoc = GetShaderLocation(e->shader, "fogDensity");
   e->depthCycleLoc = GetShaderLocation(e->shader, "depthCycle");
   e->baseFreqLoc = GetShaderLocation(e->shader, "baseFreq");
   e->maxFreqLoc = GetShaderLocation(e->shader, "maxFreq");
@@ -80,8 +79,6 @@ static void BindUniforms(const ApollonianTunnelEffect *e,
   SetShaderValue(e->shader, e->rollAmountLoc, &cfg->rollAmount,
                  SHADER_UNIFORM_FLOAT);
   SetShaderValue(e->shader, e->glowIntensityLoc, &cfg->glowIntensity,
-                 SHADER_UNIFORM_FLOAT);
-  SetShaderValue(e->shader, e->fogDensityLoc, &cfg->fogDensity,
                  SHADER_UNIFORM_FLOAT);
   SetShaderValue(e->shader, e->depthCycleLoc, &cfg->depthCycle,
                  SHADER_UNIFORM_FLOAT);
@@ -142,9 +139,7 @@ void ApollonianTunnelRegisterParams(ApollonianTunnelConfig *cfg) {
   ModEngineRegisterParam("apollonianTunnel.rollAmount", &cfg->rollAmount, 0.0f,
                          1.0f);
   ModEngineRegisterParam("apollonianTunnel.glowIntensity", &cfg->glowIntensity,
-                         1e-5f, 1e-2f);
-  ModEngineRegisterParam("apollonianTunnel.fogDensity", &cfg->fogDensity, 0.0f,
-                         0.2f);
+                         0.0f, 5.0f);
   ModEngineRegisterParam("apollonianTunnel.depthCycle", &cfg->depthCycle, 2.0f,
                          50.0f);
   ModEngineRegisterParam("apollonianTunnel.baseFreq", &cfg->baseFreq, 27.5f,
@@ -221,10 +216,8 @@ static void DrawApollonianTunnelParams(EffectConfig *e,
 
   // Glow
   ImGui::SeparatorText("Glow");
-  ModulatableSliderLog("Glow Intensity##apollonianTunnel", &at->glowIntensity,
-                       "apollonianTunnel.glowIntensity", "%.5f", modSources);
-  ModulatableSlider("Fog Density##apollonianTunnel", &at->fogDensity,
-                    "apollonianTunnel.fogDensity", "%.4f", modSources);
+  ModulatableSlider("Glow Intensity##apollonianTunnel", &at->glowIntensity,
+                    "apollonianTunnel.glowIntensity", "%.2f", modSources);
   ModulatableSlider("Depth Cycle##apollonianTunnel", &at->depthCycle,
                     "apollonianTunnel.depthCycle", "%.2f", modSources);
 }

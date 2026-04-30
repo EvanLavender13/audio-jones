@@ -28,7 +28,6 @@ uniform float pathFreq;
 uniform float rollAmount;
 
 uniform float glowIntensity;
-uniform float fogDensity;
 uniform float depthCycle;
 
 uniform float baseFreq;
@@ -104,14 +103,13 @@ void main() {
         s = mapTunnel(p) * 0.8;
         d += s;
 
-        float t = fract(p.z / depthCycle);
-        float bw = 1.0 / float(marchSteps);
+        float t = fract(0.05 * float(iter) / 6.2831853 + p.z / depthCycle);
         vec3 baseColor = texture(gradientLUT, vec2(t, 0.5)).rgb;
-        float brightness = sampleFFTBand(t, t + bw);
+        float brightness = sampleFFTBand(t, t + 1.0 / float(marchSteps));
 
         accumulator += baseColor * brightness / max(s, 0.0003);
     }
 
-    vec3 toned = tanh(accumulator * glowIntensity / d * exp(-d * fogDensity));
+    vec3 toned = tanh(accumulator * glowIntensity * 0.0001 / max(d, 1.0));
     finalColor = vec4(toned, 1.0);
 }

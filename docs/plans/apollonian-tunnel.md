@@ -411,32 +411,46 @@ Do not add tonemap beyond the `tanh` already shown. Do not add gamma. Do not cha
 
 ## Implementation Notes
 
-The shader and parameters diverged from the original spec during implementation. Recording the actual shipped behavior here.
+Recording actual shipped behavior, which diverged from the original spec.
 
 ### Removed parameters
 
-- `tunnelBlend` was removed entirely. The carved-tunnel SDF (`max(tunnel, fractal)`) is now unconditional. The original `mix(max(tunnel, fractal), fractal, tunnelBlend)` produced binary on/off behavior at the extremes and the open-lattice mode looked bad without the camera being inside a tube.
+- `tunnelBlend` removed. SDF is unconditional `max(tunnel, fractal)`. The mix-toward-bare-fractal mode looked bad and felt binary.
+- `fogDensity` removed. The depth-fog `exp(d/fogDensity)` term in the original tonemap caused background pixels (where `d` grows large) to blow into pure red and made the slider counter-intuitive. Without per-channel separation it had no salvageable purpose.
 
-### Inverted/rescaled tonemap parameters
+### Tonemap
 
-Original tonemap (per research): `tanh(o / d / glowIntensity * exp(d / fogDensity))`. Both knobs ran inverted to UI expectations (higher glowIntensity made the image darker; higher fogDensity made it brighter). New tonemap: `tanh(accumulator * glowIntensity / d * exp(-d * fogDensity))`.
+Final form: `tanh(accumulator * glowIntensity * 0.0001 / max(d, 1.0))`.
 
-- `glowIntensity`: now a multiplicative gain. Range `1e-5` to `1e-2`, default `1.5e-4`. Higher = brighter. Format `%.5f` log slider.
-- `fogDensity`: now a depth-attenuation rate (the `d` factor in `exp(-d * fogDensity)`). Range `0.0` to `0.2`, default `0.025`. Higher = thicker fog. Format `%.4f`.
+- `glowIntensity` is a multiplicative gain. Range `0.0` to `5.0`, default `1.0`. Higher = brighter. Linear slider.
+- The internal `0.0001` constant is a fixed pre-attenuation that lets the multiplier land in a usable user range; `max(d, 1.0)` prevents stuck-ray division blowout.
+- The per-channel `vec3(3,2,1) * exp(d/fog)` boost is gone. The gradient LUT carries all coloring.
 
-The reference's per-channel `vec4(3,2,1,0)` separation is removed; warm-near/cool-far comes from the gradient LUT sampled along depth instead.
+### Per-step color/audio index
+
+Each march step samples both the gradient LUT and the FFT at the same `t`, computed as `fract(0.05 * float(iter) / 2π + p.z / depthCycle)`. Iteration count and world-space depth both contribute to the gradient cycle. `depthCycle` controls the spatial period (default 12.6, matching the cosine-palette period).
+
+FFT lookup uses 4-sample band averaging via `sampleFFTBand(t, t + 1/marchSteps)`. Helper ported from `shaders/voxel_march.fs`. Single-point sampling aliased on narrow tones. Same helper added to `shaders/spiral_march.fs` for consistency.
 
 ### Camera animation simplified
 
-- Speed wobble dropped. Original `T = flyPhase*1.5 + 5 + 1.5*sin(flyPhase*0.5)` produced visible accelerate/decelerate surges. Replaced with `T = flyPhase + 5`. Forward speed is fully governed by `flySpeed` on the CPU.
-- Roll changed from oscillating to continuous. Was `sin(rollPhase) * rollAmount` (camera wobbled left-right). Now `rollPhase * rollAmount` (camera rotates monotonically).
-
-### Gradient and FFT sampling
-
-Both gradient LUT and FFT lookups now share a single `t = fract(p.z / depthCycle)` index — world-space p.z, like the reference's `cos(0.5*p.z + ...)` cycle. The earlier `clamp(d / depthCycle, 0, 1)` formulation pinned t=1 for far march steps and saturated the gradient endpoint into blown-out colors.
-
-FFT lookup uses 4-sample band averaging via a `sampleFFTBand(t, t + 1/marchSteps)` helper ported from `shaders/voxel_march.fs`. Single-point sampling aliased on narrow tones. The same helper was added to `shaders/spiral_march.fs` for consistency.
+- Speed wobble dropped. `T = flyPhase + 5`. No more sinusoidal speed surge on top of the linear fly motion.
+- Roll is continuous, not oscillating. `rot2D(rollPhase * rollAmount)`. The phase accumulates monotonically.
 
 ### Known UX limitation: path knobs move the camera
 
-`pathAmplitude` and `pathFreq` define the tunnel centerline AND the camera position (`camPos = pathPos(T*2)`). Adjusting either knob teleports the camera laterally to a different slice of the lattice — it reads visually as "the fractal jumped" even though `apollonian(p)` is unchanged. Decoupling the camera from the path was considered and rejected (it would let the camera exit the tube). Lissajous-driven lateral motion in other effects doesn't have this issue because those effects don't carve a path-following tube around the camera.
+`pathAmplitude` and `pathFreq` define the tunnel centerline AND the camera position (`camPos = pathPos(T*2)`). Adjusting either knob teleports the camera laterally to a different slice of the lattice — visually it reads as "the fractal jumped" even though `apollonian(p)` is unchanged. Decoupling was considered and rejected (camera would exit the tube). Lissajous-driven lateral motion in other effects doesn't have this issue because those effects don't carve a path-following tube around the camera.
+
+### Tuning history (visual iteration)
+
+Multiple tonemap formulations were tried before settling on the final form:
+- `tanh(accumulator / d / glowIntensity * exp(d / fogDensity))` — inverted slider semantics, blown-out red background.
+- `tanh(accumulator * glowIntensity / d * exp(-d * fogDensity))` — fixed slider direction but exp brightening still produced uneven saturation.
+- `tanh(accumulator / d / glowIntensity)` — dim, no exp boost.
+- `tanh(accumulator / d / glowIntensity * exp(vec3(3,2,1) * d / fogDensity))` — kept channel separation but produced strong red bias at depth.
+- `tanh(accumulator * glowIntensity / d)` — too bright at any value of glow.
+- `min(accumulator * glowIntensity * scale / max(d, 1.0), vec3(1.0))` — hard per-channel clamp; produced primary-saturation magenta/cyan/white at default settings because all three channels exceeded 1.0 simultaneously in dense regions.
+- Channel-max normalize (`raw / max(maxC, 1.0)`) — every pixel ended up peak-normalized, image went posterized.
+- Density-into-gradient-t (single gradient sample per pixel via `1 - exp(-density * scale)`) — collapsed to flat single-color regions because most pixels saturated the exp curve.
+
+Final form (`tanh(accumulator * glowIntensity * 0.0001 / max(d, 1.0))`) accepts that some saturation may occur in extreme regions; FFT brightness pumping the accumulator is bounded by `tanh` per channel, and the gradient's own colors define what saturated pixels look like.
