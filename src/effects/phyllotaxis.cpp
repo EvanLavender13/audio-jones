@@ -127,8 +127,12 @@ static void DrawPhyllotaxisParams(EffectConfig *e, const ModSources *ms,
                             "phyllotaxis.spinSpeed", ms);
 }
 
+PhyllotaxisEffect *GetPhyllotaxisEffect(PostEffect *pe) {
+  return (PhyllotaxisEffect *)pe->effectStates[TRANSFORM_PHYLLOTAXIS];
+}
+
 void SetupPhyllotaxis(PostEffect *pe) {
-  PhyllotaxisEffectSetup(&pe->phyllotaxis, &pe->effects.phyllotaxis,
+  PhyllotaxisEffectSetup(GetPhyllotaxisEffect(pe), &pe->effects.phyllotaxis,
                          pe->currentDeltaTime);
 }
 

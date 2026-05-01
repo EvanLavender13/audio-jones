@@ -164,8 +164,12 @@ void DancingLinesRegisterParams(DancingLinesConfig *cfg) {
                          0.0f, 5.0f);
 }
 
+DancingLinesEffect *GetDancingLinesEffect(PostEffect *pe) {
+  return (DancingLinesEffect *)pe->effectStates[TRANSFORM_DANCING_LINES_BLEND];
+}
+
 void SetupDancingLines(PostEffect *pe) {
-  DancingLinesEffectSetup(&pe->dancingLines, &pe->effects.dancingLines,
+  DancingLinesEffectSetup(GetDancingLinesEffect(pe), &pe->effects.dancingLines,
                           pe->currentDeltaTime, pe->fftTexture);
 }
 

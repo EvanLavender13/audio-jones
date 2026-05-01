@@ -10,6 +10,8 @@
 #include "render/color_config.h"
 #include <stdbool.h>
 
+struct PostEffect;
+
 typedef struct ColorLUT ColorLUT;
 
 typedef struct CurlAdvectionConfig {
@@ -100,5 +102,7 @@ void CurlAdvectionEffectUninit(CurlAdvectionEffect *e);
 
 // Registers modulatable params with the modulation engine
 void CurlAdvectionRegisterParams(CurlAdvectionConfig *cfg);
+
+CurlAdvectionEffect *GetCurlAdvectionEffect(PostEffect *pe);
 
 #endif // CURL_ADVECTION_H

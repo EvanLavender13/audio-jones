@@ -9,6 +9,8 @@
 #include "render/color_config.h"
 #include <stdbool.h>
 
+struct PostEffect;
+
 struct StarTrailConfig {
   bool enabled = false;
 
@@ -103,5 +105,7 @@ void StarTrailEffectUninit(StarTrailEffect *e);
 
 // Registers modulatable params with the modulation engine
 void StarTrailRegisterParams(StarTrailConfig *cfg);
+
+StarTrailEffect *GetStarTrailEffect(PostEffect *pe);
 
 #endif // STAR_TRAIL_H

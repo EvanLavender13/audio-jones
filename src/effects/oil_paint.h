@@ -62,7 +62,9 @@ void OilPaintRegisterParams(OilPaintConfig *cfg);
 typedef struct PostEffect PostEffect;
 
 // Runs the oil paint 2-pass pipeline at half resolution
-void ApplyHalfResOilPaint(const PostEffect *pe, const RenderTexture2D *source,
+void ApplyHalfResOilPaint(PostEffect *pe, const RenderTexture2D *source,
                           const int *writeIdx);
+
+OilPaintEffect *GetOilPaintEffect(PostEffect *pe);
 
 #endif // OIL_PAINT_H

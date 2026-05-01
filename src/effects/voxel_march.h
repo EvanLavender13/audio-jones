@@ -10,6 +10,8 @@
 #include "render/color_config.h"
 #include <stdbool.h>
 
+struct PostEffect;
+
 struct VoxelMarchConfig {
   bool enabled = false;
 
@@ -109,5 +111,7 @@ void VoxelMarchEffectUninit(VoxelMarchEffect *e);
 
 // Registers modulatable params with the modulation engine
 void VoxelMarchRegisterParams(VoxelMarchConfig *cfg);
+
+VoxelMarchEffect *GetVoxelMarchEffect(PostEffect *pe);
 
 #endif // VOXEL_MARCH_H

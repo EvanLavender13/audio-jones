@@ -4,6 +4,8 @@
 #include "raylib.h"
 #include <stdbool.h>
 
+struct PostEffect;
+
 // Poincare Disk: Hyperbolic tiling with Mobius translation and fundamental
 // domain folding
 struct PoincareDiskConfig {
@@ -50,5 +52,7 @@ void PoincareDiskEffectUninit(const PoincareDiskEffect *e);
 
 // Registers modulatable params with the modulation engine
 void PoincareDiskRegisterParams(PoincareDiskConfig *cfg);
+
+PoincareDiskEffect *GetPoincareDiskEffect(PostEffect *pe);
 
 #endif // POINCARE_DISK_H

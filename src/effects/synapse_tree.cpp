@@ -121,8 +121,12 @@ void SynapseTreeRegisterParams(SynapseTreeConfig *cfg) {
                          0.0f, 5.0f);
 }
 
+SynapseTreeEffect *GetSynapseTreeEffect(PostEffect *pe) {
+  return (SynapseTreeEffect *)pe->effectStates[TRANSFORM_SYNAPSE_TREE_BLEND];
+}
+
 void SetupSynapseTree(PostEffect *pe) {
-  SynapseTreeEffectSetup(&pe->synapseTree, &pe->effects.synapseTree,
+  SynapseTreeEffectSetup(GetSynapseTreeEffect(pe), &pe->effects.synapseTree,
                          pe->currentDeltaTime);
 }
 

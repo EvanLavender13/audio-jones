@@ -81,8 +81,12 @@ static void DrawAsciiArtParams(EffectConfig *e, const ModSources *ms,
   ImGui::Checkbox("Invert##ascii", &aa->invert);
 }
 
+AsciiArtEffect *GetAsciiArtEffect(PostEffect *pe) {
+  return (AsciiArtEffect *)pe->effectStates[TRANSFORM_ASCII_ART];
+}
+
 void SetupAsciiArt(PostEffect *pe) {
-  AsciiArtEffectSetup(&pe->asciiArt, &pe->effects.asciiArt);
+  AsciiArtEffectSetup(GetAsciiArtEffect(pe), &pe->effects.asciiArt);
 }
 
 // clang-format off

@@ -172,8 +172,12 @@ static void DrawCrtParams(EffectConfig *e, const ModSources *ms, ImU32 glow) {
   }
 }
 
+CrtEffect *GetCrtEffect(PostEffect *pe) {
+  return (CrtEffect *)pe->effectStates[TRANSFORM_CRT];
+}
+
 void SetupCrt(PostEffect *pe) {
-  CrtEffectSetup(&pe->crt, &pe->effects.crt, pe->currentDeltaTime);
+  CrtEffectSetup(GetCrtEffect(pe), &pe->effects.crt, pe->currentDeltaTime);
 }
 
 // clang-format off

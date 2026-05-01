@@ -163,8 +163,12 @@ void SignalFramesRegisterParams(SignalFramesConfig *cfg) {
                          0.0f, 5.0f);
 }
 
+SignalFramesEffect *GetSignalFramesEffect(PostEffect *pe) {
+  return (SignalFramesEffect *)pe->effectStates[TRANSFORM_SIGNAL_FRAMES_BLEND];
+}
+
 void SetupSignalFrames(PostEffect *pe) {
-  SignalFramesEffectSetup(&pe->signalFrames, &pe->effects.signalFrames,
+  SignalFramesEffectSetup(GetSignalFramesEffect(pe), &pe->effects.signalFrames,
                           pe->currentDeltaTime, pe->fftTexture);
 }
 

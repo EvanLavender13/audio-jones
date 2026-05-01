@@ -5,6 +5,8 @@
 #include "raylib.h"
 #include <stdbool.h>
 
+struct PostEffect;
+
 // Escher-style self-tiling Droste warp
 // Log-polar recursive tiling distinct from the spiral-zoom droste. Maps the
 // plane through complex logarithm, tiles in log-radius/angle space, then maps
@@ -49,5 +51,7 @@ void EscherDrosteEffectUninit(const EscherDrosteEffect *e);
 
 // Registers modulatable params with the modulation engine
 void EscherDrosteRegisterParams(EscherDrosteConfig *cfg);
+
+EscherDrosteEffect *GetEscherDrosteEffect(PostEffect *pe);
 
 #endif // ESCHER_DROSTE_H

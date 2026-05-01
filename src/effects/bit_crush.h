@@ -9,6 +9,8 @@
 #include "render/color_config.h"
 #include <stdbool.h>
 
+struct PostEffect;
+
 struct BitCrushConfig {
   bool enabled = false;
 
@@ -78,5 +80,7 @@ void BitCrushEffectUninit(BitCrushEffect *e);
 
 // Registers modulatable params with the modulation engine
 void BitCrushRegisterParams(BitCrushConfig *cfg);
+
+BitCrushEffect *GetBitCrushEffect(PostEffect *pe);
 
 #endif // BIT_CRUSH_H

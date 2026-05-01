@@ -47,8 +47,12 @@ void SolidColorRegisterParams(SolidColorConfig *cfg) {
                          0.0f, 5.0f);
 }
 
+SolidColorEffect *GetSolidColorEffect(PostEffect *pe) {
+  return (SolidColorEffect *)pe->effectStates[TRANSFORM_SOLID_COLOR];
+}
+
 void SetupSolidColor(PostEffect *pe) {
-  SolidColorEffectSetup(&pe->solidColor, &pe->effects.solidColor);
+  SolidColorEffectSetup(GetSolidColorEffect(pe), &pe->effects.solidColor);
 }
 
 void SetupSolidColorBlend(PostEffect *pe) {

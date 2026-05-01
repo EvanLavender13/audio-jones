@@ -162,8 +162,12 @@ void ArcStrobeRegisterParams(ArcStrobeConfig *cfg) {
                          5.0f);
 }
 
+ArcStrobeEffect *GetArcStrobeEffect(PostEffect *pe) {
+  return (ArcStrobeEffect *)pe->effectStates[TRANSFORM_ARC_STROBE_BLEND];
+}
+
 void SetupArcStrobe(PostEffect *pe) {
-  ArcStrobeEffectSetup(&pe->arcStrobe, &pe->effects.arcStrobe,
+  ArcStrobeEffectSetup(GetArcStrobeEffect(pe), &pe->effects.arcStrobe,
                        pe->currentDeltaTime, pe->fftTexture);
 }
 

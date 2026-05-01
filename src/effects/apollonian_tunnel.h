@@ -10,6 +10,8 @@
 #include "render/color_config.h"
 #include <stdbool.h>
 
+struct PostEffect;
+
 struct ApollonianTunnelConfig {
   bool enabled = false;
 
@@ -101,5 +103,7 @@ void ApollonianTunnelEffectUninit(ApollonianTunnelEffect *e);
 
 // Registers modulatable params with the modulation engine
 void ApollonianTunnelRegisterParams(ApollonianTunnelConfig *cfg);
+
+ApollonianTunnelEffect *GetApollonianTunnelEffect(PostEffect *pe);
 
 #endif // APOLLONIAN_TUNNEL_H

@@ -11,6 +11,8 @@
 #include "render/color_config.h"
 #include <stdbool.h>
 
+struct PostEffect;
+
 struct AttractorLinesConfig {
   bool enabled = false;
 
@@ -139,5 +141,7 @@ void AttractorLinesEffectUninit(AttractorLinesEffect *e);
 
 // Registers modulatable params with the modulation engine
 void AttractorLinesRegisterParams(AttractorLinesConfig *cfg);
+
+AttractorLinesEffect *GetAttractorLinesEffect(PostEffect *pe);
 
 #endif // ATTRACTOR_LINES_H

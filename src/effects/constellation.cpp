@@ -201,9 +201,14 @@ void ConstellationRegisterParams(ConstellationConfig *cfg) {
                          1.0f);
 }
 
+ConstellationEffect *GetConstellationEffect(PostEffect *pe) {
+  return (ConstellationEffect *)pe->effectStates[TRANSFORM_CONSTELLATION_BLEND];
+}
+
 void SetupConstellation(PostEffect *pe) {
-  ConstellationEffectSetup(&pe->constellation, &pe->effects.constellation,
-                           pe->currentDeltaTime, pe->fftTexture);
+  ConstellationEffectSetup(GetConstellationEffect(pe),
+                           &pe->effects.constellation, pe->currentDeltaTime,
+                           pe->fftTexture);
 }
 
 void SetupConstellationBlend(PostEffect *pe) {

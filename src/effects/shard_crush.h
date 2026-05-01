@@ -7,6 +7,8 @@
 #include "raylib.h"
 #include <stdbool.h>
 
+struct PostEffect;
+
 struct ShardCrushConfig {
   bool enabled = false;
   int iterations = 100;           // Loop count (20-100)
@@ -49,5 +51,7 @@ void ShardCrushEffectUninit(const ShardCrushEffect *e);
 
 // Registers modulatable params with the modulation engine
 void ShardCrushRegisterParams(ShardCrushConfig *cfg);
+
+ShardCrushEffect *GetShardCrushEffect(PostEffect *pe);
 
 #endif // SHARD_CRUSH_H

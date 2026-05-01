@@ -10,6 +10,8 @@
 #include "render/color_config.h"
 #include <stdbool.h>
 
+struct PostEffect;
+
 struct IrisRingsConfig {
   bool enabled = false;
 
@@ -75,5 +77,7 @@ void IrisRingsEffectUninit(IrisRingsEffect *e);
 
 // Registers modulatable params with the modulation engine
 void IrisRingsRegisterParams(IrisRingsConfig *cfg);
+
+IrisRingsEffect *GetIrisRingsEffect(PostEffect *pe);
 
 #endif // IRIS_RINGS_H

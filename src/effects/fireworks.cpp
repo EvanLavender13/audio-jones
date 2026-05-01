@@ -166,19 +166,23 @@ void FireworksRegisterParams(FireworksConfig *cfg) {
                          5.0f);
 }
 
+FireworksEffect *GetFireworksEffect(PostEffect *pe) {
+  return (FireworksEffect *)pe->effectStates[TRANSFORM_FIREWORKS_BLEND];
+}
+
 void SetupFireworks(PostEffect *pe) {
-  FireworksEffectSetup(&pe->fireworks, &pe->effects.fireworks,
+  FireworksEffectSetup(GetFireworksEffect(pe), &pe->effects.fireworks,
                        pe->currentDeltaTime, pe->screenWidth, pe->screenHeight);
 }
 
 void SetupFireworksBlend(PostEffect *pe) {
-  BlendCompositorApply(pe->blendCompositor, pe->fireworks.target.texture,
-                       pe->effects.fireworks.blendIntensity,
-                       pe->effects.fireworks.blendMode);
+  BlendCompositorApply(
+      pe->blendCompositor, GetFireworksEffect(pe)->target.texture,
+      pe->effects.fireworks.blendIntensity, pe->effects.fireworks.blendMode);
 }
 
 void RenderFireworks(PostEffect *pe) {
-  FireworksEffectRender(&pe->fireworks, &pe->effects.fireworks,
+  FireworksEffectRender(GetFireworksEffect(pe), &pe->effects.fireworks,
                         pe->currentDeltaTime, pe->screenWidth, pe->screenHeight,
                         pe->fftTexture);
 }

@@ -4,6 +4,8 @@
 #include "raylib.h"
 #include <stdbool.h>
 
+struct PostEffect;
+
 // Lens Space - warps image through a spherical lens with p/q symmetry
 // reflections, creating kaleidoscopic mirrored geometry inside a bounding
 // sphere.
@@ -56,5 +58,7 @@ void LensSpaceEffectUninit(const LensSpaceEffect *e);
 
 // Registers modulatable params with the modulation engine
 void LensSpaceRegisterParams(LensSpaceConfig *cfg);
+
+LensSpaceEffect *GetLensSpaceEffect(PostEffect *pe);
 
 #endif // LENS_SPACE_H

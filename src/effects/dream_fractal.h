@@ -10,6 +10,8 @@
 #include "render/color_config.h"
 #include <stdbool.h>
 
+struct PostEffect;
+
 struct DreamFractalConfig {
   bool enabled = false;
 
@@ -100,5 +102,7 @@ void DreamFractalEffectUninit(DreamFractalEffect *e);
 
 // Registers modulatable params with the modulation engine
 void DreamFractalRegisterParams(DreamFractalConfig *cfg);
+
+DreamFractalEffect *GetDreamFractalEffect(PostEffect *pe);
 
 #endif // DREAM_FRACTAL_H

@@ -4,6 +4,8 @@
 #include "raylib.h"
 #include <stdbool.h>
 
+struct PostEffect;
+
 // Droste Zoom with spiral mapping
 // Applies recursive self-similar zoom using complex logarithmic mapping.
 // spiralAngle controls the twist between zoom layers, shearCoeff skews the
@@ -44,5 +46,7 @@ void DrosteZoomEffectUninit(const DrosteZoomEffect *e);
 
 // Registers modulatable params with the modulation engine
 void DrosteZoomRegisterParams(DrosteZoomConfig *cfg);
+
+DrosteZoomEffect *GetDrosteZoomEffect(PostEffect *pe);
 
 #endif // DROSTE_ZOOM_H

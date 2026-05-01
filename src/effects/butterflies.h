@@ -10,6 +10,8 @@
 #include "render/color_config.h"
 #include <stdbool.h>
 
+struct PostEffect;
+
 struct ButterfliesConfig {
   bool enabled = false;
 
@@ -84,5 +86,7 @@ void ButterfliesEffectUninit(ButterfliesEffect *e);
 
 // Registers modulatable params with the modulation engine
 void ButterfliesRegisterParams(ButterfliesConfig *cfg);
+
+ButterfliesEffect *GetButterfliesEffect(PostEffect *pe);
 
 #endif // BUTTERFLIES_H

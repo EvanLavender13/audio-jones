@@ -58,8 +58,12 @@ void WatercolorRegisterParams(WatercolorConfig *cfg) {
                          1.0f);
 }
 
+WatercolorEffect *GetWatercolorEffect(PostEffect *pe) {
+  return (WatercolorEffect *)pe->effectStates[TRANSFORM_WATERCOLOR];
+}
+
 void SetupWatercolor(PostEffect *pe) {
-  WatercolorEffectSetup(&pe->watercolor, &pe->effects.watercolor);
+  WatercolorEffectSetup(GetWatercolorEffect(pe), &pe->effects.watercolor);
 }
 
 // === UI ===

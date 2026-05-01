@@ -10,6 +10,8 @@
 #include "render/color_config.h"
 #include <stdbool.h>
 
+struct PostEffect;
+
 struct HexRushConfig {
   bool enabled = false;
 
@@ -109,5 +111,7 @@ void HexRushEffectUninit(HexRushEffect *e);
 
 // Registers modulatable params with the modulation engine
 void HexRushRegisterParams(HexRushConfig *cfg);
+
+HexRushEffect *GetHexRushEffect(PostEffect *pe);
 
 #endif // HEX_RUSH_H

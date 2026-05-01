@@ -138,8 +138,12 @@ void PitchSpiralRegisterParams(PitchSpiralConfig *cfg) {
                          0.0f, 5.0f);
 }
 
+PitchSpiralEffect *GetPitchSpiralEffect(PostEffect *pe) {
+  return (PitchSpiralEffect *)pe->effectStates[TRANSFORM_PITCH_SPIRAL_BLEND];
+}
+
 void SetupPitchSpiral(PostEffect *pe) {
-  PitchSpiralEffectSetup(&pe->pitchSpiral, &pe->effects.pitchSpiral,
+  PitchSpiralEffectSetup(GetPitchSpiralEffect(pe), &pe->effects.pitchSpiral,
                          pe->currentDeltaTime, pe->fftTexture);
 }
 

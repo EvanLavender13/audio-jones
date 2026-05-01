@@ -104,8 +104,13 @@ static void DrawMultiScaleGridParams(EffectConfig *e, const ModSources *ms,
   ImGui::Combo("Glow Mode##msg", &g->glowMode, "Hard\0Soft\0");
 }
 
+MultiScaleGridEffect *GetMultiScaleGridEffect(PostEffect *pe) {
+  return (MultiScaleGridEffect *)pe->effectStates[TRANSFORM_MULTI_SCALE_GRID];
+}
+
 void SetupMultiScaleGrid(PostEffect *pe) {
-  MultiScaleGridEffectSetup(&pe->multiScaleGrid, &pe->effects.multiScaleGrid);
+  MultiScaleGridEffectSetup(GetMultiScaleGridEffect(pe),
+                            &pe->effects.multiScaleGrid);
 }
 
 // clang-format off

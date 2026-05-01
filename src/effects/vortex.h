@@ -9,6 +9,8 @@
 #include "render/color_config.h"
 #include <stdbool.h>
 
+struct PostEffect;
+
 struct VortexConfig {
   bool enabled = false;
 
@@ -94,5 +96,7 @@ void VortexEffectUninit(VortexEffect *e);
 
 // Registers modulatable params with the modulation engine
 void VortexRegisterParams(VortexConfig *cfg);
+
+VortexEffect *GetVortexEffect(PostEffect *pe);
 
 #endif // VORTEX_H

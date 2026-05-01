@@ -10,6 +10,8 @@
 #include "render/color_config.h"
 #include <stdbool.h>
 
+struct PostEffect;
+
 typedef enum {
   LASER_FOLD_MIN,
   LASER_FOLD_MAX,
@@ -127,5 +129,7 @@ void LaserDanceEffectUninit(LaserDanceEffect *e);
 
 // Registers modulatable params with the modulation engine
 void LaserDanceRegisterParams(LaserDanceConfig *cfg);
+
+LaserDanceEffect *GetLaserDanceEffect(PostEffect *pe);
 
 #endif // LASER_DANCE_H

@@ -44,8 +44,12 @@ void ToonEffectUninit(const ToonEffect *e) { UnloadShader(e->shader); }
 
 void ToonRegisterParams(ToonConfig *cfg) { (void)cfg; }
 
+ToonEffect *GetToonEffect(PostEffect *pe) {
+  return (ToonEffect *)pe->effectStates[TRANSFORM_TOON];
+}
+
 void SetupToon(PostEffect *pe) {
-  ToonEffectSetup(&pe->toon, &pe->effects.toon);
+  ToonEffectSetup(GetToonEffect(pe), &pe->effects.toon);
 }
 
 // === UI ===

@@ -142,9 +142,15 @@ void SpectralRingsRegisterParams(SpectralRingsConfig *cfg) {
                          0.0f, 5.0f);
 }
 
+SpectralRingsEffect *GetSpectralRingsEffect(PostEffect *pe) {
+  return (SpectralRingsEffect *)
+      pe->effectStates[TRANSFORM_SPECTRAL_RINGS_BLEND];
+}
+
 void SetupSpectralRings(PostEffect *pe) {
-  SpectralRingsEffectSetup(&pe->spectralRings, &pe->effects.spectralRings,
-                           pe->currentDeltaTime, pe->fftTexture);
+  SpectralRingsEffectSetup(GetSpectralRingsEffect(pe),
+                           &pe->effects.spectralRings, pe->currentDeltaTime,
+                           pe->fftTexture);
 }
 
 void SetupSpectralRingsBlend(PostEffect *pe) {

@@ -9,6 +9,8 @@
 #include "render/color_config.h"
 #include <stdbool.h>
 
+struct PostEffect;
+
 struct VisceraConfig {
   bool enabled = false;
 
@@ -101,5 +103,7 @@ void VisceraEffectUninit(VisceraEffect *e);
 
 // Registers modulatable params with the modulation engine
 void VisceraRegisterParams(VisceraConfig *cfg);
+
+VisceraEffect *GetVisceraEffect(PostEffect *pe);
 
 #endif // VISCERA_H

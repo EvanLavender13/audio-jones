@@ -152,8 +152,12 @@ void ScanBarsRegisterParams(ScanBarsConfig *cfg) {
                          5.0f);
 }
 
+ScanBarsEffect *GetScanBarsEffect(PostEffect *pe) {
+  return (ScanBarsEffect *)pe->effectStates[TRANSFORM_SCAN_BARS_BLEND];
+}
+
 void SetupScanBars(PostEffect *pe) {
-  ScanBarsEffectSetup(&pe->scanBars, &pe->effects.scanBars,
+  ScanBarsEffectSetup(GetScanBarsEffect(pe), &pe->effects.scanBars,
                       pe->currentDeltaTime, pe->fftTexture);
 }
 

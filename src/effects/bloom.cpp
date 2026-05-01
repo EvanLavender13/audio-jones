@@ -114,6 +114,7 @@ static void BloomRenderPass(const RenderTexture2D *source,
 
 void ApplyBloomPasses(PostEffect *pe, const RenderTexture2D *source,
                       int * /* writeIdx */) {
+  BloomEffect *e = GetBloomEffect(pe);
   const BloomConfig *b = &pe->effects.bloom;
   int iterations = b->iterations;
   if (iterations < 1) {
@@ -124,39 +125,37 @@ void ApplyBloomPasses(PostEffect *pe, const RenderTexture2D *source,
   }
 
   // Prefilter: extract bright pixels from source to mip[0]
-  SetShaderValue(pe->bloom.prefilterShader, pe->bloom.thresholdLoc,
-                 &b->threshold, SHADER_UNIFORM_FLOAT);
-  SetShaderValue(pe->bloom.prefilterShader, pe->bloom.kneeLoc, &b->knee,
+  SetShaderValue(e->prefilterShader, e->thresholdLoc, &b->threshold,
                  SHADER_UNIFORM_FLOAT);
-  BloomRenderPass(source, &pe->bloom.mips[0], pe->bloom.prefilterShader);
+  SetShaderValue(e->prefilterShader, e->kneeLoc, &b->knee,
+                 SHADER_UNIFORM_FLOAT);
+  BloomRenderPass(source, &e->mips[0], e->prefilterShader);
 
   // Downsample: mip[0] -> mip[1] -> ... -> mip[iterations-1]
   for (int i = 1; i < iterations; i++) {
-    const float halfpixel[2] = {
-        0.5f / (float)pe->bloom.mips[i - 1].texture.width,
-        0.5f / (float)pe->bloom.mips[i - 1].texture.height};
-    SetShaderValue(pe->bloom.downsampleShader, pe->bloom.downsampleHalfpixelLoc,
-                   halfpixel, SHADER_UNIFORM_VEC2);
-    BloomRenderPass(&pe->bloom.mips[i - 1], &pe->bloom.mips[i],
-                    pe->bloom.downsampleShader);
+    const float halfpixel[2] = {0.5f / (float)e->mips[i - 1].texture.width,
+                                0.5f / (float)e->mips[i - 1].texture.height};
+    SetShaderValue(e->downsampleShader, e->downsampleHalfpixelLoc, halfpixel,
+                   SHADER_UNIFORM_VEC2);
+    BloomRenderPass(&e->mips[i - 1], &e->mips[i], e->downsampleShader);
   }
 
   // Upsample: mip[iterations-1] -> ... -> mip[0] (additive blend at each level)
   for (int i = iterations - 1; i > 0; i--) {
-    const float halfpixel[2] = {0.5f / (float)pe->bloom.mips[i].texture.width,
-                                0.5f / (float)pe->bloom.mips[i].texture.height};
-    SetShaderValue(pe->bloom.upsampleShader, pe->bloom.upsampleHalfpixelLoc,
-                   halfpixel, SHADER_UNIFORM_VEC2);
+    const float halfpixel[2] = {0.5f / (float)e->mips[i].texture.width,
+                                0.5f / (float)e->mips[i].texture.height};
+    SetShaderValue(e->upsampleShader, e->upsampleHalfpixelLoc, halfpixel,
+                   SHADER_UNIFORM_VEC2);
 
     // Upsample mip[i] and add to mip[i-1]
-    BeginTextureMode(pe->bloom.mips[i - 1]);
+    BeginTextureMode(e->mips[i - 1]);
     BeginBlendMode(BLEND_ADDITIVE);
-    BeginShaderMode(pe->bloom.upsampleShader);
-    DrawTexturePro(pe->bloom.mips[i].texture,
-                   {0, 0, (float)pe->bloom.mips[i].texture.width,
-                    (float)-pe->bloom.mips[i].texture.height},
-                   {0, 0, (float)pe->bloom.mips[i - 1].texture.width,
-                    (float)pe->bloom.mips[i - 1].texture.height},
+    BeginShaderMode(e->upsampleShader);
+    DrawTexturePro(e->mips[i].texture,
+                   {0, 0, (float)e->mips[i].texture.width,
+                    (float)-e->mips[i].texture.height},
+                   {0, 0, (float)e->mips[i - 1].texture.width,
+                    (float)e->mips[i - 1].texture.height},
                    {0, 0}, 0.0f, WHITE);
     EndShaderMode();
     EndBlendMode();
@@ -172,22 +171,31 @@ void BloomRegisterParams(BloomConfig *cfg) {
 }
 
 // Manual registration: custom GetShader (compositeShader) and Resize wrapper
+static BloomEffect g_bloomState;
+
 static bool Init_bloom(PostEffect *pe, int w, int h) {
-  return BloomEffectInit(&pe->bloom, w, h);
+  return BloomEffectInit((BloomEffect *)pe->effectStates[TRANSFORM_BLOOM], w,
+                         h);
 }
-static void Uninit_bloom(PostEffect *pe) { BloomEffectUninit(&pe->bloom); }
+static void Uninit_bloom(PostEffect *pe) {
+  BloomEffectUninit((BloomEffect *)pe->effectStates[TRANSFORM_BLOOM]);
+}
 static void Resize_bloom(PostEffect *pe, int w, int h) {
-  BloomEffectResize(&pe->bloom, w, h);
+  BloomEffectResize((BloomEffect *)pe->effectStates[TRANSFORM_BLOOM], w, h);
 }
 static void Register_bloom(EffectConfig *cfg) {
   BloomRegisterParams(&cfg->bloom);
 }
 static Shader *GetShader_bloom(PostEffect *pe) {
-  return &pe->bloom.compositeShader;
+  return &((BloomEffect *)pe->effectStates[TRANSFORM_BLOOM])->compositeShader;
+}
+
+BloomEffect *GetBloomEffect(PostEffect *pe) {
+  return (BloomEffect *)pe->effectStates[TRANSFORM_BLOOM];
 }
 
 void SetupBloom(PostEffect *pe) {
-  BloomEffectSetup(&pe->bloom, &pe->effects.bloom);
+  BloomEffectSetup(GetBloomEffect(pe), &pe->effects.bloom);
 }
 
 // === UI ===
@@ -213,5 +221,6 @@ static bool reg_bloom = EffectDescriptorRegister(
      Init_bloom, Uninit_bloom, Resize_bloom, Register_bloom,
      GetShader_bloom, SetupBloom,
      nullptr, nullptr, nullptr,
-     DrawBloomParams, nullptr});
+     DrawBloomParams, nullptr,
+     &g_bloomState});
 // clang-format on

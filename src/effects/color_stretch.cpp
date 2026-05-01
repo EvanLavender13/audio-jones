@@ -121,8 +121,12 @@ void ColorStretchRegisterParams(ColorStretchConfig *cfg) {
                          0.0f, 5.0f);
 }
 
+ColorStretchEffect *GetColorStretchEffect(PostEffect *pe) {
+  return (ColorStretchEffect *)pe->effectStates[TRANSFORM_COLOR_STRETCH_BLEND];
+}
+
 void SetupColorStretch(PostEffect *pe) {
-  ColorStretchEffectSetup(&pe->colorStretch, &pe->effects.colorStretch,
+  ColorStretchEffectSetup(GetColorStretchEffect(pe), &pe->effects.colorStretch,
                           pe->currentDeltaTime, pe->fftTexture);
 }
 

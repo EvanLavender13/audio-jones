@@ -111,7 +111,7 @@ void AnamorphicStreakEffectUninit(const AnamorphicStreakEffect *e) {
 void ApplyAnamorphicStreakPasses(PostEffect *pe,
                                  const RenderTexture2D *source) {
   const AnamorphicStreakConfig *a = &pe->effects.anamorphicStreak;
-  AnamorphicStreakEffect *e = &pe->anamorphicStreak;
+  AnamorphicStreakEffect *e = GetAnamorphicStreakEffect(pe);
 
   int iterations = a->iterations;
   if (iterations < 3) {
@@ -200,24 +200,31 @@ void AnamorphicStreakRegisterParams(AnamorphicStreakConfig *cfg) {
 }
 
 // Manual registration: custom GetShader (compositeShader) and Resize wrapper
+static AnamorphicStreakEffect g_anamorphicStreakState;
+
 static bool Init_anamorphicStreak(PostEffect *pe, int w, int h) {
-  return AnamorphicStreakEffectInit(&pe->anamorphicStreak, w, h);
+  return AnamorphicStreakEffectInit(GetAnamorphicStreakEffect(pe), w, h);
 }
 static void Uninit_anamorphicStreak(PostEffect *pe) {
-  AnamorphicStreakEffectUninit(&pe->anamorphicStreak);
+  AnamorphicStreakEffectUninit(GetAnamorphicStreakEffect(pe));
 }
 static void Resize_anamorphicStreak(PostEffect *pe, int w, int h) {
-  AnamorphicStreakEffectResize(&pe->anamorphicStreak, w, h);
+  AnamorphicStreakEffectResize(GetAnamorphicStreakEffect(pe), w, h);
 }
 static void Register_anamorphicStreak(EffectConfig *cfg) {
   AnamorphicStreakRegisterParams(&cfg->anamorphicStreak);
 }
 static Shader *GetShader_anamorphicStreak(PostEffect *pe) {
-  return &pe->anamorphicStreak.compositeShader;
+  return &GetAnamorphicStreakEffect(pe)->compositeShader;
+}
+
+AnamorphicStreakEffect *GetAnamorphicStreakEffect(PostEffect *pe) {
+  return (AnamorphicStreakEffect *)
+      pe->effectStates[TRANSFORM_ANAMORPHIC_STREAK];
 }
 
 void SetupAnamorphicStreak(PostEffect *pe) {
-  AnamorphicStreakEffectSetup(&pe->anamorphicStreak,
+  AnamorphicStreakEffectSetup(GetAnamorphicStreakEffect(pe),
                               &pe->effects.anamorphicStreak);
 }
 
@@ -249,5 +256,6 @@ static bool reg_anamorphicStreak = EffectDescriptorRegister(
      Register_anamorphicStreak, GetShader_anamorphicStreak,
      SetupAnamorphicStreak,
      nullptr, nullptr, nullptr,
-     DrawAnamorphicStreakParams, nullptr});
+     DrawAnamorphicStreakParams, nullptr,
+     &g_anamorphicStreakState});
 // clang-format on

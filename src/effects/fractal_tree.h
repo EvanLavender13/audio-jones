@@ -9,6 +9,8 @@
 #include "render/color_config.h"
 #include <stdbool.h>
 
+struct PostEffect;
+
 struct FractalTreeConfig {
   bool enabled = false;
 
@@ -74,5 +76,7 @@ void FractalTreeEffectUninit(FractalTreeEffect *e);
 
 // Registers modulatable params with the modulation engine
 void FractalTreeRegisterParams(FractalTreeConfig *cfg);
+
+FractalTreeEffect *GetFractalTreeEffect(PostEffect *pe);
 
 #endif // FRACTAL_TREE_H

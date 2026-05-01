@@ -10,6 +10,8 @@
 #include "render/color_config.h"
 #include <stdbool.h>
 
+struct PostEffect;
+
 typedef struct ColorLUT ColorLUT;
 
 typedef struct LichenConfig {
@@ -126,5 +128,7 @@ void LichenEffectUninit(LichenEffect *e);
 
 // Registers modulatable params with the modulation engine
 void LichenRegisterParams(LichenConfig *cfg);
+
+LichenEffect *GetLichenEffect(PostEffect *pe);
 
 #endif // LICHEN_EFFECT_H

@@ -9,6 +9,8 @@
 #include "render/color_config.h"
 #include <stdbool.h>
 
+struct PostEffect;
+
 struct GlyphFieldConfig {
   bool enabled = false;
 
@@ -119,5 +121,7 @@ void GlyphFieldEffectUninit(GlyphFieldEffect *e);
 
 // Registers modulatable params with the modulation engine
 void GlyphFieldRegisterParams(GlyphFieldConfig *cfg);
+
+GlyphFieldEffect *GetGlyphFieldEffect(PostEffect *pe);
 
 #endif // GLYPH_FIELD_H

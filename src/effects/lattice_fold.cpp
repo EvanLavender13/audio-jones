@@ -71,8 +71,12 @@ static void DrawLatticeFoldParams(EffectConfig *e, const ModSources *ms,
                     "latticeFold.smoothing", "%.2f", ms);
 }
 
+LatticeFoldEffect *GetLatticeFoldEffect(PostEffect *pe) {
+  return (LatticeFoldEffect *)pe->effectStates[TRANSFORM_LATTICE_FOLD];
+}
+
 void SetupLatticeFold(PostEffect *pe) {
-  LatticeFoldEffectSetup(&pe->latticeFold, &pe->effects.latticeFold,
+  LatticeFoldEffectSetup(GetLatticeFoldEffect(pe), &pe->effects.latticeFold,
                          pe->currentDeltaTime, pe->transformTime);
 }
 

@@ -150,8 +150,12 @@ void LightMedleyRegisterParams(LightMedleyConfig *cfg) {
                          0.0f, 5.0f);
 }
 
+LightMedleyEffect *GetLightMedleyEffect(PostEffect *pe) {
+  return (LightMedleyEffect *)pe->effectStates[TRANSFORM_LIGHT_MEDLEY_BLEND];
+}
+
 void SetupLightMedley(PostEffect *pe) {
-  LightMedleyEffectSetup(&pe->lightMedley, &pe->effects.lightMedley,
+  LightMedleyEffectSetup(GetLightMedleyEffect(pe), &pe->effects.lightMedley,
                          pe->currentDeltaTime, pe->fftTexture);
 }
 

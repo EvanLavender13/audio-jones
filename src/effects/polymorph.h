@@ -11,6 +11,8 @@
 #include <stdbool.h>
 #include <stdint.h>
 
+struct PostEffect;
+
 struct PolymorphConfig {
   bool enabled = false;
 
@@ -110,5 +112,7 @@ void PolymorphEffectUninit(PolymorphEffect *e);
 
 // Registers modulatable params with the modulation engine
 void PolymorphRegisterParams(PolymorphConfig *cfg);
+
+PolymorphEffect *GetPolymorphEffect(PostEffect *pe);
 
 #endif // POLYMORPH_H

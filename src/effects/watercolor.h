@@ -7,6 +7,8 @@
 #include "raylib.h"
 #include <stdbool.h>
 
+struct PostEffect;
+
 struct WatercolorConfig {
   bool enabled = false;
   int samples = 24;        // Trace iterations per pixel (8-32)
@@ -48,5 +50,7 @@ void WatercolorEffectUninit(const WatercolorEffect *e);
 
 // Registers modulatable params with the modulation engine
 void WatercolorRegisterParams(WatercolorConfig *cfg);
+
+WatercolorEffect *GetWatercolorEffect(PostEffect *pe);
 
 #endif // WATERCOLOR_H

@@ -9,6 +9,8 @@
 #include "render/color_config.h"
 #include <stdbool.h>
 
+struct PostEffect;
+
 struct MoireLayerConfig {
   float frequency = 20.0f;    // Grating line density (1.0-100.0)
   float angle = 0.0f;         // Static rotation offset in radians
@@ -89,5 +91,7 @@ void MoireGeneratorEffectUninit(MoireGeneratorEffect *e);
 
 // Registers modulatable params with the modulation engine
 void MoireGeneratorRegisterParams(MoireGeneratorConfig *cfg);
+
+MoireGeneratorEffect *GetMoireGeneratorEffect(PostEffect *pe);
 
 #endif // MOIRE_GENERATOR_H

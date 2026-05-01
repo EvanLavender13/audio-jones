@@ -106,8 +106,12 @@ void FractalTreeRegisterParams(FractalTreeConfig *cfg) {
                          0.0f, 5.0f);
 }
 
+FractalTreeEffect *GetFractalTreeEffect(PostEffect *pe) {
+  return (FractalTreeEffect *)pe->effectStates[TRANSFORM_FRACTAL_TREE_BLEND];
+}
+
 void SetupFractalTree(PostEffect *pe) {
-  FractalTreeEffectSetup(&pe->fractalTree, &pe->effects.fractalTree,
+  FractalTreeEffectSetup(GetFractalTreeEffect(pe), &pe->effects.fractalTree,
                          pe->currentDeltaTime, pe->fftTexture);
 }
 

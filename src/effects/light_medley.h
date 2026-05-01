@@ -11,6 +11,8 @@
 #include "render/color_config.h"
 #include <stdbool.h>
 
+struct PostEffect;
+
 struct LightMedleyConfig {
   bool enabled = false;
 
@@ -101,5 +103,7 @@ void LightMedleyEffectUninit(LightMedleyEffect *e);
 
 // Registers modulatable params with the modulation engine
 void LightMedleyRegisterParams(LightMedleyConfig *cfg);
+
+LightMedleyEffect *GetLightMedleyEffect(PostEffect *pe);
 
 #endif // LIGHT_MEDLEY_H

@@ -130,8 +130,12 @@ void TriskelionRegisterParams(TriskelionConfig *cfg) {
                          0.0f, 5.0f);
 }
 
+TriskelionEffect *GetTriskelionEffect(PostEffect *pe) {
+  return (TriskelionEffect *)pe->effectStates[TRANSFORM_TRISKELION_BLEND];
+}
+
 void SetupTriskelion(PostEffect *pe) {
-  TriskelionEffectSetup(&pe->triskelion, &pe->effects.triskelion,
+  TriskelionEffectSetup(GetTriskelionEffect(pe), &pe->effects.triskelion,
                         pe->currentDeltaTime, pe->fftTexture);
 }
 

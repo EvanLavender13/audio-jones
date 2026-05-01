@@ -7,6 +7,8 @@
 #include "raylib.h"
 #include <stdbool.h>
 
+struct PostEffect;
+
 // Chromatic Aberration: Separates RGB channels with configurable spectral
 // sampling and radial distance falloff
 struct ChromaticAberrationConfig {
@@ -38,5 +40,7 @@ void ChromaticAberrationEffectUninit(const ChromaticAberrationEffect *e);
 
 // Registers modulatable params with the modulation engine
 void ChromaticAberrationRegisterParams(ChromaticAberrationConfig *cfg);
+
+ChromaticAberrationEffect *GetChromaticAberrationEffect(PostEffect *pe);
 
 #endif // CHROMATIC_ABERRATION_H

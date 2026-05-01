@@ -99,8 +99,12 @@ void SpiralNestRegisterParams(SpiralNestConfig *cfg) {
                          0.0f, 5.0f);
 }
 
+SpiralNestEffect *GetSpiralNestEffect(PostEffect *pe) {
+  return (SpiralNestEffect *)pe->effectStates[TRANSFORM_SPIRAL_NEST_BLEND];
+}
+
 void SetupSpiralNest(PostEffect *pe) {
-  SpiralNestEffectSetup(&pe->spiralNest, &pe->effects.spiralNest,
+  SpiralNestEffectSetup(GetSpiralNestEffect(pe), &pe->effects.spiralNest,
                         pe->currentDeltaTime, pe->fftTexture);
 }
 

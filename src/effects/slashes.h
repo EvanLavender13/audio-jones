@@ -10,6 +10,8 @@
 #include "render/color_config.h"
 #include <stdbool.h>
 
+struct PostEffect;
+
 struct SlashesConfig {
   bool enabled = false;
 
@@ -86,5 +88,7 @@ void SlashesEffectUninit(SlashesEffect *e);
 
 // Registers modulatable params with the modulation engine
 void SlashesRegisterParams(SlashesConfig *cfg);
+
+SlashesEffect *GetSlashesEffect(PostEffect *pe);
 
 #endif // SLASHES_H

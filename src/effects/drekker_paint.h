@@ -7,6 +7,8 @@
 #include "raylib.h"
 #include <stdbool.h>
 
+struct PostEffect;
+
 struct DrekkerPaintConfig {
   bool enabled = false;
   float xDiv = 11.0f; // Horizontal cell count (2-30)
@@ -46,5 +48,7 @@ void DrekkerPaintEffectUninit(const DrekkerPaintEffect *e);
 
 // Registers modulatable params with the modulation engine
 void DrekkerPaintRegisterParams(DrekkerPaintConfig *cfg);
+
+DrekkerPaintEffect *GetDrekkerPaintEffect(PostEffect *pe);
 
 #endif // DREKKER_PAINT_H

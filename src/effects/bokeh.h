@@ -7,6 +7,8 @@
 #include "raylib.h"
 #include <stdbool.h>
 
+struct PostEffect;
+
 // Bokeh: Simulates out-of-focus camera blur with golden-angle Vogel disc
 // sampling Bright spots bloom into soft circular highlights weighted by
 // brightness
@@ -50,5 +52,7 @@ void BokehEffectUninit(const BokehEffect *e);
 
 // Registers modulatable params with the modulation engine
 void BokehRegisterParams(BokehConfig *cfg);
+
+BokehEffect *GetBokehEffect(PostEffect *pe);
 
 #endif // BOKEH_H

@@ -99,8 +99,12 @@ static void DrawMatrixRainParams(EffectConfig *e, const ModSources *ms,
   ImGui::Checkbox("Sample##matrixrain", &mr->sampleMode);
 }
 
+MatrixRainEffect *GetMatrixRainEffect(PostEffect *pe) {
+  return (MatrixRainEffect *)pe->effectStates[TRANSFORM_MATRIX_RAIN];
+}
+
 void SetupMatrixRain(PostEffect *pe) {
-  MatrixRainEffectSetup(&pe->matrixRain, &pe->effects.matrixRain,
+  MatrixRainEffectSetup(GetMatrixRainEffect(pe), &pe->effects.matrixRain,
                         pe->currentDeltaTime);
 }
 

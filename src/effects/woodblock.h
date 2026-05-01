@@ -8,6 +8,8 @@
 #include "raylib.h"
 #include <stdbool.h>
 
+struct PostEffect;
+
 struct WoodblockConfig {
   bool enabled = false;
   float levels = 5.0f;         // Posterization steps (2-12)
@@ -53,5 +55,7 @@ void WoodblockEffectUninit(const WoodblockEffect *e);
 
 // Registers modulatable params with the modulation engine
 void WoodblockRegisterParams(WoodblockConfig *cfg);
+
+WoodblockEffect *GetWoodblockEffect(PostEffect *pe);
 
 #endif // WOODBLOCK_H

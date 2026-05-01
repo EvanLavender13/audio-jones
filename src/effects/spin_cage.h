@@ -9,6 +9,8 @@
 #include "render/color_config.h"
 #include <stdbool.h>
 
+struct PostEffect;
+
 struct SpinCageConfig {
   bool enabled = false;
 
@@ -84,5 +86,7 @@ void SpinCageEffectUninit(SpinCageEffect *e);
 
 // Registers modulatable params with the modulation engine
 void SpinCageRegisterParams(SpinCageConfig *cfg);
+
+SpinCageEffect *GetSpinCageEffect(PostEffect *pe);
 
 #endif // SPIN_CAGE_H

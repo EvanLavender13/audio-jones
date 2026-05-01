@@ -63,8 +63,13 @@ static void DrawPaletteQuantizationParams(EffectConfig *e, const ModSources *ms,
   }
 }
 
+PaletteQuantizationEffect *GetPaletteQuantizationEffect(PostEffect *pe) {
+  return (PaletteQuantizationEffect *)
+      pe->effectStates[TRANSFORM_PALETTE_QUANTIZATION];
+}
+
 void SetupPaletteQuantization(PostEffect *pe) {
-  PaletteQuantizationEffectSetup(&pe->paletteQuantization,
+  PaletteQuantizationEffectSetup(GetPaletteQuantizationEffect(pe),
                                  &pe->effects.paletteQuantization);
 }
 

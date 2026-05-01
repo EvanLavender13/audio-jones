@@ -121,8 +121,13 @@ void PolygonSubdivideRegisterParams(PolygonSubdivideConfig *cfg) {
                          &cfg->blendIntensity, 0.0f, 5.0f);
 }
 
+PolygonSubdivideEffect *GetPolygonSubdivideEffect(PostEffect *pe) {
+  return (PolygonSubdivideEffect *)
+      pe->effectStates[TRANSFORM_POLYGON_SUBDIVIDE_BLEND];
+}
+
 void SetupPolygonSubdivide(PostEffect *pe) {
-  PolygonSubdivideEffectSetup(&pe->polygonSubdivide,
+  PolygonSubdivideEffectSetup(GetPolygonSubdivideEffect(pe),
                               &pe->effects.polygonSubdivide,
                               pe->currentDeltaTime, pe->fftTexture);
 }

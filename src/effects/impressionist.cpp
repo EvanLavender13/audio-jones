@@ -71,8 +71,13 @@ void ImpressionistRegisterParams(ImpressionistConfig *cfg) {
                          0.0f, 1.0f);
 }
 
+ImpressionistEffect *GetImpressionistEffect(PostEffect *pe) {
+  return (ImpressionistEffect *)pe->effectStates[TRANSFORM_IMPRESSIONIST];
+}
+
 void SetupImpressionist(PostEffect *pe) {
-  ImpressionistEffectSetup(&pe->impressionist, &pe->effects.impressionist);
+  ImpressionistEffectSetup(GetImpressionistEffect(pe),
+                           &pe->effects.impressionist);
 }
 
 // === UI ===

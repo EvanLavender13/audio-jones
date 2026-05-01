@@ -77,8 +77,12 @@ static void DrawSurfaceWarpParams(EffectConfig *e, const ModSources *ms,
                     "surfaceWarp.depthShade", "%.2f", ms);
 }
 
+SurfaceWarpEffect *GetSurfaceWarpEffect(PostEffect *pe) {
+  return (SurfaceWarpEffect *)pe->effectStates[TRANSFORM_SURFACE_WARP];
+}
+
 void SetupSurfaceWarp(PostEffect *pe) {
-  SurfaceWarpEffectSetup(&pe->surfaceWarp, &pe->effects.surfaceWarp,
+  SurfaceWarpEffectSetup(GetSurfaceWarpEffect(pe), &pe->effects.surfaceWarp,
                          pe->currentDeltaTime);
 }
 

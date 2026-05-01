@@ -127,8 +127,12 @@ void ButterfliesRegisterParams(ButterfliesConfig *cfg) {
                          0.0f, 5.0f);
 }
 
+ButterfliesEffect *GetButterfliesEffect(PostEffect *pe) {
+  return (ButterfliesEffect *)pe->effectStates[TRANSFORM_BUTTERFLIES_BLEND];
+}
+
 void SetupButterflies(PostEffect *pe) {
-  ButterfliesEffectSetup(&pe->butterflies, &pe->effects.butterflies,
+  ButterfliesEffectSetup(GetButterfliesEffect(pe), &pe->effects.butterflies,
                          pe->currentDeltaTime, pe->fftTexture);
 }
 

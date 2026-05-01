@@ -11,6 +11,8 @@
 #include "render/color_config.h"
 #include <stdbool.h>
 
+struct PostEffect;
+
 struct SpectralRingsConfig {
   bool enabled = false;
 
@@ -99,5 +101,7 @@ void SpectralRingsEffectUninit(SpectralRingsEffect *e);
 
 // Registers modulatable params with the modulation engine
 void SpectralRingsRegisterParams(SpectralRingsConfig *cfg);
+
+SpectralRingsEffect *GetSpectralRingsEffect(PostEffect *pe);
 
 #endif // SPECTRAL_RINGS_H

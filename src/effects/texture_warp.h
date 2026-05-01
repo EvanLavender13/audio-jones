@@ -4,6 +4,8 @@
 #include "raylib.h"
 #include <stdbool.h>
 
+struct PostEffect;
+
 // Channel modes for texture-based displacement
 typedef enum {
   TEXTURE_WARP_CHANNEL_RG = 0,              // Red-Green channels
@@ -57,5 +59,7 @@ void TextureWarpEffectUninit(const TextureWarpEffect *e);
 
 // Registers modulatable params with the modulation engine
 void TextureWarpRegisterParams(TextureWarpConfig *cfg);
+
+TextureWarpEffect *GetTextureWarpEffect(PostEffect *pe);
 
 #endif // TEXTURE_WARP_H

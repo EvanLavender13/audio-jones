@@ -4,6 +4,8 @@
 #include "raylib.h"
 #include <stdbool.h>
 
+struct PostEffect;
+
 // Config struct (user-facing parameters, serialized in presets)
 struct KifsConfig {
   bool enabled = false;
@@ -46,5 +48,7 @@ void KifsEffectUninit(const KifsEffect *e);
 
 // Registers modulatable params with the modulation engine
 void KifsRegisterParams(KifsConfig *cfg);
+
+KifsEffect *GetKifsEffect(PostEffect *pe);
 
 #endif

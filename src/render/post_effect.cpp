@@ -2,6 +2,8 @@
 #include "analysis/fft.h"
 #include "blend_compositor.h"
 #include "config/effect_descriptor.h"
+#include "effects/attractor_lines.h"
+#include "effects/curl_advection.h"
 #include "noise_texture.h"
 #include "render_utils.h"
 #include "rlgl.h"
@@ -142,6 +144,10 @@ PostEffect *PostEffectInit(int screenWidth, int screenHeight,
   pe->screenWidth = screenWidth;
   pe->screenHeight = screenHeight;
   pe->effects = EffectConfig{};
+
+  for (int i = 0; i < TRANSFORM_EFFECT_COUNT; i++) {
+    pe->effectStates[i] = EFFECT_DESCRIPTORS[i].state;
+  }
 
   if (!LoadPostEffectShaders(pe)) {
     TraceLog(LOG_ERROR, "POST_EFFECT: Failed to load shaders");
@@ -337,13 +343,14 @@ void PostEffectClearFeedback(PostEffect *pe) {
   EndTextureMode();
 
   // Clear attractor lines ping-pong trail buffers
-  BeginTextureMode(pe->attractorLines.pingPong[0]);
+  AttractorLinesEffect *al = GetAttractorLinesEffect(pe);
+  BeginTextureMode(al->pingPong[0]);
   ClearBackground(BLACK);
   EndTextureMode();
-  BeginTextureMode(pe->attractorLines.pingPong[1]);
+  BeginTextureMode(al->pingPong[1]);
   ClearBackground(BLACK);
   EndTextureMode();
-  pe->attractorLines.readIdx = 0;
+  al->readIdx = 0;
 
   // Reset only enabled simulations to avoid expensive GPU uploads for disabled
   // effects
@@ -354,9 +361,9 @@ void PostEffectClearFeedback(PostEffect *pe) {
     CurlFlowReset(pe->curlFlow);
   }
   // Clear curl advection state and re-seed with noise
-  if (pe->curlAdvection.statePingPong[0].id > 0) {
-    CurlAdvectionEffectReset(&pe->curlAdvection, GetScreenWidth(),
-                             GetScreenHeight());
+  CurlAdvectionEffect *ca = GetCurlAdvectionEffect(pe);
+  if (ca->statePingPong[0].id > 0) {
+    CurlAdvectionEffectReset(ca, GetScreenWidth(), GetScreenHeight());
   }
   if (pe->effects.attractorFlow.enabled) {
     AttractorFlowReset(pe->attractorFlow);

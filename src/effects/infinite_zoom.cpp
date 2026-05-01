@@ -180,8 +180,12 @@ static void DrawInfiniteZoomParams(EffectConfig *e, const ModSources *ms,
                "Weighted Avg\0Additive\0Screen\0");
 }
 
+InfiniteZoomEffect *GetInfiniteZoomEffect(PostEffect *pe) {
+  return (InfiniteZoomEffect *)pe->effectStates[TRANSFORM_INFINITE_ZOOM];
+}
+
 void SetupInfiniteZoom(PostEffect *pe) {
-  InfiniteZoomEffectSetup(&pe->infiniteZoom, &pe->effects.infiniteZoom,
+  InfiniteZoomEffectSetup(GetInfiniteZoomEffect(pe), &pe->effects.infiniteZoom,
                           pe->currentDeltaTime);
 }
 

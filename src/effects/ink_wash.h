@@ -8,6 +8,8 @@
 #include "raylib.h"
 #include <stdbool.h>
 
+struct PostEffect;
+
 struct InkWashConfig {
   bool enabled = false;
   float strength = 1.0f;      // Edge darkening intensity (0.0-2.0)
@@ -41,5 +43,7 @@ void InkWashEffectUninit(const InkWashEffect *e);
 
 // Registers modulatable params with the modulation engine
 void InkWashRegisterParams(InkWashConfig *cfg);
+
+InkWashEffect *GetInkWashEffect(PostEffect *pe);
 
 #endif // INK_WASH_H

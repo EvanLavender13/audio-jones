@@ -9,6 +9,8 @@
 #include "render/color_config.h"
 #include <stdbool.h>
 
+struct PostEffect;
+
 struct TriskelionConfig {
   bool enabled = false;
 
@@ -86,5 +88,7 @@ void TriskelionEffectUninit(TriskelionEffect *e);
 
 // Registers modulatable params with the modulation engine
 void TriskelionRegisterParams(TriskelionConfig *cfg);
+
+TriskelionEffect *GetTriskelionEffect(PostEffect *pe);
 
 #endif // TRISKELION_H

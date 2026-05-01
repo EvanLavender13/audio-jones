@@ -120,8 +120,12 @@ static void DrawCorridorWarpParams(EffectConfig *e, const ModSources *ms,
                     "corridorWarp.fogStrength", "%.2f", ms);
 }
 
+CorridorWarpEffect *GetCorridorWarpEffect(PostEffect *pe) {
+  return (CorridorWarpEffect *)pe->effectStates[TRANSFORM_CORRIDOR_WARP];
+}
+
 void SetupCorridorWarp(PostEffect *pe) {
-  CorridorWarpEffectSetup(&pe->corridorWarp, &pe->effects.corridorWarp,
+  CorridorWarpEffectSetup(GetCorridorWarpEffect(pe), &pe->effects.corridorWarp,
                           pe->currentDeltaTime, pe->screenWidth,
                           pe->screenHeight);
 }

@@ -9,6 +9,8 @@
 #include "render/color_config.h"
 #include <stdbool.h>
 
+struct PostEffect;
+
 struct NeonLatticeConfig {
   bool enabled = false;
 
@@ -97,5 +99,7 @@ void NeonLatticeEffectUninit(NeonLatticeEffect *e);
 
 // Registers modulatable params with the modulation engine
 void NeonLatticeRegisterParams(NeonLatticeConfig *cfg);
+
+NeonLatticeEffect *GetNeonLatticeEffect(PostEffect *pe);
 
 #endif // NEON_LATTICE_H

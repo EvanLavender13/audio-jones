@@ -81,8 +81,12 @@ static void DrawWaveDriftParams(EffectConfig *e, const ModSources *ms,
   SliderSpeedDeg("Speed##waveDrift", &e->waveDrift.speed, -180.0f, 180.0f);
 }
 
+WaveDriftEffect *GetWaveDriftEffect(PostEffect *pe) {
+  return (WaveDriftEffect *)pe->effectStates[TRANSFORM_WAVE_DRIFT];
+}
+
 void SetupWaveDrift(PostEffect *pe) {
-  WaveDriftEffectSetup(&pe->waveDrift, &pe->effects.waveDrift,
+  WaveDriftEffectSetup(GetWaveDriftEffect(pe), &pe->effects.waveDrift,
                        pe->currentDeltaTime);
 }
 

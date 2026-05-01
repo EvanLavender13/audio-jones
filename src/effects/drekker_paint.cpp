@@ -56,8 +56,12 @@ void DrekkerPaintRegisterParams(DrekkerPaintConfig *cfg) {
                          500.0f);
 }
 
+DrekkerPaintEffect *GetDrekkerPaintEffect(PostEffect *pe) {
+  return (DrekkerPaintEffect *)pe->effectStates[TRANSFORM_DREKKER_PAINT];
+}
+
 void SetupDrekkerPaint(PostEffect *pe) {
-  DrekkerPaintEffectSetup(&pe->drekkerPaint, &pe->effects.drekkerPaint);
+  DrekkerPaintEffectSetup(GetDrekkerPaintEffect(pe), &pe->effects.drekkerPaint);
 }
 
 // === UI ===

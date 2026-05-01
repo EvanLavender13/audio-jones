@@ -82,8 +82,12 @@ static void DrawChladniWarpParams(EffectConfig *e, const ModSources *ms,
   ImGui::Checkbox("Pre-Fold (Symmetry)##chladni", &cw->preFold);
 }
 
+ChladniWarpEffect *GetChladniWarpEffect(PostEffect *pe) {
+  return (ChladniWarpEffect *)pe->effectStates[TRANSFORM_CHLADNI_WARP];
+}
+
 void SetupChladniWarp(PostEffect *pe) {
-  ChladniWarpEffectSetup(&pe->chladniWarp, &pe->effects.chladniWarp,
+  ChladniWarpEffectSetup(GetChladniWarpEffect(pe), &pe->effects.chladniWarp,
                          pe->currentDeltaTime);
 }
 

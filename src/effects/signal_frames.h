@@ -10,6 +10,8 @@
 #include "render/color_config.h"
 #include <stdbool.h>
 
+struct PostEffect;
+
 struct SignalFramesConfig {
   bool enabled = false;
 
@@ -112,5 +114,7 @@ void SignalFramesEffectUninit(SignalFramesEffect *e);
 
 // Registers modulatable params with the modulation engine
 void SignalFramesRegisterParams(SignalFramesConfig *cfg);
+
+SignalFramesEffect *GetSignalFramesEffect(PostEffect *pe);
 
 #endif // SIGNAL_FRAMES_H

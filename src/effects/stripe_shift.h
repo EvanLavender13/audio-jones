@@ -6,6 +6,8 @@
 #include "raylib.h"
 #include <stdbool.h>
 
+struct PostEffect;
+
 struct StripeShiftConfig {
   bool enabled = false;
   float stripeCount = 16.0f;  // Stripe density (4.0-64.0)
@@ -45,5 +47,7 @@ void StripeShiftEffectUninit(const StripeShiftEffect *e);
 
 // Registers modulatable params with the modulation engine
 void StripeShiftRegisterParams(StripeShiftConfig *cfg);
+
+StripeShiftEffect *GetStripeShiftEffect(PostEffect *pe);
 
 #endif // STRIPE_SHIFT_EFFECT_H

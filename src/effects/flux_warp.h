@@ -4,6 +4,8 @@
 #include "raylib.h"
 #include <stdbool.h>
 
+struct PostEffect;
+
 // Flux Warp - coupled trig-based UV distortion with morphing cell geometry
 // and amplitude gating for a flickering crystalline warp field.
 struct FluxWarpConfig {
@@ -46,5 +48,7 @@ void FluxWarpEffectUninit(const FluxWarpEffect *e);
 
 // Registers modulatable params with the modulation engine
 void FluxWarpRegisterParams(FluxWarpConfig *cfg);
+
+FluxWarpEffect *GetFluxWarpEffect(PostEffect *pe);
 
 #endif // FLUX_WARP_H

@@ -139,9 +139,13 @@ void GalaxyRegisterParams(GalaxyConfig *cfg) {
                          5.0f);
 }
 
+GalaxyEffect *GetGalaxyEffect(PostEffect *pe) {
+  return (GalaxyEffect *)pe->effectStates[TRANSFORM_GALAXY_BLEND];
+}
+
 void SetupGalaxy(PostEffect *pe) {
-  GalaxyEffectSetup(&pe->galaxy, &pe->effects.galaxy, pe->currentDeltaTime,
-                    pe->fftTexture);
+  GalaxyEffectSetup(GetGalaxyEffect(pe), &pe->effects.galaxy,
+                    pe->currentDeltaTime, pe->fftTexture);
 }
 
 void SetupGalaxyBlend(PostEffect *pe) {

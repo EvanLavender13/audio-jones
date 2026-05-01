@@ -4,6 +4,8 @@
 #include "raylib.h"
 #include <stdbool.h>
 
+struct PostEffect;
+
 // Interference Warp - multi-axis harmonic UV displacement
 // Sums sine waves across configurable axes to create lattice-like distortion.
 // Higher axes produce more complex quasicrystal patterns.
@@ -50,5 +52,7 @@ void InterferenceWarpEffectUninit(const InterferenceWarpEffect *e);
 
 // Registers modulatable params with the modulation engine
 void InterferenceWarpRegisterParams(InterferenceWarpConfig *cfg);
+
+InterferenceWarpEffect *GetInterferenceWarpEffect(PostEffect *pe);
 
 #endif // INTERFERENCE_WARP_H

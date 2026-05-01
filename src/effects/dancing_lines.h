@@ -11,6 +11,8 @@
 #include "render/color_config.h"
 #include <stdbool.h>
 
+struct PostEffect;
+
 struct DancingLinesConfig {
   bool enabled = false;
 
@@ -108,5 +110,7 @@ void DancingLinesEffectUninit(DancingLinesEffect *e);
 
 // Registers modulatable params with the modulation engine
 void DancingLinesRegisterParams(DancingLinesConfig *cfg);
+
+DancingLinesEffect *GetDancingLinesEffect(PostEffect *pe);
 
 #endif // DANCING_LINES_EFFECT_H

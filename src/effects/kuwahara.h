@@ -7,6 +7,8 @@
 #include "raylib.h"
 #include <stdbool.h>
 
+struct PostEffect;
+
 struct KuwaharaConfig {
   bool enabled = false;
   float radius = 4.0f; // Kernel radius, cast to int in shader (2-12)
@@ -31,5 +33,7 @@ void KuwaharaEffectUninit(const KuwaharaEffect *e);
 
 // Registers modulatable params with the modulation engine
 void KuwaharaRegisterParams(KuwaharaConfig *cfg);
+
+KuwaharaEffect *GetKuwaharaEffect(PostEffect *pe);
 
 #endif // KUWAHARA_H

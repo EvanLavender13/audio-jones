@@ -101,8 +101,12 @@ static void DrawStripeShiftParams(EffectConfig *e, const ModSources *ms,
                     "stripeShift.colorDisplace", "%.2f", ms);
 }
 
+StripeShiftEffect *GetStripeShiftEffect(PostEffect *pe) {
+  return (StripeShiftEffect *)pe->effectStates[TRANSFORM_STRIPE_SHIFT];
+}
+
 void SetupStripeShift(PostEffect *pe) {
-  StripeShiftEffectSetup(&pe->stripeShift, &pe->effects.stripeShift,
+  StripeShiftEffectSetup(GetStripeShiftEffect(pe), &pe->effects.stripeShift,
                          pe->currentDeltaTime);
 }
 

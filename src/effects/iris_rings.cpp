@@ -104,8 +104,12 @@ void IrisRingsRegisterParams(IrisRingsConfig *cfg) {
                          5.0f);
 }
 
+IrisRingsEffect *GetIrisRingsEffect(PostEffect *pe) {
+  return (IrisRingsEffect *)pe->effectStates[TRANSFORM_IRIS_RINGS_BLEND];
+}
+
 void SetupIrisRings(PostEffect *pe) {
-  IrisRingsEffectSetup(&pe->irisRings, &pe->effects.irisRings,
+  IrisRingsEffectSetup(GetIrisRingsEffect(pe), &pe->effects.irisRings,
                        pe->currentDeltaTime, pe->fftTexture);
 }
 

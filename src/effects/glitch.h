@@ -7,6 +7,8 @@
 #include "raylib.h"
 #include <stdbool.h>
 
+struct PostEffect;
+
 // Glitch: Analog/digital video corruption through UV distortion, chromatic
 // aberration, noise Modes enable automatically when their primary parameter > 0
 struct GlitchConfig {
@@ -161,5 +163,7 @@ void GlitchEffectUninit(const GlitchEffect *e);
 
 // Registers modulatable params with the modulation engine
 void GlitchRegisterParams(GlitchConfig *cfg);
+
+GlitchEffect *GetGlitchEffect(PostEffect *pe);
 
 #endif // GLITCH_H

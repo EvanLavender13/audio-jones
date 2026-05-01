@@ -78,7 +78,7 @@ void OilPaintEffectResize(OilPaintEffect *e, int width, int height) {
   RenderUtilsInitTextureHDR(&e->intermediate, width, height, "OIL_PAINT");
 }
 
-void ApplyHalfResOilPaint(const PostEffect *pe, const RenderTexture2D *source,
+void ApplyHalfResOilPaint(PostEffect *pe, const RenderTexture2D *source,
                           const int *writeIdx) {
   const int halfW = pe->screenWidth / 2;
   const int halfH = pe->screenHeight / 2;
@@ -94,32 +94,34 @@ void ApplyHalfResOilPaint(const PostEffect *pe, const RenderTexture2D *source,
   DrawTexturePro(source->texture, srcRect, halfRect, {0, 0}, 0.0f, WHITE);
   EndTextureMode();
 
-  SetShaderValue(pe->oilPaint.strokeShader, pe->oilPaint.strokeResolutionLoc,
-                 halfRes, SHADER_UNIFORM_VEC2);
+  SetShaderValue(GetOilPaintEffect(pe)->strokeShader,
+                 GetOilPaintEffect(pe)->strokeResolutionLoc, halfRes,
+                 SHADER_UNIFORM_VEC2);
 
   BeginTextureMode(pe->halfResB);
-  BeginShaderMode(pe->oilPaint.strokeShader);
+  BeginShaderMode(GetOilPaintEffect(pe)->strokeShader);
   DrawTexturePro(pe->halfResA.texture, {0, 0, (float)halfW, (float)-halfH},
                  halfRect, {0, 0}, 0.0f, WHITE);
   EndShaderMode();
   EndTextureMode();
 
-  SetShaderValue(pe->oilPaint.compositeShader,
-                 pe->oilPaint.compositeResolutionLoc, halfRes,
+  SetShaderValue(GetOilPaintEffect(pe)->compositeShader,
+                 GetOilPaintEffect(pe)->compositeResolutionLoc, halfRes,
                  SHADER_UNIFORM_VEC2);
 
   BeginTextureMode(pe->halfResA);
-  BeginShaderMode(pe->oilPaint.compositeShader);
+  BeginShaderMode(GetOilPaintEffect(pe)->compositeShader);
   DrawTexturePro(pe->halfResB.texture, {0, 0, (float)halfW, (float)-halfH},
                  halfRect, {0, 0}, 0.0f, WHITE);
   EndShaderMode();
   EndTextureMode();
 
   // Subsequent effects may share these shaders
-  SetShaderValue(pe->oilPaint.strokeShader, pe->oilPaint.strokeResolutionLoc,
-                 fullRes, SHADER_UNIFORM_VEC2);
-  SetShaderValue(pe->oilPaint.compositeShader,
-                 pe->oilPaint.compositeResolutionLoc, fullRes,
+  SetShaderValue(GetOilPaintEffect(pe)->strokeShader,
+                 GetOilPaintEffect(pe)->strokeResolutionLoc, fullRes,
+                 SHADER_UNIFORM_VEC2);
+  SetShaderValue(GetOilPaintEffect(pe)->compositeShader,
+                 GetOilPaintEffect(pe)->compositeResolutionLoc, fullRes,
                  SHADER_UNIFORM_VEC2);
 
   BeginTextureMode(pe->pingPong[*writeIdx]);
@@ -139,23 +141,29 @@ void OilPaintRegisterParams(OilPaintConfig *cfg) {
 }
 
 // Manual registration: oil paint has a composite shader (not .shader)
+static OilPaintEffect g_oilPaintState;
+
 static bool Init_oilPaint(PostEffect *pe, int w, int h) {
-  return OilPaintEffectInit(&pe->oilPaint, w, h);
+  return OilPaintEffectInit(GetOilPaintEffect(pe), w, h);
 }
 static void Uninit_oilPaint(PostEffect *pe) {
-  OilPaintEffectUninit(&pe->oilPaint);
+  OilPaintEffectUninit(GetOilPaintEffect(pe));
 }
 static void Resize_oilPaint(PostEffect *pe, int w, int h) {
-  OilPaintEffectResize(&pe->oilPaint, w, h);
+  OilPaintEffectResize(GetOilPaintEffect(pe), w, h);
 }
 static void Register_oilPaint(EffectConfig *cfg) {
   OilPaintRegisterParams(&cfg->oilPaint);
 }
 static Shader *GetShader_oilPaint(PostEffect *pe) {
-  return &pe->oilPaint.compositeShader;
+  return &GetOilPaintEffect(pe)->compositeShader;
 }
+OilPaintEffect *GetOilPaintEffect(PostEffect *pe) {
+  return (OilPaintEffect *)pe->effectStates[TRANSFORM_OIL_PAINT];
+}
+
 void SetupOilPaint(PostEffect *pe) {
-  OilPaintEffectSetup(&pe->oilPaint, &pe->effects.oilPaint,
+  OilPaintEffectSetup(GetOilPaintEffect(pe), &pe->effects.oilPaint,
                       pe->currentDeltaTime);
 }
 
@@ -189,5 +197,5 @@ static bool reg_oilPaint = EffectDescriptorRegister(
      offsetof(EffectConfig, oilPaint.enabled), "oilPaint.", EFFECT_FLAG_NEEDS_RESIZE,
      Init_oilPaint, Uninit_oilPaint, Resize_oilPaint, Register_oilPaint,
      GetShader_oilPaint, SetupOilPaint, nullptr, nullptr, nullptr,
-     DrawOilPaintParams, nullptr});
+     DrawOilPaintParams, nullptr, &g_oilPaintState});
 // clang-format on

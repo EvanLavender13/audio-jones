@@ -10,6 +10,8 @@
 #include "render/color_config.h"
 #include <stdbool.h>
 
+struct PostEffect;
+
 struct NebulaConfig {
   bool enabled = false;
 
@@ -121,5 +123,7 @@ void NebulaEffectUninit(NebulaEffect *e);
 
 // Registers modulatable params with the modulation engine
 void NebulaRegisterParams(NebulaConfig *cfg);
+
+NebulaEffect *GetNebulaEffect(PostEffect *pe);
 
 #endif // NEBULA_H

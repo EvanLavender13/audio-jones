@@ -10,6 +10,8 @@
 #include "render/color_config.h"
 #include <stdbool.h>
 
+struct PostEffect;
+
 struct CyberMarchConfig {
   bool enabled = false;
 
@@ -108,5 +110,7 @@ void CyberMarchEffectUninit(CyberMarchEffect *e);
 
 // Registers modulatable params with the modulation engine
 void CyberMarchRegisterParams(CyberMarchConfig *cfg);
+
+CyberMarchEffect *GetCyberMarchEffect(PostEffect *pe);
 
 #endif // CYBER_MARCH_H

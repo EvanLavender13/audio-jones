@@ -7,6 +7,8 @@
 #include "raylib.h"
 #include <stdbool.h>
 
+struct PostEffect;
+
 struct DogFilterConfig {
   bool enabled = false;
   float sigma = 1.5f; // Edge Gaussian sigma (0.5-5.0)
@@ -35,5 +37,7 @@ void DogFilterEffectUninit(const DogFilterEffect *e);
 
 // Registers modulatable params with the modulation engine
 void DogFilterRegisterParams(DogFilterConfig *cfg);
+
+DogFilterEffect *GetDogFilterEffect(PostEffect *pe);
 
 #endif // DOG_FILTER_H

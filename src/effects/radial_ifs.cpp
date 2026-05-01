@@ -82,8 +82,12 @@ static void DrawRadialIfsParams(EffectConfig *e, const ModSources *ms,
                             "radialIfs.twistSpeed", ms);
 }
 
+RadialIfsEffect *GetRadialIfsEffect(PostEffect *pe) {
+  return (RadialIfsEffect *)pe->effectStates[TRANSFORM_RADIAL_IFS];
+}
+
 void SetupRadialIfs(PostEffect *pe) {
-  RadialIfsEffectSetup(&pe->radialIfs, &pe->effects.radialIfs,
+  RadialIfsEffectSetup(GetRadialIfsEffect(pe), &pe->effects.radialIfs,
                        pe->currentDeltaTime);
 }
 

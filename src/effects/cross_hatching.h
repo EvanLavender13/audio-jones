@@ -8,6 +8,8 @@
 #include "raylib.h"
 #include <stdbool.h>
 
+struct PostEffect;
+
 struct CrossHatchingConfig {
   bool enabled = false;
   float width = 1.5f;     // Base line thickness in pixels (0.5-4.0)
@@ -41,5 +43,7 @@ void CrossHatchingEffectUninit(const CrossHatchingEffect *e);
 
 // Registers modulatable params with the modulation engine
 void CrossHatchingRegisterParams(CrossHatchingConfig *cfg);
+
+CrossHatchingEffect *GetCrossHatchingEffect(PostEffect *pe);
 
 #endif // CROSS_HATCHING_H

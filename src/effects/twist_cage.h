@@ -10,6 +10,8 @@
 #include "render/color_config.h"
 #include <stdbool.h>
 
+struct PostEffect;
+
 struct TwistCageConfig {
   bool enabled = false;
 
@@ -24,10 +26,9 @@ struct TwistCageConfig {
   float twistSpeed = 0.1f; // Yaw twist accumulation rate rad/s (-PI..+PI)
   float twistPitch = 0.0f; // Static pitch twist per layer in radians (-PI..+PI)
   float twistPitchSpeed =
-      0.0f; // Pitch twist accumulation rate rad/s (-PI..+PI)
+      0.0f;               // Pitch twist accumulation rate rad/s (-PI..+PI)
   float twistRoll = 0.0f; // Static roll twist per layer in radians (-PI..+PI)
-  float twistRollSpeed =
-      0.0f; // Roll twist accumulation rate rad/s (-PI..+PI)
+  float twistRollSpeed = 0.0f; // Roll twist accumulation rate rad/s (-PI..+PI)
 
   // Projection
   float perspective = 4.0f; // Camera projection depth (1.0-20.0)
@@ -64,7 +65,7 @@ struct TwistCageConfig {
 #define TWIST_CAGE_CONFIG_FIELDS                                               \
   enabled, shape, layerCount, scaleRatio, twistAngle, twistSpeed, twistPitch,  \
       twistPitchSpeed, twistRoll, twistRollSpeed, perspective, scale,          \
-      lineWidth, glowIntensity, contrast, lissajous, baseFreq, maxFreq, gain, \
+      lineWidth, glowIntensity, contrast, lissajous, baseFreq, maxFreq, gain,  \
       curve, baseBright, gradient, blendMode, blendIntensity
 
 typedef struct ColorLUT ColorLUT;
@@ -118,5 +119,7 @@ void TwistCageEffectUninit(TwistCageEffect *e);
 
 // Registers modulatable params with the modulation engine
 void TwistCageRegisterParams(TwistCageConfig *cfg);
+
+TwistCageEffect *GetTwistCageEffect(PostEffect *pe);
 
 #endif // TWIST_CAGE_H

@@ -7,6 +7,8 @@
 #include "raylib.h"
 #include <stdbool.h>
 
+struct PostEffect;
+
 struct HalftoneConfig {
   bool enabled = false;
   float dotScale = 8.0f;      // Grid cell size in pixels (2.0-20.0)
@@ -39,5 +41,7 @@ void HalftoneEffectUninit(const HalftoneEffect *e);
 
 // Registers modulatable params with the modulation engine
 void HalftoneRegisterParams(HalftoneConfig *cfg);
+
+HalftoneEffect *GetHalftoneEffect(PostEffect *pe);
 
 #endif // HALFTONE_H

@@ -207,20 +207,25 @@ void MuonsRegisterParams(MuonsConfig *cfg) {
                          5.0f);
 }
 
+MuonsEffect *GetMuonsEffect(PostEffect *pe) {
+  return (MuonsEffect *)pe->effectStates[TRANSFORM_MUONS_BLEND];
+}
+
 void SetupMuons(PostEffect *pe) {
-  MuonsEffectSetup(&pe->muons, &pe->effects.muons, pe->currentDeltaTime,
+  MuonsEffectSetup(GetMuonsEffect(pe), &pe->effects.muons, pe->currentDeltaTime,
                    pe->fftTexture);
 }
 
 void SetupMuonsBlend(PostEffect *pe) {
   BlendCompositorApply(
-      pe->blendCompositor, pe->muons.pingPong[pe->muons.readIdx].texture,
+      pe->blendCompositor,
+      GetMuonsEffect(pe)->pingPong[GetMuonsEffect(pe)->readIdx].texture,
       pe->effects.muons.blendIntensity, pe->effects.muons.blendMode);
 }
 
 void RenderMuons(PostEffect *pe) {
-  MuonsEffectRender(&pe->muons, &pe->effects.muons, pe->currentDeltaTime,
-                    pe->screenWidth, pe->screenHeight);
+  MuonsEffectRender(GetMuonsEffect(pe), &pe->effects.muons,
+                    pe->currentDeltaTime, pe->screenWidth, pe->screenHeight);
 }
 
 // === UI ===

@@ -148,8 +148,12 @@ static void DrawFractureGridParams(EffectConfig *e, const ModSources *ms,
   }
 }
 
+FractureGridEffect *GetFractureGridEffect(PostEffect *pe) {
+  return (FractureGridEffect *)pe->effectStates[TRANSFORM_FRACTURE_GRID];
+}
+
 void SetupFractureGrid(PostEffect *pe) {
-  FractureGridEffectSetup(&pe->fractureGrid, &pe->effects.fractureGrid,
+  FractureGridEffectSetup(GetFractureGridEffect(pe), &pe->effects.fractureGrid,
                           pe->currentDeltaTime, pe->screenWidth,
                           pe->screenHeight);
 }

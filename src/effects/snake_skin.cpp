@@ -133,8 +133,12 @@ void SnakeSkinRegisterParams(SnakeSkinConfig *cfg) {
                          5.0f);
 }
 
+SnakeSkinEffect *GetSnakeSkinEffect(PostEffect *pe) {
+  return (SnakeSkinEffect *)pe->effectStates[TRANSFORM_SNAKE_SKIN_BLEND];
+}
+
 void SetupSnakeSkin(PostEffect *pe) {
-  SnakeSkinEffectSetup(&pe->snakeSkin, &pe->effects.snakeSkin,
+  SnakeSkinEffectSetup(GetSnakeSkinEffect(pe), &pe->effects.snakeSkin,
                        pe->currentDeltaTime, pe->fftTexture);
 }
 

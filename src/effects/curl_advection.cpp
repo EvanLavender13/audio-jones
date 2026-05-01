@@ -296,23 +296,26 @@ void CurlAdvectionRegisterParams(CurlAdvectionConfig *cfg) {
                          0.0f, 5.0f);
 }
 
+CurlAdvectionEffect *GetCurlAdvectionEffect(PostEffect *pe) {
+  return (CurlAdvectionEffect *)pe->effectStates[TRANSFORM_CURL_ADVECTION];
+}
+
 void SetupCurlAdvection(PostEffect *pe) {
-  CurlAdvectionEffect *e = &pe->curlAdvection;
+  CurlAdvectionEffect *e = GetCurlAdvectionEffect(pe);
   const CurlAdvectionConfig *cfg = &pe->effects.curlAdvection;
   e->currentAccumTexture = pe->accumTexture.texture;
   CurlAdvectionEffectSetup(e, cfg, GetFrameTime());
 }
 
 void SetupCurlAdvectionBlend(PostEffect *pe) {
-  BlendCompositorApply(
-      pe->blendCompositor,
-      pe->curlAdvection.pingPong[pe->curlAdvection.readIdx].texture,
-      pe->effects.curlAdvection.boostIntensity,
-      pe->effects.curlAdvection.blendMode);
+  CurlAdvectionEffect *e = GetCurlAdvectionEffect(pe);
+  BlendCompositorApply(pe->blendCompositor, e->pingPong[e->readIdx].texture,
+                       pe->effects.curlAdvection.boostIntensity,
+                       pe->effects.curlAdvection.blendMode);
 }
 
 void RenderCurlAdvection(PostEffect *pe) {
-  CurlAdvectionEffect *e = &pe->curlAdvection;
+  CurlAdvectionEffect *e = GetCurlAdvectionEffect(pe);
   const CurlAdvectionConfig *cfg = &pe->effects.curlAdvection;
   CurlAdvectionEffectRender(e, cfg, GetFrameTime(), pe->screenWidth,
                             pe->screenHeight);

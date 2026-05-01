@@ -7,6 +7,8 @@
 #include "raylib.h"
 #include <stdbool.h>
 
+struct PostEffect;
+
 struct SolarizeConfig {
   bool enabled = false;
   float amount = 0.5f;    // Inversion strength (0.0-1.0)
@@ -32,5 +34,7 @@ void SolarizeEffectUninit(const SolarizeEffect *e);
 
 // Registers modulatable params with the modulation engine
 void SolarizeRegisterParams(SolarizeConfig *cfg);
+
+SolarizeEffect *GetSolarizeEffect(PostEffect *pe);
 
 #endif // SOLARIZE_H

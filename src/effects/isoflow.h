@@ -10,6 +10,8 @@
 #include "render/color_config.h"
 #include <stdbool.h>
 
+struct PostEffect;
+
 struct IsoflowConfig {
   bool enabled = false;
 
@@ -97,5 +99,7 @@ void IsoflowEffectUninit(IsoflowEffect *e);
 
 // Registers modulatable params with the modulation engine
 void IsoflowRegisterParams(IsoflowConfig *cfg);
+
+IsoflowEffect *GetIsoflowEffect(PostEffect *pe);
 
 #endif // ISOFLOW_H

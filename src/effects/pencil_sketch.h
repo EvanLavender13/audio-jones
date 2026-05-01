@@ -7,6 +7,8 @@
 #include "raylib.h"
 #include <stdbool.h>
 
+struct PostEffect;
+
 struct PencilSketchConfig {
   bool enabled = false;
   int angleCount = 3;          // Number of hatching directions (2-6)
@@ -57,5 +59,7 @@ void PencilSketchEffectUninit(const PencilSketchEffect *e);
 
 // Registers modulatable params with the modulation engine
 void PencilSketchRegisterParams(PencilSketchConfig *cfg);
+
+PencilSketchEffect *GetPencilSketchEffect(PostEffect *pe);
 
 #endif // PENCIL_SKETCH_H

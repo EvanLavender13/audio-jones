@@ -77,8 +77,12 @@ static void DrawDrosteZoomParams(EffectConfig *e, const ModSources *ms,
   ImGui::SliderInt("Branches##droste", &e->drosteZoom.branches, 1, 8);
 }
 
+DrosteZoomEffect *GetDrosteZoomEffect(PostEffect *pe) {
+  return (DrosteZoomEffect *)pe->effectStates[TRANSFORM_DROSTE_ZOOM];
+}
+
 void SetupDrosteZoom(PostEffect *pe) {
-  DrosteZoomEffectSetup(&pe->drosteZoom, &pe->effects.drosteZoom,
+  DrosteZoomEffectSetup(GetDrosteZoomEffect(pe), &pe->effects.drosteZoom,
                         pe->currentDeltaTime);
 }
 

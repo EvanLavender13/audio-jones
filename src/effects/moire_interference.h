@@ -4,6 +4,8 @@
 #include "raylib.h"
 #include <stdbool.h>
 
+struct PostEffect;
+
 // Moire Interference: Per-layer wave displacement with configurable pattern and
 // profile modes producing large-scale interference fringes
 
@@ -82,5 +84,7 @@ void MoireInterferenceEffectUninit(const MoireInterferenceEffect *e);
 
 // Registers modulatable params with the modulation engine
 void MoireInterferenceRegisterParams(MoireInterferenceConfig *cfg);
+
+MoireInterferenceEffect *GetMoireInterferenceEffect(PostEffect *pe);
 
 #endif // MOIRE_INTERFERENCE_H

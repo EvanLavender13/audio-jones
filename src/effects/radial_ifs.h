@@ -4,6 +4,8 @@
 #include "raylib.h"
 #include <stdbool.h>
 
+struct PostEffect;
+
 // Config struct (user-facing parameters, serialized in presets)
 struct RadialIfsConfig {
   bool enabled = false;
@@ -42,5 +44,7 @@ void RadialIfsEffectUninit(const RadialIfsEffect *e);
 
 // Registers modulatable params with the modulation engine
 void RadialIfsRegisterParams(RadialIfsConfig *cfg);
+
+RadialIfsEffect *GetRadialIfsEffect(PostEffect *pe);
 
 #endif

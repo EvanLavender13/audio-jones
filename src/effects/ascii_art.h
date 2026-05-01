@@ -7,6 +7,8 @@
 #include "raylib.h"
 #include <stdbool.h>
 
+struct PostEffect;
+
 struct AsciiArtConfig {
   bool enabled = false;
   float cellSize =
@@ -46,5 +48,7 @@ void AsciiArtEffectUninit(const AsciiArtEffect *e);
 
 // Registers modulatable params with the modulation engine
 void AsciiArtRegisterParams(AsciiArtConfig *cfg);
+
+AsciiArtEffect *GetAsciiArtEffect(PostEffect *pe);
 
 #endif // ASCII_ART_H

@@ -103,8 +103,12 @@ static void DrawLotusWarpParams(EffectConfig *e, const ModSources *ms,
                             "lotusWarp.spinSpeed", ms);
 }
 
+LotusWarpEffect *GetLotusWarpEffect(PostEffect *pe) {
+  return (LotusWarpEffect *)pe->effectStates[TRANSFORM_LOTUS_WARP];
+}
+
 void SetupLotusWarp(PostEffect *pe) {
-  LotusWarpEffectSetup(&pe->lotusWarp, &pe->effects.lotusWarp,
+  LotusWarpEffectSetup(GetLotusWarpEffect(pe), &pe->effects.lotusWarp,
                        pe->currentDeltaTime);
 }
 

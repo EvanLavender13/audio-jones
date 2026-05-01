@@ -224,8 +224,13 @@ void PolyhedralMirrorRegisterParams(PolyhedralMirrorConfig *cfg) {
                          &cfg->blendIntensity, 0.0f, 5.0f);
 }
 
+PolyhedralMirrorEffect *GetPolyhedralMirrorEffect(PostEffect *pe) {
+  return (PolyhedralMirrorEffect *)
+      pe->effectStates[TRANSFORM_POLYHEDRAL_MIRROR_BLEND];
+}
+
 void SetupPolyhedralMirror(PostEffect *pe) {
-  PolyhedralMirrorEffectSetup(&pe->polyhedralMirror,
+  PolyhedralMirrorEffectSetup(GetPolyhedralMirrorEffect(pe),
                               &pe->effects.polyhedralMirror,
                               pe->currentDeltaTime, pe->fftTexture);
 }

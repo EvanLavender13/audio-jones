@@ -8,6 +8,8 @@
 #include "raylib.h"
 #include <stdbool.h>
 
+struct PostEffect;
+
 struct LatticeCrushConfig {
   bool enabled = false;
 
@@ -47,5 +49,7 @@ void LatticeCrushEffectUninit(const LatticeCrushEffect *e);
 
 // Registers modulatable params with the modulation engine
 void LatticeCrushRegisterParams(LatticeCrushConfig *cfg);
+
+LatticeCrushEffect *GetLatticeCrushEffect(PostEffect *pe);
 
 #endif // LATTICE_CRUSH_H

@@ -101,8 +101,12 @@ static void DrawRadialPulseParams(EffectConfig *e, const ModSources *ms,
                      "%.2f");
 }
 
+RadialPulseEffect *GetRadialPulseEffect(PostEffect *pe) {
+  return (RadialPulseEffect *)pe->effectStates[TRANSFORM_RADIAL_PULSE];
+}
+
 void SetupRadialPulse(PostEffect *pe) {
-  RadialPulseEffectSetup(&pe->radialPulse, &pe->effects.radialPulse,
+  RadialPulseEffectSetup(GetRadialPulseEffect(pe), &pe->effects.radialPulse,
                          pe->currentDeltaTime);
 }
 

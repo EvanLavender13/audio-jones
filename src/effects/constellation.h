@@ -10,6 +10,8 @@
 #include "render/color_config.h"
 #include <stdbool.h>
 
+struct PostEffect;
+
 struct ConstellationConfig {
   bool enabled = false;
 
@@ -135,5 +137,7 @@ void ConstellationEffectUninit(ConstellationEffect *e);
 
 // Registers modulatable params with the modulation engine
 void ConstellationRegisterParams(ConstellationConfig *cfg);
+
+ConstellationEffect *GetConstellationEffect(PostEffect *pe);
 
 #endif // CONSTELLATION_H

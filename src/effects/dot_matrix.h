@@ -7,6 +7,8 @@
 #include "raylib.h"
 #include <stdbool.h>
 
+struct PostEffect;
+
 struct DotMatrixConfig {
   bool enabled = false;
   float dotScale = 32.0f;     // Grid resolution (4.0-80.0)
@@ -41,5 +43,7 @@ void DotMatrixEffectUninit(const DotMatrixEffect *e);
 
 // Registers modulatable params with the modulation engine
 void DotMatrixRegisterParams(DotMatrixConfig *cfg);
+
+DotMatrixEffect *GetDotMatrixEffect(PostEffect *pe);
 
 #endif // DOT_MATRIX_H

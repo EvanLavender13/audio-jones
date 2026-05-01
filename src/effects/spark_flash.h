@@ -9,6 +9,8 @@
 #include "render/color_config.h"
 #include <stdbool.h>
 
+struct PostEffect;
+
 struct SparkFlashConfig {
   bool enabled = false;
 
@@ -78,5 +80,7 @@ void SparkFlashEffectUninit(SparkFlashEffect *e);
 
 // Registers modulatable params with the modulation engine
 void SparkFlashRegisterParams(SparkFlashConfig *cfg);
+
+SparkFlashEffect *GetSparkFlashEffect(PostEffect *pe);
 
 #endif // SPARK_FLASH_H

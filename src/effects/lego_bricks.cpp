@@ -60,8 +60,12 @@ void LegoBricksRegisterParams(LegoBricksConfig *cfg) {
                          -ROTATION_OFFSET_MAX, ROTATION_OFFSET_MAX);
 }
 
+LegoBricksEffect *GetLegoBricksEffect(PostEffect *pe) {
+  return (LegoBricksEffect *)pe->effectStates[TRANSFORM_LEGO_BRICKS];
+}
+
 void SetupLegoBricks(PostEffect *pe) {
-  LegoBricksEffectSetup(&pe->legoBricks, &pe->effects.legoBricks);
+  LegoBricksEffectSetup(GetLegoBricksEffect(pe), &pe->effects.legoBricks);
 }
 
 // === UI ===

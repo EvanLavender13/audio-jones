@@ -188,8 +188,12 @@ void ByzantineRegisterParams(ByzantineConfig *cfg) {
                          5.0f);
 }
 
+ByzantineEffect *GetByzantineEffect(PostEffect *pe) {
+  return (ByzantineEffect *)pe->effectStates[TRANSFORM_BYZANTINE_BLEND];
+}
+
 void SetupByzantine(PostEffect *pe) {
-  ByzantineEffectSetup(&pe->byzantine, &pe->effects.byzantine,
+  ByzantineEffectSetup(GetByzantineEffect(pe), &pe->effects.byzantine,
                        pe->currentDeltaTime);
 }
 
@@ -200,7 +204,7 @@ void SetupByzantineBlend(PostEffect *pe) {
 }
 
 void RenderByzantine(PostEffect *pe) {
-  ByzantineEffectRender(&pe->byzantine, pe);
+  ByzantineEffectRender(GetByzantineEffect(pe), pe);
 }
 
 // === UI ===

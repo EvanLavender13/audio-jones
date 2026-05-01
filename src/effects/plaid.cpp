@@ -113,8 +113,12 @@ void PlaidRegisterParams(PlaidConfig *cfg) {
                          5.0f);
 }
 
+PlaidEffect *GetPlaidEffect(PostEffect *pe) {
+  return (PlaidEffect *)pe->effectStates[TRANSFORM_PLAID_BLEND];
+}
+
 void SetupPlaid(PostEffect *pe) {
-  PlaidEffectSetup(&pe->plaid, &pe->effects.plaid, pe->currentDeltaTime,
+  PlaidEffectSetup(GetPlaidEffect(pe), &pe->effects.plaid, pe->currentDeltaTime,
                    pe->fftTexture);
 }
 

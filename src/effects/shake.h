@@ -7,6 +7,8 @@
 #include "raylib.h"
 #include <stdbool.h>
 
+struct PostEffect;
+
 struct ShakeConfig {
   bool enabled = false;
   float intensity = 0.02f;
@@ -39,5 +41,7 @@ void ShakeEffectUninit(const ShakeEffect *e);
 
 // Registers modulatable params with the modulation engine
 void ShakeRegisterParams(ShakeConfig *cfg);
+
+ShakeEffect *GetShakeEffect(PostEffect *pe);
 
 #endif // SHAKE_H

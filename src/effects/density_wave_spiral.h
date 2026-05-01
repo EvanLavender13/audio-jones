@@ -10,6 +10,8 @@
 #include "raylib.h"
 #include <stdbool.h>
 
+struct PostEffect;
+
 struct DensityWaveSpiralConfig {
   bool enabled = false;
   float centerX = 0.0f;
@@ -55,5 +57,7 @@ void DensityWaveSpiralEffectUninit(const DensityWaveSpiralEffect *e);
 
 // Registers modulatable params with the modulation engine
 void DensityWaveSpiralRegisterParams(DensityWaveSpiralConfig *cfg);
+
+DensityWaveSpiralEffect *GetDensityWaveSpiralEffect(PostEffect *pe);
 
 #endif // DENSITY_WAVE_SPIRAL_H

@@ -4,6 +4,8 @@
 #include "raylib.h"
 #include <stdbool.h>
 
+struct PostEffect;
+
 // Kaleidoscope (Polar): Wedge-based radial mirroring with optional smooth edges
 struct KaleidoscopeConfig {
   bool enabled = false;
@@ -37,5 +39,7 @@ void KaleidoscopeEffectUninit(const KaleidoscopeEffect *e);
 
 // Registers modulatable params with the modulation engine
 void KaleidoscopeRegisterParams(KaleidoscopeConfig *cfg);
+
+KaleidoscopeEffect *GetKaleidoscopeEffect(PostEffect *pe);
 
 #endif // KALEIDOSCOPE_H

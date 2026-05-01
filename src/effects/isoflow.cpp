@@ -149,9 +149,13 @@ void IsoflowRegisterParams(IsoflowConfig *cfg) {
                          5.0f);
 }
 
+IsoflowEffect *GetIsoflowEffect(PostEffect *pe) {
+  return (IsoflowEffect *)pe->effectStates[TRANSFORM_ISOFLOW_BLEND];
+}
+
 void SetupIsoflow(PostEffect *pe) {
-  IsoflowEffectSetup(&pe->isoflow, &pe->effects.isoflow, pe->currentDeltaTime,
-                     pe->fftTexture);
+  IsoflowEffectSetup(GetIsoflowEffect(pe), &pe->effects.isoflow,
+                     pe->currentDeltaTime, pe->fftTexture);
 }
 
 void SetupIsoflowBlend(PostEffect *pe) {

@@ -9,6 +9,8 @@
 #include "render/color_config.h"
 #include <stdbool.h>
 
+struct PostEffect;
+
 struct ChladniConfig {
   bool enabled = false;
 
@@ -91,5 +93,7 @@ void ChladniEffectUninit(ChladniEffect *e);
 
 // Registers modulatable params with the modulation engine
 void ChladniRegisterParams(ChladniConfig *cfg);
+
+ChladniEffect *GetChladniEffect(PostEffect *pe);
 
 #endif // CHLADNI_H

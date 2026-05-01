@@ -85,4 +85,6 @@ void SlitScanEffectUninit(const SlitScanEffect *e);
 // Registers modulatable params with the modulation engine
 void SlitScanRegisterParams(SlitScanConfig *cfg);
 
+SlitScanEffect *GetSlitScanEffect(PostEffect *pe);
+
 #endif // SLIT_SCAN_EFFECT_H

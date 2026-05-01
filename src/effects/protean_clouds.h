@@ -11,6 +11,8 @@
 #include "render/color_config.h"
 #include <stdbool.h>
 
+struct PostEffect;
+
 struct ProteanCloudsConfig {
   bool enabled = false;
 
@@ -111,5 +113,7 @@ void ProteanCloudsEffectUninit(ProteanCloudsEffect *e);
 
 // Registers modulatable params with the modulation engine
 void ProteanCloudsRegisterParams(ProteanCloudsConfig *cfg);
+
+ProteanCloudsEffect *GetProteanCloudsEffect(PostEffect *pe);
 
 #endif // PROTEAN_CLOUDS_H

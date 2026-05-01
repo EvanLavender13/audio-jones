@@ -170,8 +170,12 @@ static void DrawSurfaceDepthParams(EffectConfig *e, const ModSources *ms,
   }
 }
 
+SurfaceDepthEffect *GetSurfaceDepthEffect(PostEffect *pe) {
+  return (SurfaceDepthEffect *)pe->effectStates[TRANSFORM_SURFACE_DEPTH];
+}
+
 void SetupSurfaceDepth(PostEffect *pe) {
-  SurfaceDepthEffectSetup(&pe->surfaceDepth, &pe->effects.surfaceDepth,
+  SurfaceDepthEffectSetup(GetSurfaceDepthEffect(pe), &pe->effects.surfaceDepth,
                           pe->currentDeltaTime);
 }
 

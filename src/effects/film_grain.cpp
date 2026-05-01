@@ -68,8 +68,12 @@ static void DrawFilmGrainParams(EffectConfig *e, const ModSources *ms,
                     "filmGrain.colorAmount", "%.2f", ms);
 }
 
+FilmGrainEffect *GetFilmGrainEffect(PostEffect *pe) {
+  return (FilmGrainEffect *)pe->effectStates[TRANSFORM_FILM_GRAIN];
+}
+
 void SetupFilmGrain(PostEffect *pe) {
-  FilmGrainEffectSetup(&pe->filmGrain, &pe->effects.filmGrain,
+  FilmGrainEffectSetup(GetFilmGrainEffect(pe), &pe->effects.filmGrain,
                        pe->currentDeltaTime);
 }
 

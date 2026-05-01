@@ -9,6 +9,8 @@
 #include "render/color_config.h"
 #include <stdbool.h>
 
+struct PostEffect;
+
 struct DigitalShardConfig {
   bool enabled = false;
 
@@ -79,5 +81,7 @@ void DigitalShardEffectUninit(DigitalShardEffect *e);
 
 // Registers modulatable params with the modulation engine
 void DigitalShardRegisterParams(DigitalShardConfig *cfg);
+
+DigitalShardEffect *GetDigitalShardEffect(PostEffect *pe);
 
 #endif // DIGITAL_SHARD_H

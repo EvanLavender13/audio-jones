@@ -6,6 +6,8 @@
 
 #include "config/dual_lissajous_config.h"
 
+struct PostEffect;
+
 // Wave Ripple: pseudo-3D radial wave displacement
 // Summed sine waves create height field; gradient displaces UVs for parallax
 struct WaveRippleConfig {
@@ -61,5 +63,7 @@ void WaveRippleEffectUninit(const WaveRippleEffect *e);
 
 // Registers modulatable params with the modulation engine
 void WaveRippleRegisterParams(WaveRippleConfig *cfg);
+
+WaveRippleEffect *GetWaveRippleEffect(PostEffect *pe);
 
 #endif // WAVE_RIPPLE_H

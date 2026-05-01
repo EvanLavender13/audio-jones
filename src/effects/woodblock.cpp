@@ -83,8 +83,12 @@ void WoodblockRegisterParams(WoodblockConfig *cfg) {
   ModEngineRegisterParam("woodblock.paperTone", &cfg->paperTone, 0.0f, 1.0f);
 }
 
+WoodblockEffect *GetWoodblockEffect(PostEffect *pe) {
+  return (WoodblockEffect *)pe->effectStates[TRANSFORM_WOODBLOCK];
+}
+
 void SetupWoodblock(PostEffect *pe) {
-  WoodblockEffectSetup(&pe->woodblock, &pe->effects.woodblock);
+  WoodblockEffectSetup(GetWoodblockEffect(pe), &pe->effects.woodblock);
 }
 
 // === UI ===

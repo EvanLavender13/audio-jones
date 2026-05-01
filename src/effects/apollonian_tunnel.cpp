@@ -154,8 +154,13 @@ void ApollonianTunnelRegisterParams(ApollonianTunnelConfig *cfg) {
                          &cfg->blendIntensity, 0.0f, 5.0f);
 }
 
+ApollonianTunnelEffect *GetApollonianTunnelEffect(PostEffect *pe) {
+  return (ApollonianTunnelEffect *)
+      pe->effectStates[TRANSFORM_APOLLONIAN_TUNNEL_BLEND];
+}
+
 void SetupApollonianTunnel(PostEffect *pe) {
-  ApollonianTunnelEffectSetup(&pe->apollonianTunnel,
+  ApollonianTunnelEffectSetup(GetApollonianTunnelEffect(pe),
                               &pe->effects.apollonianTunnel,
                               pe->currentDeltaTime, pe->fftTexture);
 }

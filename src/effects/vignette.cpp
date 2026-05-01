@@ -50,8 +50,12 @@ void VignetteRegisterParams(VignetteConfig *cfg) {
   ModEngineRegisterParam("vignette.roundness", &cfg->roundness, 0.0f, 1.0f);
 }
 
+VignetteEffect *GetVignetteEffect(PostEffect *pe) {
+  return (VignetteEffect *)pe->effectStates[TRANSFORM_VIGNETTE];
+}
+
 void SetupVignette(PostEffect *pe) {
-  VignetteEffectSetup(&pe->vignette, &pe->effects.vignette);
+  VignetteEffectSetup(GetVignetteEffect(pe), &pe->effects.vignette);
 }
 
 // === UI ===

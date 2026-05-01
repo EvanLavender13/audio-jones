@@ -54,8 +54,12 @@ static void DrawRadialStreakParams(EffectConfig *e, const ModSources *ms,
                     "radialStreak.intensity", "%.2f", ms);
 }
 
+RadialStreakEffect *GetRadialStreakEffect(PostEffect *pe) {
+  return (RadialStreakEffect *)pe->effectStates[TRANSFORM_RADIAL_STREAK];
+}
+
 void SetupRadialStreak(PostEffect *pe) {
-  RadialStreakEffectSetup(&pe->radialStreak, &pe->effects.radialStreak,
+  RadialStreakEffectSetup(GetRadialStreakEffect(pe), &pe->effects.radialStreak,
                           pe->currentDeltaTime);
 }
 

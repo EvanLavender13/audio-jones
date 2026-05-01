@@ -108,8 +108,12 @@ void SpiralWalkRegisterParams(SpiralWalkConfig *cfg) {
                          0.0f, 5.0f);
 }
 
+SpiralWalkEffect *GetSpiralWalkEffect(PostEffect *pe) {
+  return (SpiralWalkEffect *)pe->effectStates[TRANSFORM_SPIRAL_WALK_BLEND];
+}
+
 void SetupSpiralWalk(PostEffect *pe) {
-  SpiralWalkEffectSetup(&pe->spiralWalk, &pe->effects.spiralWalk,
+  SpiralWalkEffectSetup(GetSpiralWalkEffect(pe), &pe->effects.spiralWalk,
                         pe->currentDeltaTime, pe->fftTexture);
 }
 

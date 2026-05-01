@@ -260,8 +260,12 @@ static void DrawHueRemapParams(EffectConfig *e, const ModSources *ms,
                     "%.2f", ms);
 }
 
+HueRemapEffect *GetHueRemapEffect(PostEffect *pe) {
+  return (HueRemapEffect *)pe->effectStates[TRANSFORM_HUE_REMAP];
+}
+
 void SetupHueRemap(PostEffect *pe) {
-  HueRemapEffectSetup(&pe->hueRemap, &pe->effects.hueRemap,
+  HueRemapEffectSetup(GetHueRemapEffect(pe), &pe->effects.hueRemap,
                       pe->currentDeltaTime);
 }
 

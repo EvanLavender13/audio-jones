@@ -9,6 +9,8 @@
 #include "render/color_config.h"
 #include <stdbool.h>
 
+struct PostEffect;
+
 struct PolygonSubdivideConfig {
   bool enabled = false;
 
@@ -82,5 +84,7 @@ void PolygonSubdivideEffectUninit(PolygonSubdivideEffect *e);
 
 // Registers modulatable params with the modulation engine
 void PolygonSubdivideRegisterParams(PolygonSubdivideConfig *cfg);
+
+PolygonSubdivideEffect *GetPolygonSubdivideEffect(PostEffect *pe);
 
 #endif // POLYGON_SUBDIVIDE_H

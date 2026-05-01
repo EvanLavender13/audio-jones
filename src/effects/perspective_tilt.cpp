@@ -65,8 +65,12 @@ void PerspectiveTiltRegisterParams(PerspectiveTiltConfig *cfg) {
   ModEngineRegisterParam("perspectiveTilt.fov", &cfg->fov, 20.0f, 120.0f);
 }
 
+PerspectiveTiltEffect *GetPerspectiveTiltEffect(PostEffect *pe) {
+  return (PerspectiveTiltEffect *)pe->effectStates[TRANSFORM_PERSPECTIVE_TILT];
+}
+
 void SetupPerspectiveTilt(PostEffect *pe) {
-  PerspectiveTiltEffectSetup(&pe->perspectiveTilt,
+  PerspectiveTiltEffectSetup(GetPerspectiveTiltEffect(pe),
                              &pe->effects.perspectiveTilt);
 }
 

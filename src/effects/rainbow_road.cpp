@@ -123,8 +123,12 @@ void RainbowRoadRegisterParams(RainbowRoadConfig *cfg) {
                          0.0f, 1.0f);
 }
 
+RainbowRoadEffect *GetRainbowRoadEffect(PostEffect *pe) {
+  return (RainbowRoadEffect *)pe->effectStates[TRANSFORM_RAINBOW_ROAD_BLEND];
+}
+
 void SetupRainbowRoad(PostEffect *pe) {
-  RainbowRoadEffectSetup(&pe->rainbowRoad, &pe->effects.rainbowRoad,
+  RainbowRoadEffectSetup(GetRainbowRoadEffect(pe), &pe->effects.rainbowRoad,
                          pe->currentDeltaTime, pe->fftTexture);
 }
 

@@ -98,8 +98,12 @@ static void DrawPoincareDiskParams(EffectConfig *e, const ModSources *ms,
                             "poincareDisk.rotationSpeed", ms);
 }
 
+PoincareDiskEffect *GetPoincareDiskEffect(PostEffect *pe) {
+  return (PoincareDiskEffect *)pe->effectStates[TRANSFORM_POINCARE_DISK];
+}
+
 void SetupPoincareDisk(PostEffect *pe) {
-  PoincareDiskEffectSetup(&pe->poincareDisk, &pe->effects.poincareDisk,
+  PoincareDiskEffectSetup(GetPoincareDiskEffect(pe), &pe->effects.poincareDisk,
                           pe->currentDeltaTime);
 }
 

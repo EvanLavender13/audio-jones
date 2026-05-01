@@ -174,9 +174,14 @@ void MoireGeneratorRegisterParams(MoireGeneratorConfig *cfg) {
   }
 }
 
+MoireGeneratorEffect *GetMoireGeneratorEffect(PostEffect *pe) {
+  return (MoireGeneratorEffect *)
+      pe->effectStates[TRANSFORM_MOIRE_GENERATOR_BLEND];
+}
+
 void SetupMoireGenerator(PostEffect *pe) {
-  MoireGeneratorEffectSetup(&pe->moireGenerator, &pe->effects.moireGenerator,
-                            pe->currentDeltaTime);
+  MoireGeneratorEffectSetup(GetMoireGeneratorEffect(pe),
+                            &pe->effects.moireGenerator, pe->currentDeltaTime);
 }
 
 void SetupMoireGeneratorBlend(PostEffect *pe) {

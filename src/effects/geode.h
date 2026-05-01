@@ -9,6 +9,8 @@
 #include "render/color_config.h"
 #include <stdbool.h>
 
+struct PostEffect;
+
 struct GeodeConfig {
   bool enabled = false;
 
@@ -120,5 +122,7 @@ void GeodeEffectUninit(GeodeEffect *e);
 
 // Registers modulatable params with the modulation engine
 void GeodeRegisterParams(GeodeConfig *cfg);
+
+GeodeEffect *GetGeodeEffect(PostEffect *pe);
 
 #endif // GEODE_H

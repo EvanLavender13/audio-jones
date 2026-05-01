@@ -156,8 +156,12 @@ void NeonLatticeRegisterParams(NeonLatticeConfig *cfg) {
                          0.0f, 5.0f);
 }
 
+NeonLatticeEffect *GetNeonLatticeEffect(PostEffect *pe) {
+  return (NeonLatticeEffect *)pe->effectStates[TRANSFORM_NEON_LATTICE_BLEND];
+}
+
 void SetupNeonLattice(PostEffect *pe) {
-  NeonLatticeEffectSetup(&pe->neonLattice, &pe->effects.neonLattice,
+  NeonLatticeEffectSetup(GetNeonLatticeEffect(pe), &pe->effects.neonLattice,
                          pe->currentDeltaTime, pe->fftTexture);
 }
 

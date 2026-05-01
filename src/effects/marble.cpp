@@ -130,9 +130,13 @@ void MarbleRegisterParams(MarbleConfig *cfg) {
                          5.0f);
 }
 
+MarbleEffect *GetMarbleEffect(PostEffect *pe) {
+  return (MarbleEffect *)pe->effectStates[TRANSFORM_MARBLE_BLEND];
+}
+
 void SetupMarble(PostEffect *pe) {
-  MarbleEffectSetup(&pe->marble, &pe->effects.marble, pe->currentDeltaTime,
-                    pe->fftTexture);
+  MarbleEffectSetup(GetMarbleEffect(pe), &pe->effects.marble,
+                    pe->currentDeltaTime, pe->fftTexture);
 }
 
 void SetupMarbleBlend(PostEffect *pe) {

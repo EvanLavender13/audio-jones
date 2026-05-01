@@ -4,6 +4,8 @@
 #include "raylib.h"
 #include <stdbool.h>
 
+struct PostEffect;
+
 // Circuit Board Voronoi grid warp
 // Tiles space into SDF square Voronoi cells with breathing animation, optional
 // dual layers, and contour-band displacement for PCB trace aesthetics.
@@ -49,5 +51,7 @@ void CircuitBoardEffectUninit(const CircuitBoardEffect *e);
 
 // Registers modulatable params with the modulation engine
 void CircuitBoardRegisterParams(CircuitBoardConfig *cfg);
+
+CircuitBoardEffect *GetCircuitBoardEffect(PostEffect *pe);
 
 #endif // CIRCUIT_BOARD_H

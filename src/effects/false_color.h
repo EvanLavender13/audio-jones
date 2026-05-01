@@ -8,6 +8,8 @@
 #include "render/color_config.h"
 #include <stdbool.h>
 
+struct PostEffect;
+
 struct FalseColorConfig {
   bool enabled = false;
   ColorConfig gradient = {
@@ -43,5 +45,7 @@ void FalseColorEffectUninit(FalseColorEffect *e);
 
 // Registers modulatable params with the modulation engine
 void FalseColorRegisterParams(FalseColorConfig *cfg);
+
+FalseColorEffect *GetFalseColorEffect(PostEffect *pe);
 
 #endif // FALSE_COLOR_H

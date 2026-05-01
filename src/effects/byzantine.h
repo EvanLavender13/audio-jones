@@ -9,6 +9,8 @@
 #include "render/color_config.h"
 #include <stdbool.h>
 
+struct PostEffect;
+
 struct ByzantineConfig {
   bool enabled = false;
 
@@ -35,7 +37,6 @@ struct ByzantineConfig {
       twistSpeed, gradient, blendMode, blendIntensity
 
 typedef struct ColorLUT ColorLUT;
-typedef struct PostEffect PostEffect;
 
 typedef struct ByzantineEffect {
   Shader shader;        // Simulation shader (ping-pong)
@@ -84,5 +85,7 @@ void ByzantineEffectUninit(ByzantineEffect *e);
 
 // Registers modulatable params with the modulation engine
 void ByzantineRegisterParams(ByzantineConfig *cfg);
+
+ByzantineEffect *GetByzantineEffect(PostEffect *pe);
 
 #endif // BYZANTINE_H

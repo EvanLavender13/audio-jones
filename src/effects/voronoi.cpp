@@ -92,8 +92,13 @@ static void DrawVoronoiParams(EffectConfig *e, const ModSources *ms,
   ModulatableSlider("Speed##vor", &v->speed, "voronoi.speed", "%.2f", ms);
 }
 
+VoronoiEffect *GetVoronoiEffect(PostEffect *pe) {
+  return (VoronoiEffect *)pe->effectStates[TRANSFORM_VORONOI];
+}
+
 void SetupVoronoi(PostEffect *pe) {
-  VoronoiEffectSetup(&pe->voronoi, &pe->effects.voronoi, pe->currentDeltaTime);
+  VoronoiEffectSetup(GetVoronoiEffect(pe), &pe->effects.voronoi,
+                     pe->currentDeltaTime);
 }
 
 // clang-format off

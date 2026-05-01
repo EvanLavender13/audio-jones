@@ -157,8 +157,12 @@ void LaserDanceRegisterParams(LaserDanceConfig *cfg) {
                          0.0f, 5.0f);
 }
 
+LaserDanceEffect *GetLaserDanceEffect(PostEffect *pe) {
+  return (LaserDanceEffect *)pe->effectStates[TRANSFORM_LASER_DANCE_BLEND];
+}
+
 void SetupLaserDance(PostEffect *pe) {
-  LaserDanceEffectSetup(&pe->laserDance, &pe->effects.laserDance,
+  LaserDanceEffectSetup(GetLaserDanceEffect(pe), &pe->effects.laserDance,
                         pe->currentDeltaTime, pe->fftTexture);
 }
 

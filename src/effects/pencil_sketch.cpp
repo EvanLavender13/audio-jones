@@ -88,8 +88,12 @@ void PencilSketchRegisterParams(PencilSketchConfig *cfg) {
                          8.0f);
 }
 
+PencilSketchEffect *GetPencilSketchEffect(PostEffect *pe) {
+  return (PencilSketchEffect *)pe->effectStates[TRANSFORM_PENCIL_SKETCH];
+}
+
 void SetupPencilSketch(PostEffect *pe) {
-  PencilSketchEffectSetup(&pe->pencilSketch, &pe->effects.pencilSketch,
+  PencilSketchEffectSetup(GetPencilSketchEffect(pe), &pe->effects.pencilSketch,
                           pe->currentDeltaTime);
 }
 

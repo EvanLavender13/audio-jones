@@ -9,6 +9,8 @@
 #include "render/color_config.h"
 #include <stdbool.h>
 
+struct PostEffect;
+
 struct LedCubeConfig {
   bool enabled = false;
 
@@ -94,5 +96,7 @@ void LedCubeEffectUninit(LedCubeEffect *e);
 
 // Registers modulatable params with the modulation engine
 void LedCubeRegisterParams(LedCubeConfig *cfg);
+
+LedCubeEffect *GetLedCubeEffect(PostEffect *pe);
 
 #endif // LED_CUBE_H

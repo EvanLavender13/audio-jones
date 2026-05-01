@@ -62,8 +62,12 @@ static void DrawFalseColorParams(EffectConfig *e, const ModSources *ms,
                     "falseColor.intensity", "%.2f", ms);
 }
 
+FalseColorEffect *GetFalseColorEffect(PostEffect *pe) {
+  return (FalseColorEffect *)pe->effectStates[TRANSFORM_FALSE_COLOR];
+}
+
 void SetupFalseColor(PostEffect *pe) {
-  FalseColorEffectSetup(&pe->falseColor, &pe->effects.falseColor);
+  FalseColorEffectSetup(GetFalseColorEffect(pe), &pe->effects.falseColor);
 }
 
 // clang-format off

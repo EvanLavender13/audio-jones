@@ -121,8 +121,12 @@ static void DrawWaveRippleParams(EffectConfig *e, const ModSources *ms,
   }
 }
 
+WaveRippleEffect *GetWaveRippleEffect(PostEffect *pe) {
+  return (WaveRippleEffect *)pe->effectStates[TRANSFORM_WAVE_RIPPLE];
+}
+
 void SetupWaveRipple(PostEffect *pe) {
-  WaveRippleEffectSetup(&pe->waveRipple, &pe->effects.waveRipple,
+  WaveRippleEffectSetup(GetWaveRippleEffect(pe), &pe->effects.waveRipple,
                         pe->currentDeltaTime);
 }
 

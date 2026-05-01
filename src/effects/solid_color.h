@@ -9,6 +9,8 @@
 #include "render/color_config.h"
 #include <stdbool.h>
 
+struct PostEffect;
+
 typedef struct ColorLUT ColorLUT;
 
 struct SolidColorConfig {
@@ -37,5 +39,7 @@ void SolidColorEffectUninit(SolidColorEffect *e);
 
 // Registers modulatable params with the modulation engine
 void SolidColorRegisterParams(SolidColorConfig *cfg);
+
+SolidColorEffect *GetSolidColorEffect(PostEffect *pe);
 
 #endif // SOLID_COLOR_H

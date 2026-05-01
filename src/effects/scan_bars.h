@@ -10,6 +10,8 @@
 #include "render/color_config.h"
 #include <stdbool.h>
 
+struct PostEffect;
+
 struct ScanBarsConfig {
   bool enabled = false;
 
@@ -89,5 +91,7 @@ void ScanBarsEffectUninit(ScanBarsEffect *e);
 
 // Registers modulatable params with the modulation engine
 void ScanBarsRegisterParams(ScanBarsConfig *cfg);
+
+ScanBarsEffect *GetScanBarsEffect(PostEffect *pe);
 
 #endif // SCAN_BARS_H

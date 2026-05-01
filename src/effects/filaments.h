@@ -10,6 +10,8 @@
 #include "render/color_config.h"
 #include <stdbool.h>
 
+struct PostEffect;
+
 struct FilamentsConfig {
   bool enabled = false;
 
@@ -82,5 +84,7 @@ void FilamentsEffectUninit(FilamentsEffect *e);
 
 // Registers modulatable params with the modulation engine
 void FilamentsRegisterParams(FilamentsConfig *cfg);
+
+FilamentsEffect *GetFilamentsEffect(PostEffect *pe);
 
 #endif // FILAMENTS_H

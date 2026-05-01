@@ -7,6 +7,8 @@
 #include "raylib.h"
 #include <stdbool.h>
 
+struct PostEffect;
+
 struct LegoBricksConfig {
   bool enabled = false;
   float brickScale = 0.04f;    // Brick size relative to screen (0.01-0.2)
@@ -44,5 +46,7 @@ void LegoBricksEffectUninit(const LegoBricksEffect *e);
 
 // Registers modulatable params with the modulation engine
 void LegoBricksRegisterParams(LegoBricksConfig *cfg);
+
+LegoBricksEffect *GetLegoBricksEffect(PostEffect *pe);
 
 #endif // LEGO_BRICKS_H

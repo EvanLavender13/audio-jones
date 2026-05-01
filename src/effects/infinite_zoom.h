@@ -5,6 +5,8 @@
 #include "raylib.h"
 #include <stdbool.h>
 
+struct PostEffect;
+
 // Infinite Zoom with spiral rotation
 // Tiles scaled layers to simulate continuous forward zoom. spiralAngle offsets
 // the base rotation; spiralTwist adds per-layer cumulative rotation for a
@@ -71,5 +73,7 @@ void InfiniteZoomEffectUninit(const InfiniteZoomEffect *e);
 
 // Registers modulatable params with the modulation engine
 void InfiniteZoomRegisterParams(InfiniteZoomConfig *cfg);
+
+InfiniteZoomEffect *GetInfiniteZoomEffect(PostEffect *pe);
 
 #endif // INFINITE_ZOOM_H

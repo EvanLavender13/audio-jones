@@ -8,6 +8,8 @@
 #include "raylib.h"
 #include <stdbool.h>
 
+struct PostEffect;
+
 static const int STREAK_MIP_COUNT = 7;
 
 struct AnamorphicStreakConfig {
@@ -70,9 +72,9 @@ void AnamorphicStreakEffectUninit(const AnamorphicStreakEffect *e);
 // Registers modulatable params with the modulation engine
 void AnamorphicStreakRegisterParams(AnamorphicStreakConfig *cfg);
 
-typedef struct PostEffect PostEffect;
-
 // Executes the multi-pass anamorphic streak pipeline
 void ApplyAnamorphicStreakPasses(PostEffect *pe, const RenderTexture2D *source);
+
+AnamorphicStreakEffect *GetAnamorphicStreakEffect(PostEffect *pe);
 
 #endif // ANAMORPHIC_STREAK_H

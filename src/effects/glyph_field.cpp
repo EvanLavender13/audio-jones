@@ -190,8 +190,12 @@ void GlyphFieldRegisterParams(GlyphFieldConfig *cfg) {
                          0.0f, 5.0f);
 }
 
+GlyphFieldEffect *GetGlyphFieldEffect(PostEffect *pe) {
+  return (GlyphFieldEffect *)pe->effectStates[TRANSFORM_GLYPH_FIELD_BLEND];
+}
+
 void SetupGlyphField(PostEffect *pe) {
-  GlyphFieldEffectSetup(&pe->glyphField, &pe->effects.glyphField,
+  GlyphFieldEffectSetup(GetGlyphFieldEffect(pe), &pe->effects.glyphField,
                         pe->currentDeltaTime, pe->fftTexture);
 }
 

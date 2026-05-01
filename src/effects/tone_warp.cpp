@@ -122,8 +122,12 @@ static void DrawToneWarpParams(EffectConfig *e, const ModSources *ms,
                             "toneWarp.phaseSpeed", ms);
 }
 
+ToneWarpEffect *GetToneWarpEffect(PostEffect *pe) {
+  return (ToneWarpEffect *)pe->effectStates[TRANSFORM_TONE_WARP];
+}
+
 void SetupToneWarp(PostEffect *pe) {
-  ToneWarpEffectSetup(&pe->toneWarp, &pe->effects.toneWarp,
+  ToneWarpEffectSetup(GetToneWarpEffect(pe), &pe->effects.toneWarp,
                       pe->currentDeltaTime, pe->screenWidth, pe->screenHeight,
                       pe->fftTexture);
 }

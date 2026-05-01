@@ -133,8 +133,13 @@ void RandomVolumetricRegisterParams(RandomVolumetricConfig *cfg) {
                          &cfg->blendIntensity, 0.0f, 5.0f);
 }
 
+RandomVolumetricEffect *GetRandomVolumetricEffect(PostEffect *pe) {
+  return (RandomVolumetricEffect *)
+      pe->effectStates[TRANSFORM_RANDOM_VOLUMETRIC];
+}
+
 void SetupRandomVolumetric(PostEffect *pe) {
-  RandomVolumetricEffectSetup(&pe->randomVolumetric,
+  RandomVolumetricEffectSetup(GetRandomVolumetricEffect(pe),
                               &pe->effects.randomVolumetric,
                               pe->currentDeltaTime, pe->fftTexture);
 }

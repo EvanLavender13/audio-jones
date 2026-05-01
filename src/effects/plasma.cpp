@@ -131,8 +131,13 @@ void PlasmaRegisterParams(PlasmaConfig *cfg) {
                          5.0f);
 }
 
+PlasmaEffect *GetPlasmaEffect(PostEffect *pe) {
+  return (PlasmaEffect *)pe->effectStates[TRANSFORM_PLASMA_BLEND];
+}
+
 void SetupPlasma(PostEffect *pe) {
-  PlasmaEffectSetup(&pe->plasma, &pe->effects.plasma, pe->currentDeltaTime);
+  PlasmaEffectSetup(GetPlasmaEffect(pe), &pe->effects.plasma,
+                    pe->currentDeltaTime);
 }
 
 void SetupPlasmaBlend(PostEffect *pe) {

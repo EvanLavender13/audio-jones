@@ -9,6 +9,8 @@
 #include "render/color_config.h"
 #include <stdbool.h>
 
+struct PostEffect;
+
 struct ShellConfig {
   bool enabled = false;
 
@@ -99,5 +101,7 @@ void ShellEffectUninit(ShellEffect *e);
 
 // Registers modulatable params with the modulation engine
 void ShellRegisterParams(ShellConfig *cfg);
+
+ShellEffect *GetShellEffect(PostEffect *pe);
 
 #endif // SHELL_H

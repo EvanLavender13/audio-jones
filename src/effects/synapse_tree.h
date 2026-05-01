@@ -8,6 +8,8 @@
 #include "render/color_config.h"
 #include <stdbool.h>
 
+struct PostEffect;
+
 struct SynapseTreeConfig {
   bool enabled = false;
 
@@ -84,5 +86,7 @@ void SynapseTreeEffectUninit(SynapseTreeEffect *e);
 
 // Registers modulatable params with the modulation engine
 void SynapseTreeRegisterParams(SynapseTreeConfig *cfg);
+
+SynapseTreeEffect *GetSynapseTreeEffect(PostEffect *pe);
 
 #endif // SYNAPSE_TREE_H

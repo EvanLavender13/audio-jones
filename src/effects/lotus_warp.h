@@ -6,6 +6,8 @@
 #include "raylib.h"
 #include <stdbool.h>
 
+struct PostEffect;
+
 struct LotusWarpConfig {
   bool enabled = false;
   float scale = 3.0f;         // Cell density (0.5-10.0)
@@ -40,5 +42,7 @@ void LotusWarpEffectSetup(LotusWarpEffect *e, const LotusWarpConfig *cfg,
                           float deltaTime);
 void LotusWarpEffectUninit(const LotusWarpEffect *e);
 void LotusWarpRegisterParams(LotusWarpConfig *cfg);
+
+LotusWarpEffect *GetLotusWarpEffect(PostEffect *pe);
 
 #endif // LOTUS_WARP_H

@@ -347,19 +347,23 @@ void LichenRegisterParams(LichenConfig *cfg) {
                          5.0f);
 }
 
+LichenEffect *GetLichenEffect(PostEffect *pe) {
+  return (LichenEffect *)pe->effectStates[TRANSFORM_LICHEN];
+}
+
 void SetupLichen(PostEffect *pe) {
-  LichenEffectSetup(&pe->lichen, &pe->effects.lichen, pe->currentDeltaTime,
-                    pe->fftTexture);
+  LichenEffectSetup(GetLichenEffect(pe), &pe->effects.lichen,
+                    pe->currentDeltaTime, pe->fftTexture);
 }
 
 void SetupLichenBlend(PostEffect *pe) {
-  BlendCompositorApply(pe->blendCompositor, pe->lichen.colorRT.texture,
-                       pe->effects.lichen.blendIntensity,
-                       pe->effects.lichen.blendMode);
+  BlendCompositorApply(
+      pe->blendCompositor, GetLichenEffect(pe)->colorRT.texture,
+      pe->effects.lichen.blendIntensity, pe->effects.lichen.blendMode);
 }
 
 void RenderLichen(PostEffect *pe) {
-  LichenEffectRender(&pe->lichen, pe->screenWidth, pe->screenHeight);
+  LichenEffectRender(GetLichenEffect(pe), pe->screenWidth, pe->screenHeight);
 }
 
 // === UI ===

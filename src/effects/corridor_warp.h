@@ -4,6 +4,8 @@
 #include "raylib.h"
 #include <stdbool.h>
 
+struct PostEffect;
+
 enum CorridorWarpMode {
   CORRIDOR_WARP_FLOOR = 0,
   CORRIDOR_WARP_CEILING = 1,
@@ -58,5 +60,7 @@ void CorridorWarpEffectUninit(const CorridorWarpEffect *e);
 
 // Registers modulatable params with the modulation engine
 void CorridorWarpRegisterParams(CorridorWarpConfig *cfg);
+
+CorridorWarpEffect *GetCorridorWarpEffect(PostEffect *pe);
 
 #endif // CORRIDOR_WARP_H

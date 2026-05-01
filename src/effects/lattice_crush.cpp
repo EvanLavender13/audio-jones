@@ -92,8 +92,12 @@ static void DrawLatticeCrushParams(EffectConfig *e, const ModSources *ms,
                     ms);
 }
 
+LatticeCrushEffect *GetLatticeCrushEffect(PostEffect *pe) {
+  return (LatticeCrushEffect *)pe->effectStates[TRANSFORM_LATTICE_CRUSH];
+}
+
 void SetupLatticeCrush(PostEffect *pe) {
-  LatticeCrushEffectSetup(&pe->latticeCrush, &pe->effects.latticeCrush,
+  LatticeCrushEffectSetup(GetLatticeCrushEffect(pe), &pe->effects.latticeCrush,
                           pe->currentDeltaTime);
 }
 

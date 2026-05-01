@@ -7,6 +7,8 @@
 #include "raylib.h"
 #include <stdbool.h>
 
+struct PostEffect;
+
 // Shared cell sub-effect modes used by Voronoi and Phyllotaxis
 typedef enum {
   CELL_MODE_UV_DISTORT = 0,   // "Distort"
@@ -53,5 +55,7 @@ void VoronoiEffectSetup(VoronoiEffect *e, const VoronoiConfig *cfg,
                         float deltaTime);
 void VoronoiEffectUninit(const VoronoiEffect *e);
 void VoronoiRegisterParams(VoronoiConfig *cfg);
+
+VoronoiEffect *GetVoronoiEffect(PostEffect *pe);
 
 #endif // VORONOI_H

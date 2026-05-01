@@ -54,9 +54,13 @@ void CrossHatchingRegisterParams(CrossHatchingConfig *cfg) {
   ModEngineRegisterParam("crossHatching.outline", &cfg->outline, 0.0f, 1.0f);
 }
 
+CrossHatchingEffect *GetCrossHatchingEffect(PostEffect *pe) {
+  return (CrossHatchingEffect *)pe->effectStates[TRANSFORM_CROSS_HATCHING];
+}
+
 void SetupCrossHatching(PostEffect *pe) {
-  CrossHatchingEffectSetup(&pe->crossHatching, &pe->effects.crossHatching,
-                           pe->currentDeltaTime);
+  CrossHatchingEffectSetup(GetCrossHatchingEffect(pe),
+                           &pe->effects.crossHatching, pe->currentDeltaTime);
 }
 
 // === UI ===

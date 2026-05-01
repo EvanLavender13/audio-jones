@@ -202,9 +202,13 @@ void HexRushRegisterParams(HexRushConfig *cfg) {
                          5.0f);
 }
 
+HexRushEffect *GetHexRushEffect(PostEffect *pe) {
+  return (HexRushEffect *)pe->effectStates[TRANSFORM_HEX_RUSH_BLEND];
+}
+
 void SetupHexRush(PostEffect *pe) {
-  HexRushEffectSetup(&pe->hexRush, &pe->effects.hexRush, pe->currentDeltaTime,
-                     pe->fftTexture);
+  HexRushEffectSetup(GetHexRushEffect(pe), &pe->effects.hexRush,
+                     pe->currentDeltaTime, pe->fftTexture);
 }
 
 void SetupHexRushBlend(PostEffect *pe) {

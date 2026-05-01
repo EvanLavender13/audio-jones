@@ -97,8 +97,12 @@ static void DrawKifsParams(EffectConfig *e, const ModSources *ms, ImU32 glow) {
                             ms);
 }
 
+KifsEffect *GetKifsEffect(PostEffect *pe) {
+  return (KifsEffect *)pe->effectStates[TRANSFORM_KIFS];
+}
+
 void SetupKifs(PostEffect *pe) {
-  KifsEffectSetup(&pe->kifs, &pe->effects.kifs, pe->currentDeltaTime);
+  KifsEffectSetup(GetKifsEffect(pe), &pe->effects.kifs, pe->currentDeltaTime);
 }
 
 // clang-format off

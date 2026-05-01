@@ -9,6 +9,8 @@
 #include "render/color_config.h"
 #include <stdbool.h>
 
+struct PostEffect;
+
 struct PolyhedralMirrorConfig {
   bool enabled = false;
 
@@ -99,5 +101,7 @@ void PolyhedralMirrorEffectUninit(PolyhedralMirrorEffect *e);
 
 // Registers modulatable params with the modulation engine
 void PolyhedralMirrorRegisterParams(PolyhedralMirrorConfig *cfg);
+
+PolyhedralMirrorEffect *GetPolyhedralMirrorEffect(PostEffect *pe);
 
 #endif // POLYHEDRAL_MIRROR_H

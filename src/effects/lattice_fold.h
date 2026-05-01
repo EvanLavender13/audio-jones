@@ -6,6 +6,8 @@
 #include "raylib.h"
 #include <stdbool.h>
 
+struct PostEffect;
+
 struct LatticeFoldConfig {
   bool enabled = false;
   int cellType = 6;
@@ -32,5 +34,7 @@ void LatticeFoldEffectSetup(LatticeFoldEffect *e, const LatticeFoldConfig *cfg,
                             float deltaTime, float transformTime);
 void LatticeFoldEffectUninit(const LatticeFoldEffect *e);
 void LatticeFoldRegisterParams(LatticeFoldConfig *cfg);
+
+LatticeFoldEffect *GetLatticeFoldEffect(PostEffect *pe);
 
 #endif // LATTICE_FOLD_H

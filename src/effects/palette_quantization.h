@@ -7,6 +7,8 @@
 #include "raylib.h"
 #include <stdbool.h>
 
+struct PostEffect;
+
 struct PaletteQuantizationConfig {
   bool enabled = false;
   float colorLevels = 4.0f; // Quantization levels per channel (2.0-16.0). 2=8
@@ -38,5 +40,7 @@ void PaletteQuantizationEffectUninit(const PaletteQuantizationEffect *e);
 
 // Registers modulatable params with the modulation engine
 void PaletteQuantizationRegisterParams(PaletteQuantizationConfig *cfg);
+
+PaletteQuantizationEffect *GetPaletteQuantizationEffect(PostEffect *pe);
 
 #endif // PALETTE_QUANTIZATION_H

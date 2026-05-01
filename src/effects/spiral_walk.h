@@ -9,6 +9,8 @@
 #include "render/color_config.h"
 #include <stdbool.h>
 
+struct PostEffect;
+
 struct SpiralWalkConfig {
   bool enabled = false;
 
@@ -79,5 +81,7 @@ void SpiralWalkEffectUninit(SpiralWalkEffect *e);
 
 // Registers modulatable params with the modulation engine
 void SpiralWalkRegisterParams(SpiralWalkConfig *cfg);
+
+SpiralWalkEffect *GetSpiralWalkEffect(PostEffect *pe);
 
 #endif // SPIRAL_WALK_H

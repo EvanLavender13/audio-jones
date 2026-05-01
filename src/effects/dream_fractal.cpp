@@ -145,8 +145,12 @@ void DreamFractalRegisterParams(DreamFractalConfig *cfg) {
                          0.0f, 5.0f);
 }
 
+DreamFractalEffect *GetDreamFractalEffect(PostEffect *pe) {
+  return (DreamFractalEffect *)pe->effectStates[TRANSFORM_DREAM_FRACTAL_BLEND];
+}
+
 void SetupDreamFractal(PostEffect *pe) {
-  DreamFractalEffectSetup(&pe->dreamFractal, &pe->effects.dreamFractal,
+  DreamFractalEffectSetup(GetDreamFractalEffect(pe), &pe->effects.dreamFractal,
                           pe->currentDeltaTime, pe->fftTexture);
 }
 

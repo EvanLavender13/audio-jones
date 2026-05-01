@@ -7,6 +7,8 @@
 #include "raylib.h"
 #include <stdbool.h>
 
+struct PostEffect;
+
 static const int BLOOM_MIP_COUNT = 5;
 
 struct BloomConfig {
@@ -56,10 +58,10 @@ void BloomEffectUninit(const BloomEffect *e);
 // Registers modulatable params with the modulation engine
 void BloomRegisterParams(BloomConfig *cfg);
 
-typedef struct PostEffect PostEffect;
-
 // Executes the multi-pass bloom pipeline (prefilter -> downsample -> upsample)
 void ApplyBloomPasses(PostEffect *pe, const RenderTexture2D *source,
                       int *writeIdx);
+
+BloomEffect *GetBloomEffect(PostEffect *pe);
 
 #endif // BLOOM_H

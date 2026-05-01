@@ -4,6 +4,8 @@
 #include "raylib.h"
 #include <stdbool.h>
 
+struct PostEffect;
+
 // Fracture Grid - subdivides the image into tiles with per-tile UV offset,
 // rotation, and zoom driven by a stagger hash for a shattered mosaic look.
 struct FractureGridConfig {
@@ -66,5 +68,7 @@ void FractureGridEffectUninit(const FractureGridEffect *e);
 
 // Registers modulatable params with the modulation engine
 void FractureGridRegisterParams(FractureGridConfig *cfg);
+
+FractureGridEffect *GetFractureGridEffect(PostEffect *pe);
 
 #endif // FRACTURE_GRID_H

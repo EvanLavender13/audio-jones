@@ -124,8 +124,13 @@ static void DrawMobiusParams(EffectConfig *e, const ModSources *ms,
                         "mobius.point2Lissajous", ms, 5.0f);
 }
 
+MobiusEffect *GetMobiusEffect(PostEffect *pe) {
+  return (MobiusEffect *)pe->effectStates[TRANSFORM_MOBIUS];
+}
+
 void SetupMobius(PostEffect *pe) {
-  MobiusEffectSetup(&pe->mobius, &pe->effects.mobius, pe->currentDeltaTime);
+  MobiusEffectSetup(GetMobiusEffect(pe), &pe->effects.mobius,
+                    pe->currentDeltaTime);
 }
 
 // clang-format off

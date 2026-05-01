@@ -128,9 +128,13 @@ void LedCubeRegisterParams(LedCubeConfig *cfg) {
                          5.0f);
 }
 
+LedCubeEffect *GetLedCubeEffect(PostEffect *pe) {
+  return (LedCubeEffect *)pe->effectStates[TRANSFORM_LED_CUBE_BLEND];
+}
+
 void SetupLedCube(PostEffect *pe) {
-  LedCubeEffectSetup(&pe->ledCube, &pe->effects.ledCube, pe->currentDeltaTime,
-                     pe->fftTexture);
+  LedCubeEffectSetup(GetLedCubeEffect(pe), &pe->effects.ledCube,
+                     pe->currentDeltaTime, pe->fftTexture);
 }
 
 void SetupLedCubeBlend(PostEffect *pe) {

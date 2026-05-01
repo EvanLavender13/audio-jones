@@ -107,8 +107,12 @@ static void DrawEscherDrosteParams(EffectConfig *e, const ModSources *ms,
                     "escherDroste.innerRadius", "%.2f", ms);
 }
 
+EscherDrosteEffect *GetEscherDrosteEffect(PostEffect *pe) {
+  return (EscherDrosteEffect *)pe->effectStates[TRANSFORM_ESCHER_DROSTE];
+}
+
 void SetupEscherDroste(PostEffect *pe) {
-  EscherDrosteEffectSetup(&pe->escherDroste, &pe->effects.escherDroste,
+  EscherDrosteEffectSetup(GetEscherDrosteEffect(pe), &pe->effects.escherDroste,
                           pe->currentDeltaTime);
 }
 

@@ -10,6 +10,8 @@
 #include "render/color_config.h"
 #include <stdbool.h>
 
+struct PostEffect;
+
 struct GalaxyConfig {
   bool enabled = false;
 
@@ -98,5 +100,7 @@ void GalaxyEffectUninit(GalaxyEffect *e);
 
 // Registers modulatable params with the modulation engine
 void GalaxyRegisterParams(GalaxyConfig *cfg);
+
+GalaxyEffect *GetGalaxyEffect(PostEffect *pe);
 
 #endif // GALAXY_H

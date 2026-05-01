@@ -127,9 +127,15 @@ void InfinityMatrixRegisterParams(InfinityMatrixConfig *cfg) {
                          0.0f, 5.0f);
 }
 
+InfinityMatrixEffect *GetInfinityMatrixEffect(PostEffect *pe) {
+  return (InfinityMatrixEffect *)
+      pe->effectStates[TRANSFORM_INFINITY_MATRIX_BLEND];
+}
+
 void SetupInfinityMatrix(PostEffect *pe) {
-  InfinityMatrixEffectSetup(&pe->infinityMatrix, &pe->effects.infinityMatrix,
-                            pe->currentDeltaTime, pe->fftTexture);
+  InfinityMatrixEffectSetup(GetInfinityMatrixEffect(pe),
+                            &pe->effects.infinityMatrix, pe->currentDeltaTime,
+                            pe->fftTexture);
 }
 
 void SetupInfinityMatrixBlend(PostEffect *pe) {

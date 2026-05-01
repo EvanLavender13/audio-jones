@@ -118,8 +118,12 @@ static void DrawLensSpaceParams(EffectConfig *e, const ModSources *ms,
                     "lensSpace.sphereOffsetY", "%.2f", ms);
 }
 
+LensSpaceEffect *GetLensSpaceEffect(PostEffect *pe) {
+  return (LensSpaceEffect *)pe->effectStates[TRANSFORM_LENS_SPACE];
+}
+
 void SetupLensSpace(PostEffect *pe) {
-  LensSpaceEffectSetup(&pe->lensSpace, &pe->effects.lensSpace,
+  LensSpaceEffectSetup(GetLensSpaceEffect(pe), &pe->effects.lensSpace,
                        pe->currentDeltaTime, pe->screenWidth, pe->screenHeight);
 }
 

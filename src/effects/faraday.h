@@ -9,6 +9,8 @@
 #include "render/color_config.h"
 #include <stdbool.h>
 
+struct PostEffect;
+
 struct FaradayConfig {
   bool enabled = false;
 
@@ -103,5 +105,7 @@ void FaradayEffectUninit(FaradayEffect *effect);
 
 // Registers modulatable params with the modulation engine
 void FaradayRegisterParams(FaradayConfig *cfg);
+
+FaradayEffect *GetFaradayEffect(PostEffect *pe);
 
 #endif // FARADAY_H

@@ -202,8 +202,13 @@ static void DrawMoireInterferenceParams(EffectConfig *e, const ModSources *ms,
   ImGui::SliderFloat("Y##moireintcenter", &mi->centerY, 0.0f, 1.0f, "%.2f");
 }
 
+MoireInterferenceEffect *GetMoireInterferenceEffect(PostEffect *pe) {
+  return (MoireInterferenceEffect *)
+      pe->effectStates[TRANSFORM_MOIRE_INTERFERENCE];
+}
+
 void SetupMoireInterference(PostEffect *pe) {
-  MoireInterferenceEffectSetup(&pe->moireInterference,
+  MoireInterferenceEffectSetup(GetMoireInterferenceEffect(pe),
                                &pe->effects.moireInterference,
                                pe->currentDeltaTime);
 }

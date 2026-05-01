@@ -115,8 +115,13 @@ void ScrawlRegisterParams(ScrawlConfig *cfg) {
                          5.0f);
 }
 
+ScrawlEffect *GetScrawlEffect(PostEffect *pe) {
+  return (ScrawlEffect *)pe->effectStates[TRANSFORM_SCRAWL_BLEND];
+}
+
 void SetupScrawl(PostEffect *pe) {
-  ScrawlEffectSetup(&pe->scrawl, &pe->effects.scrawl, pe->currentDeltaTime);
+  ScrawlEffectSetup(GetScrawlEffect(pe), &pe->effects.scrawl,
+                    pe->currentDeltaTime);
 }
 
 void SetupScrawlBlend(PostEffect *pe) {

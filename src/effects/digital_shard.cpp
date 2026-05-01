@@ -119,8 +119,12 @@ void DigitalShardRegisterParams(DigitalShardConfig *cfg) {
                          0.0f, 5.0f);
 }
 
+DigitalShardEffect *GetDigitalShardEffect(PostEffect *pe) {
+  return (DigitalShardEffect *)pe->effectStates[TRANSFORM_DIGITAL_SHARD_BLEND];
+}
+
 void SetupDigitalShard(PostEffect *pe) {
-  DigitalShardEffectSetup(&pe->digitalShard, &pe->effects.digitalShard,
+  DigitalShardEffectSetup(GetDigitalShardEffect(pe), &pe->effects.digitalShard,
                           pe->currentDeltaTime, pe->fftTexture);
 }
 

@@ -99,8 +99,12 @@ static void DrawShardCrushParams(EffectConfig *e, const ModSources *ms,
   ModulatableSlider("Mix##shardCrush", &sc->mix, "shardCrush.mix", "%.2f", ms);
 }
 
+ShardCrushEffect *GetShardCrushEffect(PostEffect *pe) {
+  return (ShardCrushEffect *)pe->effectStates[TRANSFORM_SHARD_CRUSH];
+}
+
 void SetupShardCrush(PostEffect *pe) {
-  ShardCrushEffectSetup(&pe->shardCrush, &pe->effects.shardCrush,
+  ShardCrushEffectSetup(GetShardCrushEffect(pe), &pe->effects.shardCrush,
                         pe->currentDeltaTime);
 }
 

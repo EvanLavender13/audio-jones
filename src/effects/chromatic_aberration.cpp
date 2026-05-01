@@ -52,8 +52,13 @@ void ChromaticAberrationRegisterParams(ChromaticAberrationConfig *cfg) {
                          3.0f);
 }
 
+ChromaticAberrationEffect *GetChromaticAberrationEffect(PostEffect *pe) {
+  return (ChromaticAberrationEffect *)
+      pe->effectStates[TRANSFORM_CHROMATIC_ABERRATION];
+}
+
 void SetupChromaticAberration(PostEffect *pe) {
-  ChromaticAberrationEffectSetup(&pe->chromaticAberration,
+  ChromaticAberrationEffectSetup(GetChromaticAberrationEffect(pe),
                                  &pe->effects.chromaticAberration);
 }
 

@@ -7,6 +7,8 @@
 #include "raylib.h"
 #include <stdbool.h>
 
+struct PostEffect;
+
 // CRT: Retro display emulation through phosphor mask, scanlines, barrel
 // distortion, vignette darkening, and animated pulse glow
 struct CrtConfig {
@@ -79,5 +81,7 @@ void CrtEffectUninit(const CrtEffect *e);
 
 // Registers modulatable params with the modulation engine
 void CrtRegisterParams(CrtConfig *cfg);
+
+CrtEffect *GetCrtEffect(PostEffect *pe);
 
 #endif // CRT_H

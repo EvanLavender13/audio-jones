@@ -45,4 +45,7 @@ void VignetteEffectUninit(const VignetteEffect *e);
 // Registers modulatable params with the modulation engine
 void VignetteRegisterParams(VignetteConfig *cfg);
 
+struct PostEffect;
+VignetteEffect *GetVignetteEffect(PostEffect *pe);
+
 #endif // VIGNETTE_EFFECT_H

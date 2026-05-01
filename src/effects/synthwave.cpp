@@ -185,8 +185,12 @@ static void DrawSynthwaveParams(EffectConfig *e, const ModSources *ms,
                      0.5f, "%.3f");
 }
 
+SynthwaveEffect *GetSynthwaveEffect(PostEffect *pe) {
+  return (SynthwaveEffect *)pe->effectStates[TRANSFORM_SYNTHWAVE];
+}
+
 void SetupSynthwave(PostEffect *pe) {
-  SynthwaveEffectSetup(&pe->synthwave, &pe->effects.synthwave,
+  SynthwaveEffectSetup(GetSynthwaveEffect(pe), &pe->effects.synthwave,
                        pe->currentDeltaTime);
 }
 

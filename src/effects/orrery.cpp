@@ -144,9 +144,13 @@ void OrreryRegisterParams(OrreryConfig *cfg) {
                          5.0f);
 }
 
+OrreryEffect *GetOrreryEffect(PostEffect *pe) {
+  return (OrreryEffect *)pe->effectStates[TRANSFORM_ORRERY_BLEND];
+}
+
 void SetupOrrery(PostEffect *pe) {
-  OrreryEffectSetup(&pe->orrery, &pe->effects.orrery, pe->currentDeltaTime,
-                    pe->fftTexture);
+  OrreryEffectSetup(GetOrreryEffect(pe), &pe->effects.orrery,
+                    pe->currentDeltaTime, pe->fftTexture);
 }
 
 void SetupOrreryBlend(PostEffect *pe) {

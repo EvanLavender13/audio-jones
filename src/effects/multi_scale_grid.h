@@ -6,6 +6,8 @@
 #include "raylib.h"
 #include <stdbool.h>
 
+struct PostEffect;
+
 struct MultiScaleGridConfig {
   bool enabled = false;
   float scale1 = 10.0f;        // Coarse grid density
@@ -43,5 +45,7 @@ void MultiScaleGridEffectSetup(const MultiScaleGridEffect *e,
                                const MultiScaleGridConfig *cfg);
 void MultiScaleGridEffectUninit(const MultiScaleGridEffect *e);
 void MultiScaleGridRegisterParams(MultiScaleGridConfig *cfg);
+
+MultiScaleGridEffect *GetMultiScaleGridEffect(PostEffect *pe);
 
 #endif // MULTI_SCALE_GRID_H

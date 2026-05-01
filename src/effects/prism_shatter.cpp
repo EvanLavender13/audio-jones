@@ -104,8 +104,12 @@ void PrismShatterRegisterParams(PrismShatterConfig *cfg) {
                          0.0f, 5.0f);
 }
 
+PrismShatterEffect *GetPrismShatterEffect(PostEffect *pe) {
+  return (PrismShatterEffect *)pe->effectStates[TRANSFORM_PRISM_SHATTER_BLEND];
+}
+
 void SetupPrismShatter(PostEffect *pe) {
-  PrismShatterEffectSetup(&pe->prismShatter, &pe->effects.prismShatter,
+  PrismShatterEffectSetup(GetPrismShatterEffect(pe), &pe->effects.prismShatter,
                           pe->currentDeltaTime);
 }
 

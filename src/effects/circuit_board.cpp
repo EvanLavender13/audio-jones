@@ -99,8 +99,12 @@ static void DrawCircuitBoardParams(EffectConfig *e, const ModSources *ms,
                             "circuitBoard.breatheSpeed", ms);
 }
 
+CircuitBoardEffect *GetCircuitBoardEffect(PostEffect *pe) {
+  return (CircuitBoardEffect *)pe->effectStates[TRANSFORM_CIRCUIT_BOARD];
+}
+
 void SetupCircuitBoard(PostEffect *pe) {
-  CircuitBoardEffectSetup(&pe->circuitBoard, &pe->effects.circuitBoard,
+  CircuitBoardEffectSetup(GetCircuitBoardEffect(pe), &pe->effects.circuitBoard,
                           pe->currentDeltaTime);
 }
 

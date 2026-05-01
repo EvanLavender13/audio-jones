@@ -108,8 +108,12 @@ void BitCrushRegisterParams(BitCrushConfig *cfg) {
                          5.0f);
 }
 
+BitCrushEffect *GetBitCrushEffect(PostEffect *pe) {
+  return (BitCrushEffect *)pe->effectStates[TRANSFORM_BIT_CRUSH_BLEND];
+}
+
 void SetupBitCrush(PostEffect *pe) {
-  BitCrushEffectSetup(&pe->bitCrush, &pe->effects.bitCrush,
+  BitCrushEffectSetup(GetBitCrushEffect(pe), &pe->effects.bitCrush,
                       pe->currentDeltaTime, pe->fftTexture);
 }
 

@@ -119,8 +119,12 @@ void SparkFlashRegisterParams(SparkFlashConfig *cfg) {
                          0.0f, 5.0f);
 }
 
+SparkFlashEffect *GetSparkFlashEffect(PostEffect *pe) {
+  return (SparkFlashEffect *)pe->effectStates[TRANSFORM_SPARK_FLASH_BLEND];
+}
+
 void SetupSparkFlash(PostEffect *pe) {
-  SparkFlashEffectSetup(&pe->sparkFlash, &pe->effects.sparkFlash,
+  SparkFlashEffectSetup(GetSparkFlashEffect(pe), &pe->effects.sparkFlash,
                         pe->currentDeltaTime, pe->fftTexture);
 }
 

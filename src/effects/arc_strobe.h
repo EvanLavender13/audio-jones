@@ -11,6 +11,8 @@
 #include "render/color_config.h"
 #include <stdbool.h>
 
+struct PostEffect;
+
 struct ArcStrobeConfig {
   bool enabled = false;
 
@@ -103,5 +105,7 @@ void ArcStrobeEffectUninit(ArcStrobeEffect *e);
 
 // Registers modulatable params with the modulation engine
 void ArcStrobeRegisterParams(ArcStrobeConfig *cfg);
+
+ArcStrobeEffect *GetArcStrobeEffect(PostEffect *pe);
 
 #endif // ARC_STROBE_H

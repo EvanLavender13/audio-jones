@@ -4,6 +4,8 @@
 #include "raylib.h"
 #include <stdbool.h>
 
+struct PostEffect;
+
 // Chladni Warp effect
 // Applies coordinate displacement based on Chladni plate vibration patterns.
 // Parameters n and m control the modal frequencies, creating resonant nodal
@@ -48,5 +50,7 @@ void ChladniWarpEffectUninit(const ChladniWarpEffect *e);
 
 // Registers modulatable params with the modulation engine
 void ChladniWarpRegisterParams(ChladniWarpConfig *cfg);
+
+ChladniWarpEffect *GetChladniWarpEffect(PostEffect *pe);
 
 #endif // CHLADNI_WARP_H

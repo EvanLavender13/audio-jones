@@ -157,20 +157,25 @@ void ChladniRegisterParams(ChladniConfig *cfg) {
                          5.0f);
 }
 
+ChladniEffect *GetChladniEffect(PostEffect *pe) {
+  return (ChladniEffect *)pe->effectStates[TRANSFORM_CHLADNI_BLEND];
+}
+
 void SetupChladni(PostEffect *pe) {
-  ChladniEffectSetup(&pe->chladni, &pe->effects.chladni, pe->currentDeltaTime,
-                     pe->fftTexture);
+  ChladniEffectSetup(GetChladniEffect(pe), &pe->effects.chladni,
+                     pe->currentDeltaTime, pe->fftTexture);
 }
 
 void SetupChladniBlend(PostEffect *pe) {
   BlendCompositorApply(
-      pe->blendCompositor, pe->chladni.pingPong[pe->chladni.readIdx].texture,
+      pe->blendCompositor,
+      GetChladniEffect(pe)->pingPong[GetChladniEffect(pe)->readIdx].texture,
       pe->effects.chladni.blendIntensity, pe->effects.chladni.blendMode);
 }
 
 void RenderChladni(PostEffect *pe) {
-  ChladniEffectRender(&pe->chladni, &pe->effects.chladni, pe->currentDeltaTime,
-                      pe->screenWidth, pe->screenHeight);
+  ChladniEffectRender(GetChladniEffect(pe), &pe->effects.chladni,
+                      pe->currentDeltaTime, pe->screenWidth, pe->screenHeight);
 }
 
 // === UI ===

@@ -4,6 +4,8 @@
 #include "raylib.h"
 #include <stdbool.h>
 
+struct PostEffect;
+
 // Wave Drift with depth accumulation
 // Stacks waveform-based coordinate shifts with rotation to create organic drift
 // patterns. Supports multiple basis functions (tri, sine, saw, square) and
@@ -49,5 +51,7 @@ void WaveDriftEffectUninit(const WaveDriftEffect *e);
 
 // Registers modulatable params with the modulation engine
 void WaveDriftRegisterParams(WaveDriftConfig *cfg);
+
+WaveDriftEffect *GetWaveDriftEffect(PostEffect *pe);
 
 #endif // WAVE_DRIFT_H

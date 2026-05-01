@@ -9,6 +9,8 @@
 #include "render/color_config.h"
 #include <stdbool.h>
 
+struct PostEffect;
+
 struct RainbowRoadConfig {
   bool enabled = false;
 
@@ -86,5 +88,7 @@ void RainbowRoadEffectUninit(RainbowRoadEffect *e);
 
 // Registers modulatable params with the modulation engine
 void RainbowRoadRegisterParams(RainbowRoadConfig *cfg);
+
+RainbowRoadEffect *GetRainbowRoadEffect(PostEffect *pe);
 
 #endif // RAINBOW_ROAD_H

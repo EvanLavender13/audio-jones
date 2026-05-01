@@ -77,8 +77,12 @@ void RisographRegisterParams(RisographConfig *cfg) {
   ModEngineRegisterParam("risograph.paperTone", &cfg->paperTone, 0.0f, 1.0f);
 }
 
+RisographEffect *GetRisographEffect(PostEffect *pe) {
+  return (RisographEffect *)pe->effectStates[TRANSFORM_RISOGRAPH];
+}
+
 void SetupRisograph(PostEffect *pe) {
-  RisographEffectSetup(&pe->risograph, &pe->effects.risograph,
+  RisographEffectSetup(GetRisographEffect(pe), &pe->effects.risograph,
                        pe->currentDeltaTime);
 }
 

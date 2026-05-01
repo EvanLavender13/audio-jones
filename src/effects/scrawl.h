@@ -9,6 +9,8 @@
 #include "render/color_config.h"
 #include <stdbool.h>
 
+struct PostEffect;
+
 struct ScrawlConfig {
   bool enabled = false;
   int mode = 0; // Fold formula selector (0-6)
@@ -74,5 +76,7 @@ void ScrawlEffectUninit(ScrawlEffect *e);
 
 // Registers modulatable params with the modulation engine
 void ScrawlRegisterParams(ScrawlConfig *cfg);
+
+ScrawlEffect *GetScrawlEffect(PostEffect *pe);
 
 #endif // SCRAWL_H

@@ -180,20 +180,25 @@ void FaradayRegisterParams(FaradayConfig *cfg) {
                          5.0f);
 }
 
+FaradayEffect *GetFaradayEffect(PostEffect *pe) {
+  return (FaradayEffect *)pe->effectStates[TRANSFORM_FARADAY_BLEND];
+}
+
 void SetupFaraday(PostEffect *pe) {
-  FaradayEffectSetup(&pe->faraday, &pe->effects.faraday, pe->currentDeltaTime,
-                     pe->fftTexture);
+  FaradayEffectSetup(GetFaradayEffect(pe), &pe->effects.faraday,
+                     pe->currentDeltaTime, pe->fftTexture);
 }
 
 void SetupFaradayBlend(PostEffect *pe) {
   BlendCompositorApply(
-      pe->blendCompositor, pe->faraday.pingPong[pe->faraday.readIdx].texture,
+      pe->blendCompositor,
+      GetFaradayEffect(pe)->pingPong[GetFaradayEffect(pe)->readIdx].texture,
       pe->effects.faraday.blendIntensity, pe->effects.faraday.blendMode);
 }
 
 void RenderFaraday(PostEffect *pe) {
-  FaradayEffectRender(&pe->faraday, &pe->effects.faraday, pe->currentDeltaTime,
-                      pe->screenWidth, pe->screenHeight);
+  FaradayEffectRender(GetFaradayEffect(pe), &pe->effects.faraday,
+                      pe->currentDeltaTime, pe->screenWidth, pe->screenHeight);
 }
 
 // === UI ===

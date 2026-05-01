@@ -4,6 +4,8 @@
 #include "raylib.h"
 #include <stdbool.h>
 
+struct PostEffect;
+
 // Domain Warp with iterative noise displacement
 // Applies fractal noise-based coordinate warping with configurable iterations.
 // Drift accumulates over time to animate the warp pattern in a specified
@@ -44,5 +46,7 @@ void DomainWarpEffectUninit(const DomainWarpEffect *e);
 
 // Registers modulatable params with the modulation engine
 void DomainWarpRegisterParams(DomainWarpConfig *cfg);
+
+DomainWarpEffect *GetDomainWarpEffect(PostEffect *pe);
 
 #endif // DOMAIN_WARP_H

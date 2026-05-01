@@ -9,6 +9,8 @@
 #include "render/color_config.h"
 #include <stdbool.h>
 
+struct PostEffect;
+
 struct OrreryConfig {
   bool enabled = false;
 
@@ -99,5 +101,7 @@ void OrreryEffectUninit(OrreryEffect *e);
 
 // Registers modulatable params with the modulation engine
 void OrreryRegisterParams(OrreryConfig *cfg);
+
+OrreryEffect *GetOrreryEffect(PostEffect *pe);
 
 #endif // ORRERY_H

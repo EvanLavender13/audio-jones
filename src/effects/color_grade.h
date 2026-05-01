@@ -8,6 +8,8 @@
 #include "raylib.h"
 #include <stdbool.h>
 
+struct PostEffect;
+
 struct ColorGradeConfig {
   bool enabled = false;
   float hueShift = 0.0f;    // Hue rotation (0-1 normalized from 0-360 degrees)
@@ -48,5 +50,7 @@ void ColorGradeEffectUninit(const ColorGradeEffect *e);
 
 // Registers modulatable params with the modulation engine
 void ColorGradeRegisterParams(ColorGradeConfig *cfg);
+
+ColorGradeEffect *GetColorGradeEffect(PostEffect *pe);
 
 #endif // COLOR_GRADE_H

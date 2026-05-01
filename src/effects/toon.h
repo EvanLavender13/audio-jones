@@ -7,6 +7,8 @@
 #include "raylib.h"
 #include <stdbool.h>
 
+struct PostEffect;
+
 struct ToonConfig {
   bool enabled = false;
   int levels = 4;                  // Luminance quantization levels (2-16)
@@ -40,5 +42,7 @@ void ToonEffectUninit(const ToonEffect *e);
 
 // Registers modulatable params with the modulation engine
 void ToonRegisterParams(ToonConfig *cfg);
+
+ToonEffect *GetToonEffect(PostEffect *pe);
 
 #endif // TOON_H

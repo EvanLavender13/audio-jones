@@ -125,8 +125,12 @@ void SpectralArcsRegisterParams(SpectralArcsConfig *cfg) {
                          0.0f, 5.0f);
 }
 
+SpectralArcsEffect *GetSpectralArcsEffect(PostEffect *pe) {
+  return (SpectralArcsEffect *)pe->effectStates[TRANSFORM_SPECTRAL_ARCS_BLEND];
+}
+
 void SetupSpectralArcs(PostEffect *pe) {
-  SpectralArcsEffectSetup(&pe->spectralArcs, &pe->effects.spectralArcs,
+  SpectralArcsEffectSetup(GetSpectralArcsEffect(pe), &pe->effects.spectralArcs,
                           pe->currentDeltaTime, pe->fftTexture);
 }
 

@@ -90,8 +90,13 @@ static void DrawInterferenceWarpParams(EffectConfig *e, const ModSources *ms,
                      "%.2f");
 }
 
+InterferenceWarpEffect *GetInterferenceWarpEffect(PostEffect *pe) {
+  return (InterferenceWarpEffect *)
+      pe->effectStates[TRANSFORM_INTERFERENCE_WARP];
+}
+
 void SetupInterferenceWarp(PostEffect *pe) {
-  InterferenceWarpEffectSetup(&pe->interferenceWarp,
+  InterferenceWarpEffectSetup(GetInterferenceWarpEffect(pe),
                               &pe->effects.interferenceWarp,
                               pe->currentDeltaTime);
 }

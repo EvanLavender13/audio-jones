@@ -80,8 +80,12 @@ static void DrawDotMatrixParams(EffectConfig *e, const ModSources *ms,
                             "dotMatrix.rotationAngle", ms);
 }
 
+DotMatrixEffect *GetDotMatrixEffect(PostEffect *pe) {
+  return (DotMatrixEffect *)pe->effectStates[TRANSFORM_DOT_MATRIX];
+}
+
 void SetupDotMatrix(PostEffect *pe) {
-  DotMatrixEffectSetup(&pe->dotMatrix, &pe->effects.dotMatrix,
+  DotMatrixEffectSetup(GetDotMatrixEffect(pe), &pe->effects.dotMatrix,
                        pe->currentDeltaTime);
 }
 

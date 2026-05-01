@@ -4,6 +4,8 @@
 #include "raylib.h"
 #include <stdbool.h>
 
+struct PostEffect;
+
 // Gradient Flow distortion effect
 // Displaces pixels along luminance gradient tangents. Creates organic flow
 // patterns by iteratively sliding pixels perpendicular to brightness edges.
@@ -42,5 +44,7 @@ void GradientFlowEffectUninit(const GradientFlowEffect *e);
 
 // Registers modulatable params with the modulation engine
 void GradientFlowRegisterParams(GradientFlowConfig *cfg);
+
+GradientFlowEffect *GetGradientFlowEffect(PostEffect *pe);
 
 #endif // GRADIENT_FLOW_H

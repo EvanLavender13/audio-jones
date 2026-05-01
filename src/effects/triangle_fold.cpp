@@ -77,8 +77,12 @@ static void DrawTriangleFoldParams(EffectConfig *e, const ModSources *ms,
                             "triangleFold.twistSpeed", ms);
 }
 
+TriangleFoldEffect *GetTriangleFoldEffect(PostEffect *pe) {
+  return (TriangleFoldEffect *)pe->effectStates[TRANSFORM_TRIANGLE_FOLD];
+}
+
 void SetupTriangleFold(PostEffect *pe) {
-  TriangleFoldEffectSetup(&pe->triangleFold, &pe->effects.triangleFold,
+  TriangleFoldEffectSetup(GetTriangleFoldEffect(pe), &pe->effects.triangleFold,
                           pe->currentDeltaTime);
 }
 

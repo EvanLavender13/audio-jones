@@ -9,6 +9,8 @@
 #include "render/color_config.h"
 #include <stdbool.h>
 
+struct PostEffect;
+
 struct MarbleConfig {
   bool enabled = false;
 
@@ -87,5 +89,7 @@ void MarbleEffectUninit(MarbleEffect *e);
 
 // Registers modulatable params with the modulation engine
 void MarbleRegisterParams(MarbleConfig *cfg);
+
+MarbleEffect *GetMarbleEffect(PostEffect *pe);
 
 #endif // MARBLE_H

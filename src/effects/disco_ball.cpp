@@ -79,8 +79,12 @@ void DiscoBallRegisterParams(DiscoBallConfig *cfg) {
                          &cfg->brightnessThreshold, 0.0f, 0.5f);
 }
 
+DiscoBallEffect *GetDiscoBallEffect(PostEffect *pe) {
+  return (DiscoBallEffect *)pe->effectStates[TRANSFORM_DISCO_BALL];
+}
+
 void SetupDiscoBall(PostEffect *pe) {
-  DiscoBallEffectSetup(&pe->discoBall, &pe->effects.discoBall,
+  DiscoBallEffectSetup(GetDiscoBallEffect(pe), &pe->effects.discoBall,
                        pe->currentDeltaTime);
 }
 

@@ -37,8 +37,12 @@ void KuwaharaRegisterParams(KuwaharaConfig *cfg) {
   ModEngineRegisterParam("kuwahara.radius", &cfg->radius, 2.0f, 12.0f);
 }
 
+KuwaharaEffect *GetKuwaharaEffect(PostEffect *pe) {
+  return (KuwaharaEffect *)pe->effectStates[TRANSFORM_KUWAHARA];
+}
+
 void SetupKuwahara(PostEffect *pe) {
-  KuwaharaEffectSetup(&pe->kuwahara, &pe->effects.kuwahara);
+  KuwaharaEffectSetup(GetKuwaharaEffect(pe), &pe->effects.kuwahara);
 }
 
 // === UI ===

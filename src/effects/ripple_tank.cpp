@@ -293,21 +293,27 @@ void RippleTankRegisterParams(RippleTankConfig *cfg) {
                          &cfg->lissajous.motionSpeed, 0.0f, 5.0f);
 }
 
+RippleTankEffect *GetRippleTankEffect(PostEffect *pe) {
+  return (RippleTankEffect *)pe->effectStates[TRANSFORM_RIPPLE_TANK];
+}
+
 void SetupRippleTank(PostEffect *pe) {
-  RippleTankEffectSetup(&pe->rippleTank, &pe->effects.rippleTank,
+  RippleTankEffectSetup(GetRippleTankEffect(pe), &pe->effects.rippleTank,
                         pe->currentDeltaTime, pe->waveformTexture,
                         pe->waveformWriteIndex, pe->fftTexture);
 }
 
 void SetupRippleTankBlend(PostEffect *pe) {
   BlendCompositorApply(pe->blendCompositor,
-                       pe->rippleTank.pingPong[pe->rippleTank.readIdx].texture,
+                       GetRippleTankEffect(pe)
+                           ->pingPong[GetRippleTankEffect(pe)->readIdx]
+                           .texture,
                        pe->effects.rippleTank.blendIntensity,
                        pe->effects.rippleTank.blendMode);
 }
 
 void RenderRippleTank(PostEffect *pe) {
-  RippleTankEffectRender(&pe->rippleTank, &pe->effects.rippleTank,
+  RippleTankEffectRender(GetRippleTankEffect(pe), &pe->effects.rippleTank,
                          pe->currentDeltaTime, pe->screenWidth,
                          pe->screenHeight);
 }

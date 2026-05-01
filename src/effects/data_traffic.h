@@ -10,6 +10,8 @@
 #include "render/color_config.h"
 #include <stdbool.h>
 
+struct PostEffect;
+
 struct DataTrafficConfig {
   bool enabled = false;
 
@@ -125,5 +127,7 @@ void DataTrafficEffectUninit(DataTrafficEffect *e);
 
 // Registers modulatable params with the modulation engine
 void DataTrafficRegisterParams(DataTrafficConfig *cfg);
+
+DataTrafficEffect *GetDataTrafficEffect(PostEffect *pe);
 
 #endif // DATA_TRAFFIC_H

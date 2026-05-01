@@ -65,8 +65,12 @@ static void DrawGradientFlowParams(EffectConfig *e, const ModSources *ms,
                   &e->gradientFlow.randomDirection);
 }
 
+GradientFlowEffect *GetGradientFlowEffect(PostEffect *pe) {
+  return (GradientFlowEffect *)pe->effectStates[TRANSFORM_GRADIENT_FLOW];
+}
+
 void SetupGradientFlow(PostEffect *pe) {
-  GradientFlowEffectSetup(&pe->gradientFlow, &pe->effects.gradientFlow,
+  GradientFlowEffectSetup(GetGradientFlowEffect(pe), &pe->effects.gradientFlow,
                           pe->screenWidth, pe->screenHeight);
 }
 

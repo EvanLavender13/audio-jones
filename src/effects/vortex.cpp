@@ -143,9 +143,13 @@ void VortexRegisterParams(VortexConfig *cfg) {
                          5.0f);
 }
 
+VortexEffect *GetVortexEffect(PostEffect *pe) {
+  return (VortexEffect *)pe->effectStates[TRANSFORM_VORTEX_BLEND];
+}
+
 void SetupVortex(PostEffect *pe) {
-  VortexEffectSetup(&pe->vortex, &pe->effects.vortex, pe->currentDeltaTime,
-                    pe->fftTexture);
+  VortexEffectSetup(GetVortexEffect(pe), &pe->effects.vortex,
+                    pe->currentDeltaTime, pe->fftTexture);
 }
 
 void SetupVortexBlend(PostEffect *pe) {

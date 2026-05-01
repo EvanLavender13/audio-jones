@@ -95,8 +95,12 @@ static void DrawColorGradeParams(EffectConfig *e, const ModSources *ms,
                     "colorGrade.highlightsOffset", "%.2f", ms);
 }
 
+ColorGradeEffect *GetColorGradeEffect(PostEffect *pe) {
+  return (ColorGradeEffect *)pe->effectStates[TRANSFORM_COLOR_GRADE];
+}
+
 void SetupColorGrade(PostEffect *pe) {
-  ColorGradeEffectSetup(&pe->colorGrade, &pe->effects.colorGrade);
+  ColorGradeEffectSetup(GetColorGradeEffect(pe), &pe->effects.colorGrade);
 }
 
 // clang-format off

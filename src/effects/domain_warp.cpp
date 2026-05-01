@@ -80,8 +80,12 @@ static void DrawDomainWarpParams(EffectConfig *e, const ModSources *ms,
                             "domainWarp.driftAngle", ms);
 }
 
+DomainWarpEffect *GetDomainWarpEffect(PostEffect *pe) {
+  return (DomainWarpEffect *)pe->effectStates[TRANSFORM_DOMAIN_WARP];
+}
+
 void SetupDomainWarp(PostEffect *pe) {
-  DomainWarpEffectSetup(&pe->domainWarp, &pe->effects.domainWarp,
+  DomainWarpEffectSetup(GetDomainWarpEffect(pe), &pe->effects.domainWarp,
                         pe->currentDeltaTime);
 }
 

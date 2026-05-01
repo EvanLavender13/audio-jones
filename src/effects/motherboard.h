@@ -11,6 +11,8 @@
 #include "render/color_config.h"
 #include <stdbool.h>
 
+struct PostEffect;
+
 struct MotherboardConfig {
   bool enabled = false;
 
@@ -82,5 +84,7 @@ void MotherboardEffectUninit(MotherboardEffect *e);
 
 // Registers modulatable params with the modulation engine
 void MotherboardRegisterParams(MotherboardConfig *cfg);
+
+MotherboardEffect *GetMotherboardEffect(PostEffect *pe);
 
 #endif // MOTHERBOARD_H

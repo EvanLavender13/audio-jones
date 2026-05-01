@@ -9,6 +9,8 @@
 #include "render/color_config.h"
 #include <stdbool.h>
 
+struct PostEffect;
+
 struct FireworksConfig {
   bool enabled = false;
 
@@ -106,5 +108,7 @@ void FireworksEffectUninit(FireworksEffect *e);
 
 // Registers modulatable params with the modulation engine
 void FireworksRegisterParams(FireworksConfig *cfg);
+
+FireworksEffect *GetFireworksEffect(PostEffect *pe);
 
 #endif // FIREWORKS_H

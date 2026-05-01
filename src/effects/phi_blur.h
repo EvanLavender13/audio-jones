@@ -7,6 +7,8 @@
 #include "raylib.h"
 #include <stdbool.h>
 
+struct PostEffect;
+
 // PhiBlur: Golden-ratio distributed blur samples with configurable kernel shape
 // Supports disc, box, hexagonal, and star kernel modes
 struct PhiBlurConfig {
@@ -47,5 +49,7 @@ void PhiBlurEffectUninit(const PhiBlurEffect *e);
 
 // Registers modulatable params with the modulation engine
 void PhiBlurRegisterParams(PhiBlurConfig *cfg);
+
+PhiBlurEffect *GetPhiBlurEffect(PostEffect *pe);
 
 #endif // PHI_BLUR_H

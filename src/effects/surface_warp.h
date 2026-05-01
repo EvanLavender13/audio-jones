@@ -4,6 +4,8 @@
 #include "raylib.h"
 #include <stdbool.h>
 
+struct PostEffect;
+
 // Surface Warp with rotation and scroll accumulation
 // Creates rolling hill/wave terrain distortion with directional shading.
 // Rotation controls warp direction, scroll animates wave movement.
@@ -42,5 +44,7 @@ void SurfaceWarpEffectUninit(const SurfaceWarpEffect *e);
 
 // Registers modulatable params with the modulation engine
 void SurfaceWarpRegisterParams(SurfaceWarpConfig *cfg);
+
+SurfaceWarpEffect *GetSurfaceWarpEffect(PostEffect *pe);
 
 #endif // SURFACE_WARP_H

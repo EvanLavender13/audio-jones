@@ -202,26 +202,32 @@ static void DrawSlitScanParams(EffectConfig *e, const ModSources *ms,
 }
 
 // Bridge functions for EffectDescriptor dispatch
+SlitScanEffect *GetSlitScanEffect(PostEffect *pe) {
+  return (SlitScanEffect *)pe->effectStates[TRANSFORM_SLIT_SCAN];
+}
+
 void SetupSlitScan(PostEffect *pe) {
-  SlitScanEffectSetup(&pe->slitScan, &pe->effects.slitScan,
+  SlitScanEffectSetup(GetSlitScanEffect(pe), &pe->effects.slitScan,
                       pe->currentDeltaTime);
 }
 
 void RenderSlitScan(PostEffect *pe) {
-  SlitScanEffectRender(&pe->slitScan, &pe->effects.slitScan, pe);
+  SlitScanEffectRender(GetSlitScanEffect(pe), &pe->effects.slitScan, pe);
 }
 
 // Manual registration - MOT badge, section 3, needs resize
+static SlitScanEffect g_slitScanState;
+
 static bool Init_slitScan(PostEffect *pe, int w, int h) {
-  return SlitScanEffectInit(&pe->slitScan, &pe->effects.slitScan, w, h);
+  return SlitScanEffectInit(GetSlitScanEffect(pe), &pe->effects.slitScan, w, h);
 }
 
 static void Uninit_slitScan(PostEffect *pe) {
-  SlitScanEffectUninit(&pe->slitScan);
+  SlitScanEffectUninit(GetSlitScanEffect(pe));
 }
 
 static void Resize_slitScan(PostEffect *pe, int w, int h) {
-  SlitScanEffectResize(&pe->slitScan, w, h);
+  SlitScanEffectResize(GetSlitScanEffect(pe), w, h);
 }
 
 static void Register_slitScan(EffectConfig *cfg) {
@@ -229,7 +235,7 @@ static void Register_slitScan(EffectConfig *cfg) {
 }
 
 static Shader *GetShader_slitScan(PostEffect *pe) {
-  return &pe->slitScan.shader;
+  return &GetSlitScanEffect(pe)->shader;
 }
 
 // clang-format off
@@ -244,5 +250,5 @@ static bool reg_slitScan = EffectDescriptorRegister(
         GetShader_slitScan, nullptr,
         nullptr, SetupSlitScan,
         RenderSlitScan,
-        DrawSlitScanParams, nullptr});
+        DrawSlitScanParams, nullptr, &g_slitScanState});
 // clang-format on

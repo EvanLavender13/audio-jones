@@ -9,6 +9,8 @@
 #include "render/color_config.h"
 #include <stdbool.h>
 
+struct PostEffect;
+
 struct SpiralNestConfig {
   bool enabled = false;
 
@@ -72,5 +74,7 @@ void SpiralNestEffectUninit(SpiralNestEffect *e);
 
 // Registers modulatable params with the modulation engine
 void SpiralNestRegisterParams(SpiralNestConfig *cfg);
+
+SpiralNestEffect *GetSpiralNestEffect(PostEffect *pe);
 
 #endif // SPIRAL_NEST_H

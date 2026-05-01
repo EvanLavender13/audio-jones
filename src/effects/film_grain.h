@@ -7,6 +7,8 @@
 #include "raylib.h"
 #include <stdbool.h>
 
+struct PostEffect;
+
 struct FilmGrainConfig {
   bool enabled = false;
   float intensity = 0.35f;  // Grain visibility (0.0-1.0)
@@ -39,5 +41,7 @@ void FilmGrainEffectUninit(const FilmGrainEffect *e);
 
 // Registers modulatable params with the modulation engine
 void FilmGrainRegisterParams(FilmGrainConfig *cfg);
+
+FilmGrainEffect *GetFilmGrainEffect(PostEffect *pe);
 
 #endif // FILM_GRAIN_H

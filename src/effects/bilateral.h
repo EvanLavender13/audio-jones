@@ -7,6 +7,8 @@
 #include "raylib.h"
 #include <stdbool.h>
 
+struct PostEffect;
+
 struct BilateralConfig {
   bool enabled = false;
   float spatialSigma = 4.0f; // Blur radius in pixels (1.0-10.0)
@@ -33,5 +35,7 @@ void BilateralEffectUninit(const BilateralEffect *e);
 
 // Registers modulatable params with the modulation engine
 void BilateralRegisterParams(BilateralConfig *cfg);
+
+BilateralEffect *GetBilateralEffect(PostEffect *pe);
 
 #endif // BILATERAL_H

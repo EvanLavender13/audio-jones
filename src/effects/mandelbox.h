@@ -4,6 +4,8 @@
 #include "raylib.h"
 #include <stdbool.h>
 
+struct PostEffect;
+
 // Config struct (user-facing parameters, serialized in presets)
 struct MandelboxConfig {
   bool enabled = false;
@@ -54,5 +56,7 @@ void MandelboxEffectUninit(const MandelboxEffect *e);
 
 // Registers modulatable params with the modulation engine
 void MandelboxRegisterParams(MandelboxConfig *cfg);
+
+MandelboxEffect *GetMandelboxEffect(PostEffect *pe);
 
 #endif

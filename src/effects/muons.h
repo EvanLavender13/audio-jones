@@ -9,6 +9,8 @@
 #include "render/color_config.h"
 #include <stdbool.h>
 
+struct PostEffect;
+
 struct MuonsConfig {
   bool enabled = false;
 
@@ -126,5 +128,7 @@ void MuonsEffectUninit(MuonsEffect *e);
 
 // Registers modulatable params with the modulation engine
 void MuonsRegisterParams(MuonsConfig *cfg);
+
+MuonsEffect *GetMuonsEffect(PostEffect *pe);
 
 #endif // MUONS_H

@@ -44,8 +44,12 @@ void DogFilterRegisterParams(DogFilterConfig *cfg) {
   ModEngineRegisterParam("dogFilter.phi", &cfg->phi, 0.5f, 10.0f);
 }
 
+DogFilterEffect *GetDogFilterEffect(PostEffect *pe) {
+  return (DogFilterEffect *)pe->effectStates[TRANSFORM_DOG_FILTER];
+}
+
 void SetupDogFilter(PostEffect *pe) {
-  DogFilterEffectSetup(&pe->dogFilter, &pe->effects.dogFilter);
+  DogFilterEffectSetup(GetDogFilterEffect(pe), &pe->effects.dogFilter);
 }
 
 // === UI ===

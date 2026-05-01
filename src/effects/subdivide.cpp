@@ -116,8 +116,12 @@ void SubdivideRegisterParams(SubdivideConfig *cfg) {
                          5.0f);
 }
 
+SubdivideEffect *GetSubdivideEffect(PostEffect *pe) {
+  return (SubdivideEffect *)pe->effectStates[TRANSFORM_SUBDIVIDE_BLEND];
+}
+
 void SetupSubdivide(PostEffect *pe) {
-  SubdivideEffectSetup(&pe->subdivide, &pe->effects.subdivide,
+  SubdivideEffectSetup(GetSubdivideEffect(pe), &pe->effects.subdivide,
                        pe->currentDeltaTime, pe->fftTexture);
 }
 

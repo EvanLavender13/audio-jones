@@ -9,6 +9,8 @@
 #include "render/color_config.h"
 #include <stdbool.h>
 
+struct PostEffect;
+
 struct SnakeSkinConfig {
   bool enabled = false;
 
@@ -87,5 +89,7 @@ void SnakeSkinEffectUninit(SnakeSkinEffect *e);
 
 // Registers modulatable params with the modulation engine
 void SnakeSkinRegisterParams(SnakeSkinConfig *cfg);
+
+SnakeSkinEffect *GetSnakeSkinEffect(PostEffect *pe);
 
 #endif // SNAKE_SKIN_H

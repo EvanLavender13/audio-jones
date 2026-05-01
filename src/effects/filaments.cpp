@@ -111,8 +111,12 @@ void FilamentsRegisterParams(FilamentsConfig *cfg) {
                          5.0f);
 }
 
+FilamentsEffect *GetFilamentsEffect(PostEffect *pe) {
+  return (FilamentsEffect *)pe->effectStates[TRANSFORM_FILAMENTS_BLEND];
+}
+
 void SetupFilaments(PostEffect *pe) {
-  FilamentsEffectSetup(&pe->filaments, &pe->effects.filaments,
+  FilamentsEffectSetup(GetFilamentsEffect(pe), &pe->effects.filaments,
                        pe->currentDeltaTime, pe->fftTexture);
 }
 

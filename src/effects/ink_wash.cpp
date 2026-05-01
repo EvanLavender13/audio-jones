@@ -54,8 +54,12 @@ void InkWashRegisterParams(InkWashConfig *cfg) {
   ModEngineRegisterParam("inkWash.softness", &cfg->softness, 0.0f, 5.0f);
 }
 
+InkWashEffect *GetInkWashEffect(PostEffect *pe) {
+  return (InkWashEffect *)pe->effectStates[TRANSFORM_INK_WASH];
+}
+
 void SetupInkWash(PostEffect *pe) {
-  InkWashEffectSetup(&pe->inkWash, &pe->effects.inkWash);
+  InkWashEffectSetup(GetInkWashEffect(pe), &pe->effects.inkWash);
 }
 
 // === UI ===

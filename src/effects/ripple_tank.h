@@ -10,6 +10,8 @@
 #include "render/color_config.h"
 #include <stdbool.h>
 
+struct PostEffect;
+
 struct RippleTankConfig {
   bool enabled = false;
   int sourceCount = 5;           // Number of sources (1-8)
@@ -130,5 +132,7 @@ void RippleTankEffectUninit(RippleTankEffect *e);
 
 // Registers modulatable params with the modulation engine
 void RippleTankRegisterParams(RippleTankConfig *cfg);
+
+RippleTankEffect *GetRippleTankEffect(PostEffect *pe);
 
 #endif // RIPPLE_TANK_H

@@ -46,8 +46,12 @@ void BilateralRegisterParams(BilateralConfig *cfg) {
   ModEngineRegisterParam("bilateral.rangeSigma", &cfg->rangeSigma, 0.01f, 0.5f);
 }
 
+BilateralEffect *GetBilateralEffect(PostEffect *pe) {
+  return (BilateralEffect *)pe->effectStates[TRANSFORM_BILATERAL];
+}
+
 void SetupBilateral(PostEffect *pe) {
-  BilateralEffectSetup(&pe->bilateral, &pe->effects.bilateral);
+  BilateralEffectSetup(GetBilateralEffect(pe), &pe->effects.bilateral);
 }
 
 // === UI ===

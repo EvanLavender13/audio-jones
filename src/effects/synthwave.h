@@ -8,6 +8,8 @@
 #include "raylib.h"
 #include <stdbool.h>
 
+struct PostEffect;
+
 // Synthwave: 80s retrofuturism aesthetic with cosine palette color remap,
 // perspective grid overlay, and horizontal sun stripes
 struct SynthwaveConfig {
@@ -92,5 +94,7 @@ void SynthwaveEffectUninit(const SynthwaveEffect *e);
 
 // Registers modulatable params with the modulation engine
 void SynthwaveRegisterParams(SynthwaveConfig *cfg);
+
+SynthwaveEffect *GetSynthwaveEffect(PostEffect *pe);
 
 #endif // SYNTHWAVE_H

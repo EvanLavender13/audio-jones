@@ -119,8 +119,12 @@ static void DrawMandelboxParams(EffectConfig *e, const ModSources *ms,
   }
 }
 
+MandelboxEffect *GetMandelboxEffect(PostEffect *pe) {
+  return (MandelboxEffect *)pe->effectStates[TRANSFORM_MANDELBOX];
+}
+
 void SetupMandelbox(PostEffect *pe) {
-  MandelboxEffectSetup(&pe->mandelbox, &pe->effects.mandelbox,
+  MandelboxEffectSetup(GetMandelboxEffect(pe), &pe->effects.mandelbox,
                        pe->currentDeltaTime);
 }
 

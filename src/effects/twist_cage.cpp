@@ -212,8 +212,12 @@ void TwistCageRegisterParams(TwistCageConfig *cfg) {
                          5.0f);
 }
 
+TwistCageEffect *GetTwistCageEffect(PostEffect *pe) {
+  return (TwistCageEffect *)pe->effectStates[TRANSFORM_TWIST_CAGE_BLEND];
+}
+
 void SetupTwistCage(PostEffect *pe) {
-  TwistCageEffectSetup(&pe->twistCage, &pe->effects.twistCage,
+  TwistCageEffectSetup(GetTwistCageEffect(pe), &pe->effects.twistCage,
                        pe->currentDeltaTime, pe->fftTexture);
 }
 

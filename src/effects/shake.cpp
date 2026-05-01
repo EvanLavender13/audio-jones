@@ -68,8 +68,13 @@ static void DrawShakeParams(EffectConfig *e, const ModSources *ms, ImU32 glow) {
   ImGui::Checkbox("Gaussian##shake", &e->shake.gaussian);
 }
 
+ShakeEffect *GetShakeEffect(PostEffect *pe) {
+  return (ShakeEffect *)pe->effectStates[TRANSFORM_SHAKE];
+}
+
 void SetupShake(PostEffect *pe) {
-  ShakeEffectSetup(&pe->shake, &pe->effects.shake, pe->currentDeltaTime);
+  ShakeEffectSetup(GetShakeEffect(pe), &pe->effects.shake,
+                   pe->currentDeltaTime);
 }
 
 // clang-format off

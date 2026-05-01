@@ -8,6 +8,8 @@
 #include "raylib.h"
 #include <stdbool.h>
 
+struct PostEffect;
+
 struct RelativisticDopplerConfig {
   bool enabled = false;
   float velocity = 0.5f;
@@ -44,5 +46,7 @@ void RelativisticDopplerEffectUninit(const RelativisticDopplerEffect *e);
 
 // Registers modulatable params with the modulation engine
 void RelativisticDopplerRegisterParams(RelativisticDopplerConfig *cfg);
+
+RelativisticDopplerEffect *GetRelativisticDopplerEffect(PostEffect *pe);
 
 #endif // RELATIVISTIC_DOPPLER_H

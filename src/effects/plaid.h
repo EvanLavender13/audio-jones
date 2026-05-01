@@ -9,6 +9,8 @@
 #include "render/color_config.h"
 #include <stdbool.h>
 
+struct PostEffect;
+
 struct PlaidConfig {
   bool enabled = false;
 
@@ -84,5 +86,7 @@ void PlaidEffectUninit(PlaidEffect *e);
 
 // Registers modulatable params with the modulation engine
 void PlaidRegisterParams(PlaidConfig *cfg);
+
+PlaidEffect *GetPlaidEffect(PostEffect *pe);
 
 #endif // PLAID_H

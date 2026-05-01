@@ -176,8 +176,12 @@ void GeodeRegisterParams(GeodeConfig *cfg) {
                          1.0f);
 }
 
+GeodeEffect *GetGeodeEffect(PostEffect *pe) {
+  return (GeodeEffect *)pe->effectStates[TRANSFORM_GEODE_BLEND];
+}
+
 void SetupGeode(PostEffect *pe) {
-  GeodeEffectSetup(&pe->geode, &pe->effects.geode, pe->currentDeltaTime,
+  GeodeEffectSetup(GetGeodeEffect(pe), &pe->effects.geode, pe->currentDeltaTime,
                    pe->fftTexture);
 }
 

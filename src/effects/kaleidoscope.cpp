@@ -66,8 +66,12 @@ static void DrawKaleidoscopeParams(EffectConfig *e, const ModSources *ms,
                     "kaleidoscope.smoothing", "%.2f", ms);
 }
 
+KaleidoscopeEffect *GetKaleidoscopeEffect(PostEffect *pe) {
+  return (KaleidoscopeEffect *)pe->effectStates[TRANSFORM_KALEIDOSCOPE];
+}
+
 void SetupKaleido(PostEffect *pe) {
-  KaleidoscopeEffectSetup(&pe->kaleidoscope, &pe->effects.kaleidoscope,
+  KaleidoscopeEffectSetup(GetKaleidoscopeEffect(pe), &pe->effects.kaleidoscope,
                           pe->currentDeltaTime);
 }
 

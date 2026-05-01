@@ -7,6 +7,8 @@
 #include "raylib.h"
 #include <stdbool.h>
 
+struct PostEffect;
+
 struct FlipBookConfig {
   bool enabled = false;
   float fps = 12.0f;   // Target frame rate (2.0-60.0)
@@ -28,8 +30,6 @@ typedef struct FlipBookEffect {
   int jitterAmountLoc;
 } FlipBookEffect;
 
-typedef struct PostEffect PostEffect;
-
 // Loads shader, caches uniform locations, allocates held frame texture
 bool FlipBookEffectInit(FlipBookEffect *e, int width, int height);
 
@@ -48,5 +48,7 @@ void FlipBookEffectUninit(const FlipBookEffect *e);
 
 // Registers modulatable params with the modulation engine
 void FlipBookRegisterParams(FlipBookConfig *cfg);
+
+FlipBookEffect *GetFlipBookEffect(PostEffect *pe);
 
 #endif // FLIP_BOOK_H

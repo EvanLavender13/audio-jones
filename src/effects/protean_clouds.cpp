@@ -164,9 +164,15 @@ void ProteanCloudsRegisterParams(ProteanCloudsConfig *cfg) {
                          0.0f, 5.0f);
 }
 
+ProteanCloudsEffect *GetProteanCloudsEffect(PostEffect *pe) {
+  return (ProteanCloudsEffect *)
+      pe->effectStates[TRANSFORM_PROTEAN_CLOUDS_BLEND];
+}
+
 void SetupProteanClouds(PostEffect *pe) {
-  ProteanCloudsEffectSetup(&pe->proteanClouds, &pe->effects.proteanClouds,
-                           pe->currentDeltaTime, pe->fftTexture);
+  ProteanCloudsEffectSetup(GetProteanCloudsEffect(pe),
+                           &pe->effects.proteanClouds, pe->currentDeltaTime,
+                           pe->fftTexture);
 }
 
 void SetupProteanCloudsBlend(PostEffect *pe) {

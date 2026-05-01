@@ -8,6 +8,8 @@
 #include "render/color_config.h"
 #include <stdbool.h>
 
+struct PostEffect;
+
 struct HueRemapConfig {
   bool enabled = false;
   bool shiftMode =
@@ -105,5 +107,7 @@ void HueRemapEffectUninit(HueRemapEffect *e);
 
 // Registers modulatable params with the modulation engine
 void HueRemapRegisterParams(HueRemapConfig *cfg);
+
+HueRemapEffect *GetHueRemapEffect(PostEffect *pe);
 
 #endif // HUE_REMAP_H

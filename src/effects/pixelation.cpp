@@ -63,8 +63,12 @@ static void DrawPixelationParams(EffectConfig *e, const ModSources *ms,
   }
 }
 
+PixelationEffect *GetPixelationEffect(PostEffect *pe) {
+  return (PixelationEffect *)pe->effectStates[TRANSFORM_PIXELATION];
+}
+
 void SetupPixelation(PostEffect *pe) {
-  PixelationEffectSetup(&pe->pixelation, &pe->effects.pixelation);
+  PixelationEffectSetup(GetPixelationEffect(pe), &pe->effects.pixelation);
 }
 
 // clang-format off

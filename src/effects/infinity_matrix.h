@@ -9,6 +9,8 @@
 #include "render/color_config.h"
 #include <stdbool.h>
 
+struct PostEffect;
+
 struct InfinityMatrixConfig {
   bool enabled = false;
 
@@ -84,5 +86,7 @@ void InfinityMatrixEffectUninit(InfinityMatrixEffect *e);
 
 // Registers modulatable params with the modulation engine
 void InfinityMatrixRegisterParams(InfinityMatrixConfig *cfg);
+
+InfinityMatrixEffect *GetInfinityMatrixEffect(PostEffect *pe);
 
 #endif // INFINITY_MATRIX_H

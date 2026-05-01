@@ -8,6 +8,8 @@
 #include "raylib.h"
 #include <stdbool.h>
 
+struct PostEffect;
+
 struct ImpressionistConfig {
   bool enabled = false;
   int splatCount = 11;
@@ -55,5 +57,7 @@ void ImpressionistEffectUninit(const ImpressionistEffect *e);
 
 // Registers modulatable params with the modulation engine
 void ImpressionistRegisterParams(ImpressionistConfig *cfg);
+
+ImpressionistEffect *GetImpressionistEffect(PostEffect *pe);
 
 #endif // IMPRESSIONIST_H

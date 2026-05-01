@@ -132,8 +132,12 @@ void MotherboardRegisterParams(MotherboardConfig *cfg) {
                          0.0f, 5.0f);
 }
 
+MotherboardEffect *GetMotherboardEffect(PostEffect *pe) {
+  return (MotherboardEffect *)pe->effectStates[TRANSFORM_MOTHERBOARD_BLEND];
+}
+
 void SetupMotherboard(PostEffect *pe) {
-  MotherboardEffectSetup(&pe->motherboard, &pe->effects.motherboard,
+  MotherboardEffectSetup(GetMotherboardEffect(pe), &pe->effects.motherboard,
                          pe->currentDeltaTime, pe->fftTexture);
 }
 

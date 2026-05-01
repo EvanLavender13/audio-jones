@@ -60,8 +60,12 @@ void BokehRegisterParams(BokehConfig *cfg) {
                          0.9f);
 }
 
+BokehEffect *GetBokehEffect(PostEffect *pe) {
+  return (BokehEffect *)pe->effectStates[TRANSFORM_BOKEH];
+}
+
 void SetupBokeh(PostEffect *pe) {
-  BokehEffectSetup(&pe->bokeh, &pe->effects.bokeh);
+  BokehEffectSetup(GetBokehEffect(pe), &pe->effects.bokeh);
 }
 
 // === UI ===

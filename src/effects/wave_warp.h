@@ -4,6 +4,8 @@
 #include "raylib.h"
 #include <stdbool.h>
 
+struct PostEffect;
+
 // Wave Warp effect module
 // Displaces coordinates using fBM built from selectable basis functions
 // (triangle, sine, sawtooth, square) to create crease-like warp patterns.
@@ -41,5 +43,7 @@ void WaveWarpEffectUninit(const WaveWarpEffect *e);
 
 // Registers modulatable params with the modulation engine
 void WaveWarpRegisterParams(WaveWarpConfig *cfg);
+
+WaveWarpEffect *GetWaveWarpEffect(PostEffect *pe);
 
 #endif // WAVE_WARP_H

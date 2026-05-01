@@ -98,8 +98,13 @@ static void DrawDensityWaveSpiralParams(EffectConfig *e, const ModSources *ms,
   ImGui::SliderFloat("Falloff##dws", &dws->falloff, 0.5f, 2.0f, "%.2f");
 }
 
+DensityWaveSpiralEffect *GetDensityWaveSpiralEffect(PostEffect *pe) {
+  return (DensityWaveSpiralEffect *)
+      pe->effectStates[TRANSFORM_DENSITY_WAVE_SPIRAL];
+}
+
 void SetupDensityWaveSpiral(PostEffect *pe) {
-  DensityWaveSpiralEffectSetup(&pe->densityWaveSpiral,
+  DensityWaveSpiralEffectSetup(GetDensityWaveSpiralEffect(pe),
                                &pe->effects.densityWaveSpiral,
                                pe->currentDeltaTime);
 }

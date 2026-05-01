@@ -63,8 +63,12 @@ static void DrawWaveWarpParams(EffectConfig *ec, const ModSources *ms,
                     ms);
 }
 
+WaveWarpEffect *GetWaveWarpEffect(PostEffect *pe) {
+  return (WaveWarpEffect *)pe->effectStates[TRANSFORM_WAVE_WARP];
+}
+
 void SetupWaveWarp(PostEffect *pe) {
-  WaveWarpEffectSetup(&pe->waveWarp, &pe->effects.waveWarp,
+  WaveWarpEffectSetup(GetWaveWarpEffect(pe), &pe->effects.waveWarp,
                       pe->currentDeltaTime);
 }
 

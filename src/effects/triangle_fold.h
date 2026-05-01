@@ -4,6 +4,8 @@
 #include "raylib.h"
 #include <stdbool.h>
 
+struct PostEffect;
+
 // Config struct (user-facing parameters, serialized in presets)
 struct TriangleFoldConfig {
   bool enabled = false;
@@ -38,5 +40,7 @@ void TriangleFoldEffectUninit(const TriangleFoldEffect *e);
 
 // Registers modulatable params with the modulation engine
 void TriangleFoldRegisterParams(TriangleFoldConfig *cfg);
+
+TriangleFoldEffect *GetTriangleFoldEffect(PostEffect *pe);
 
 #endif

@@ -215,8 +215,12 @@ void DataTrafficRegisterParams(DataTrafficConfig *cfg) {
                          0.0f, 5.0f);
 }
 
+DataTrafficEffect *GetDataTrafficEffect(PostEffect *pe) {
+  return (DataTrafficEffect *)pe->effectStates[TRANSFORM_DATA_TRAFFIC_BLEND];
+}
+
 void SetupDataTraffic(PostEffect *pe) {
-  DataTrafficEffectSetup(&pe->dataTraffic, &pe->effects.dataTraffic,
+  DataTrafficEffectSetup(GetDataTrafficEffect(pe), &pe->effects.dataTraffic,
                          pe->currentDeltaTime, pe->fftTexture);
 }
 

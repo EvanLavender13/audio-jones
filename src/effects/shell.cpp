@@ -150,8 +150,12 @@ void ShellRegisterParams(ShellConfig *cfg) {
                          5.0f);
 }
 
+ShellEffect *GetShellEffect(PostEffect *pe) {
+  return (ShellEffect *)pe->effectStates[TRANSFORM_SHELL_BLEND];
+}
+
 void SetupShell(PostEffect *pe) {
-  ShellEffectSetup(&pe->shell, &pe->effects.shell, pe->currentDeltaTime,
+  ShellEffectSetup(GetShellEffect(pe), &pe->effects.shell, pe->currentDeltaTime,
                    pe->fftTexture);
 }
 

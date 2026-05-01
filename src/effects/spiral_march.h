@@ -10,6 +10,8 @@
 #include "render/color_config.h"
 #include <stdbool.h>
 
+struct PostEffect;
+
 struct SpiralMarchConfig {
   bool enabled = false;
 
@@ -105,5 +107,7 @@ void SpiralMarchEffectUninit(SpiralMarchEffect *e);
 
 // Registers modulatable params with the modulation engine
 void SpiralMarchRegisterParams(SpiralMarchConfig *cfg);
+
+SpiralMarchEffect *GetSpiralMarchEffect(PostEffect *pe);
 
 #endif // SPIRAL_MARCH_H

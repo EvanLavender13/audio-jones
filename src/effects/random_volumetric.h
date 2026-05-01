@@ -6,6 +6,8 @@
 #include "render/color_config.h"
 #include <stdbool.h>
 
+struct PostEffect;
+
 typedef struct ColorLUT ColorLUT;
 
 struct RandomVolumetricConfig {
@@ -74,5 +76,7 @@ void RandomVolumetricEffectSetup(RandomVolumetricEffect *e,
                                  float deltaTime, const Texture2D &fftTexture);
 void RandomVolumetricEffectUninit(RandomVolumetricEffect *e);
 void RandomVolumetricRegisterParams(RandomVolumetricConfig *cfg);
+
+RandomVolumetricEffect *GetRandomVolumetricEffect(PostEffect *pe);
 
 #endif

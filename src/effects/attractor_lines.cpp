@@ -258,24 +258,28 @@ void AttractorLinesRegisterParams(AttractorLinesConfig *cfg) {
                          0.0f, 5.0f);
 }
 
+AttractorLinesEffect *GetAttractorLinesEffect(PostEffect *pe) {
+  return (AttractorLinesEffect *)
+      pe->effectStates[TRANSFORM_ATTRACTOR_LINES_BLEND];
+}
+
 void SetupAttractorLines(PostEffect *pe) {
-  AttractorLinesEffectSetup(&pe->attractorLines, &pe->effects.attractorLines,
-                            pe->currentDeltaTime, pe->screenWidth,
-                            pe->screenHeight);
+  AttractorLinesEffectSetup(GetAttractorLinesEffect(pe),
+                            &pe->effects.attractorLines, pe->currentDeltaTime,
+                            pe->screenWidth, pe->screenHeight);
 }
 
 void SetupAttractorLinesBlend(PostEffect *pe) {
-  BlendCompositorApply(
-      pe->blendCompositor,
-      pe->attractorLines.pingPong[pe->attractorLines.readIdx].texture,
-      pe->effects.attractorLines.blendIntensity,
-      pe->effects.attractorLines.blendMode);
+  AttractorLinesEffect *e = GetAttractorLinesEffect(pe);
+  BlendCompositorApply(pe->blendCompositor, e->pingPong[e->readIdx].texture,
+                       pe->effects.attractorLines.blendIntensity,
+                       pe->effects.attractorLines.blendMode);
 }
 
 void RenderAttractorLines(PostEffect *pe) {
-  AttractorLinesEffectRender(&pe->attractorLines, &pe->effects.attractorLines,
-                             pe->currentDeltaTime, pe->screenWidth,
-                             pe->screenHeight);
+  AttractorLinesEffectRender(GetAttractorLinesEffect(pe),
+                             &pe->effects.attractorLines, pe->currentDeltaTime,
+                             pe->screenWidth, pe->screenHeight);
 }
 
 // === UI ===

@@ -57,8 +57,12 @@ void PhiBlurRegisterParams(PhiBlurConfig *cfg) {
   ModEngineRegisterParam("phiBlur.gamma", &cfg->gamma, 1.0f, 6.0f);
 }
 
+PhiBlurEffect *GetPhiBlurEffect(PostEffect *pe) {
+  return (PhiBlurEffect *)pe->effectStates[TRANSFORM_PHI_BLUR];
+}
+
 void SetupPhiBlur(PostEffect *pe) {
-  PhiBlurEffectSetup(&pe->phiBlur, &pe->effects.phiBlur);
+  PhiBlurEffectSetup(GetPhiBlurEffect(pe), &pe->effects.phiBlur);
 }
 
 // === UI ===

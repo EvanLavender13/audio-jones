@@ -93,8 +93,12 @@ static void DrawTextureWarpParams(EffectConfig *e, const ModSources *ms,
                      20.0f, "%.1f");
 }
 
+TextureWarpEffect *GetTextureWarpEffect(PostEffect *pe) {
+  return (TextureWarpEffect *)pe->effectStates[TRANSFORM_TEXTURE_WARP];
+}
+
 void SetupTextureWarp(PostEffect *pe) {
-  TextureWarpEffectSetup(&pe->textureWarp, &pe->effects.textureWarp,
+  TextureWarpEffectSetup(GetTextureWarpEffect(pe), &pe->effects.textureWarp,
                          pe->currentDeltaTime);
 }
 

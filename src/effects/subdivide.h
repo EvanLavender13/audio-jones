@@ -8,6 +8,8 @@
 #include "render/color_config.h"
 #include <stdbool.h>
 
+struct PostEffect;
+
 struct SubdivideConfig {
   bool enabled = false;
 
@@ -81,5 +83,7 @@ void SubdivideEffectUninit(SubdivideEffect *e);
 
 // Registers modulatable params with the modulation engine
 void SubdivideRegisterParams(SubdivideConfig *cfg);
+
+SubdivideEffect *GetSubdivideEffect(PostEffect *pe);
 
 #endif // SUBDIVIDE_H

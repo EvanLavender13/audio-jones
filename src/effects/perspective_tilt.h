@@ -7,6 +7,8 @@
 #include "raylib.h"
 #include <stdbool.h>
 
+struct PostEffect;
+
 struct PerspectiveTiltConfig {
   bool enabled = false;
   float pitch = 0.0f;   // Forward/backward tilt in radians (-PI/2 to PI/2)
@@ -40,5 +42,7 @@ void PerspectiveTiltEffectUninit(const PerspectiveTiltEffect *e);
 
 // Registers modulatable params with the modulation engine
 void PerspectiveTiltRegisterParams(PerspectiveTiltConfig *cfg);
+
+PerspectiveTiltEffect *GetPerspectiveTiltEffect(PostEffect *pe);
 
 #endif // PERSPECTIVE_TILT_H

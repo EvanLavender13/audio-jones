@@ -7,6 +7,8 @@
 #include "raylib.h"
 #include <stdbool.h>
 
+struct PostEffect;
+
 struct PhyllotaxisConfig {
   bool enabled = false;
   bool smoothMode = false;
@@ -49,5 +51,7 @@ void PhyllotaxisEffectSetup(PhyllotaxisEffect *e, const PhyllotaxisConfig *cfg,
                             float deltaTime);
 void PhyllotaxisEffectUninit(const PhyllotaxisEffect *e);
 void PhyllotaxisRegisterParams(PhyllotaxisConfig *cfg);
+
+PhyllotaxisEffect *GetPhyllotaxisEffect(PostEffect *pe);
 
 #endif // PHYLLOTAXIS_H

@@ -174,8 +174,12 @@ void CyberMarchRegisterParams(CyberMarchConfig *cfg) {
                          0.0f, 5.0f);
 }
 
+CyberMarchEffect *GetCyberMarchEffect(PostEffect *pe) {
+  return (CyberMarchEffect *)pe->effectStates[TRANSFORM_CYBER_MARCH_BLEND];
+}
+
 void SetupCyberMarch(PostEffect *pe) {
-  CyberMarchEffectSetup(&pe->cyberMarch, &pe->effects.cyberMarch,
+  CyberMarchEffectSetup(GetCyberMarchEffect(pe), &pe->effects.cyberMarch,
                         pe->currentDeltaTime, pe->fftTexture);
 }
 

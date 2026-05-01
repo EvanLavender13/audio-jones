@@ -4,6 +4,8 @@
 #include "raylib.h"
 #include <stdbool.h>
 
+struct PostEffect;
+
 // Radial Pulse with angular modulation
 // Creates pulsating radial waves with segmented angular distortion.
 // Supports petal shapes, spiral twisting, and multi-octave layering.
@@ -54,5 +56,7 @@ void RadialPulseEffectUninit(const RadialPulseEffect *e);
 
 // Registers modulatable params with the modulation engine
 void RadialPulseRegisterParams(RadialPulseConfig *cfg);
+
+RadialPulseEffect *GetRadialPulseEffect(PostEffect *pe);
 
 #endif // RADIAL_PULSE_H

@@ -84,8 +84,12 @@ static void DrawFluxWarpParams(EffectConfig *e, const ModSources *ms,
                      "%.2f");
 }
 
+FluxWarpEffect *GetFluxWarpEffect(PostEffect *pe) {
+  return (FluxWarpEffect *)pe->effectStates[TRANSFORM_FLUX_WARP];
+}
+
 void SetupFluxWarp(PostEffect *pe) {
-  FluxWarpEffectSetup(&pe->fluxWarp, &pe->effects.fluxWarp,
+  FluxWarpEffectSetup(GetFluxWarpEffect(pe), &pe->effects.fluxWarp,
                       pe->currentDeltaTime, pe->screenWidth, pe->screenHeight);
 }
 

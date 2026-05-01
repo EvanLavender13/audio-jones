@@ -5,6 +5,8 @@
 #include "raylib.h"
 #include <stdbool.h>
 
+struct PostEffect;
+
 // Surface Depth - parallax occlusion and relief lighting from luminance height
 struct SurfaceDepthConfig {
   bool enabled = false;
@@ -72,5 +74,7 @@ void SurfaceDepthEffectUninit(const SurfaceDepthEffect *e);
 
 // Registers modulatable params with the modulation engine
 void SurfaceDepthRegisterParams(SurfaceDepthConfig *cfg);
+
+SurfaceDepthEffect *GetSurfaceDepthEffect(PostEffect *pe);
 
 #endif // SURFACE_DEPTH_H

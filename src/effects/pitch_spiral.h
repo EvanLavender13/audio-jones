@@ -10,6 +10,8 @@
 #include "render/color_config.h"
 #include <stdbool.h>
 
+struct PostEffect;
+
 struct PitchSpiralConfig {
   bool enabled = false;
 
@@ -85,5 +87,7 @@ void PitchSpiralEffectUninit(PitchSpiralEffect *e);
 
 // Registers modulatable params with the modulation engine
 void PitchSpiralRegisterParams(PitchSpiralConfig *cfg);
+
+PitchSpiralEffect *GetPitchSpiralEffect(PostEffect *pe);
 
 #endif // PITCH_SPIRAL_H

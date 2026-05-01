@@ -7,6 +7,8 @@
 #include "raylib.h"
 #include <stdbool.h>
 
+struct PostEffect;
+
 struct DiscoBallConfig {
   bool enabled = false;
   float sphereRadius =
@@ -53,5 +55,7 @@ void DiscoBallEffectUninit(const DiscoBallEffect *e);
 
 // Registers modulatable params with the modulation engine
 void DiscoBallRegisterParams(DiscoBallConfig *cfg);
+
+DiscoBallEffect *GetDiscoBallEffect(PostEffect *pe);
 
 #endif // DISCO_BALL_H

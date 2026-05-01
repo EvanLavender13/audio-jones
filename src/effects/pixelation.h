@@ -7,6 +7,8 @@
 #include "raylib.h"
 #include <stdbool.h>
 
+struct PostEffect;
+
 // Reduces image to mosaic cells for retro 8-bit aesthetic
 struct PixelationConfig {
   bool enabled = false;
@@ -39,5 +41,7 @@ void PixelationEffectUninit(const PixelationEffect *e);
 
 // Registers modulatable params with the modulation engine
 void PixelationRegisterParams(PixelationConfig *cfg);
+
+PixelationEffect *GetPixelationEffect(PostEffect *pe);
 
 #endif // PIXELATION_H

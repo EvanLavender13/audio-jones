@@ -88,8 +88,13 @@ static void DrawRelativisticDopplerParams(EffectConfig *e, const ModSources *ms,
                     "relativisticDoppler.headlight", "%.2f", ms);
 }
 
+RelativisticDopplerEffect *GetRelativisticDopplerEffect(PostEffect *pe) {
+  return (RelativisticDopplerEffect *)
+      pe->effectStates[TRANSFORM_RELATIVISTIC_DOPPLER];
+}
+
 void SetupRelativisticDoppler(PostEffect *pe) {
-  RelativisticDopplerEffectSetup(&pe->relativisticDoppler,
+  RelativisticDopplerEffectSetup(GetRelativisticDopplerEffect(pe),
                                  &pe->effects.relativisticDoppler,
                                  pe->currentDeltaTime);
 }

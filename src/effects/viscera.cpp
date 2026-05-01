@@ -147,9 +147,13 @@ void VisceraRegisterParams(VisceraConfig *cfg) {
                          5.0f);
 }
 
+VisceraEffect *GetVisceraEffect(PostEffect *pe) {
+  return (VisceraEffect *)pe->effectStates[TRANSFORM_VISCERA_BLEND];
+}
+
 void SetupViscera(PostEffect *pe) {
-  VisceraEffectSetup(&pe->viscera, &pe->effects.viscera, pe->currentDeltaTime,
-                     pe->fftTexture);
+  VisceraEffectSetup(GetVisceraEffect(pe), &pe->effects.viscera,
+                     pe->currentDeltaTime, pe->fftTexture);
 }
 
 void SetupVisceraBlend(PostEffect *pe) {

@@ -55,8 +55,12 @@ void HalftoneRegisterParams(HalftoneConfig *cfg) {
                          -ROTATION_OFFSET_MAX, ROTATION_OFFSET_MAX);
 }
 
+HalftoneEffect *GetHalftoneEffect(PostEffect *pe) {
+  return (HalftoneEffect *)pe->effectStates[TRANSFORM_HALFTONE];
+}
+
 void SetupHalftone(PostEffect *pe) {
-  HalftoneEffectSetup(&pe->halftone, &pe->effects.halftone,
+  HalftoneEffectSetup(GetHalftoneEffect(pe), &pe->effects.halftone,
                       pe->currentDeltaTime);
 }
 

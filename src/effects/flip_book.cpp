@@ -98,24 +98,32 @@ static void DrawFlipBookParams(EffectConfig *e, const ModSources *ms,
 }
 
 // Bridge functions for EffectDescriptor dispatch
+FlipBookEffect *GetFlipBookEffect(PostEffect *pe) {
+  return (FlipBookEffect *)pe->effectStates[TRANSFORM_FLIP_BOOK];
+}
+
 void SetupFlipBook(PostEffect *pe) {
-  FlipBookEffectSetup(&pe->flipBook, &pe->effects.flipBook,
+  FlipBookEffectSetup(GetFlipBookEffect(pe), &pe->effects.flipBook,
                       pe->currentDeltaTime);
 }
 
-void RenderFlipBook(PostEffect *pe) { FlipBookEffectRender(&pe->flipBook, pe); }
+void RenderFlipBook(PostEffect *pe) {
+  FlipBookEffectRender(GetFlipBookEffect(pe), pe);
+}
 
 // Manual registration - RET badge, section 6, needs resize
+static FlipBookEffect g_flipBookState;
+
 static bool Init_flipBook(PostEffect *pe, int w, int h) {
-  return FlipBookEffectInit(&pe->flipBook, w, h);
+  return FlipBookEffectInit(GetFlipBookEffect(pe), w, h);
 }
 
 static void Uninit_flipBook(PostEffect *pe) {
-  FlipBookEffectUninit(&pe->flipBook);
+  FlipBookEffectUninit(GetFlipBookEffect(pe));
 }
 
 static void Resize_flipBook(PostEffect *pe, int w, int h) {
-  FlipBookEffectResize(&pe->flipBook, w, h);
+  FlipBookEffectResize(GetFlipBookEffect(pe), w, h);
 }
 
 static void Register_flipBook(EffectConfig *cfg) {
@@ -123,7 +131,7 @@ static void Register_flipBook(EffectConfig *cfg) {
 }
 
 static Shader *GetShader_flipBook(PostEffect *pe) {
-  return &pe->flipBook.shader;
+  return &GetFlipBookEffect(pe)->shader;
 }
 
 // clang-format off
@@ -138,5 +146,6 @@ static bool reg_flipBook = EffectDescriptorRegister(
         GetShader_flipBook, nullptr,
         nullptr, SetupFlipBook,
         RenderFlipBook,
-        DrawFlipBookParams, nullptr});
+        DrawFlipBookParams, nullptr,
+        &g_flipBookState});
 // clang-format on

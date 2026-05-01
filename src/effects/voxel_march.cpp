@@ -171,8 +171,12 @@ void VoxelMarchRegisterParams(VoxelMarchConfig *cfg) {
                          0.0f, 5.0f);
 }
 
+VoxelMarchEffect *GetVoxelMarchEffect(PostEffect *pe) {
+  return (VoxelMarchEffect *)pe->effectStates[TRANSFORM_VOXEL_MARCH_BLEND];
+}
+
 void SetupVoxelMarch(PostEffect *pe) {
-  VoxelMarchEffectSetup(&pe->voxelMarch, &pe->effects.voxelMarch,
+  VoxelMarchEffectSetup(GetVoxelMarchEffect(pe), &pe->effects.voxelMarch,
                         pe->currentDeltaTime, pe->fftTexture);
 }
 

@@ -4,6 +4,8 @@
 #include "raylib.h"
 #include <stdbool.h>
 
+struct PostEffect;
+
 // Tone Warp: audio-reactive radial displacement
 // Maps FFT semitones to screen radius with standard audio params.
 // Angular segments create bidirectional push/pull patterns.
@@ -58,5 +60,7 @@ void ToneWarpEffectUninit(const ToneWarpEffect *e);
 
 // Registers modulatable params with the modulation engine
 void ToneWarpRegisterParams(ToneWarpConfig *cfg);
+
+ToneWarpEffect *GetToneWarpEffect(PostEffect *pe);
 
 #endif // TONE_WARP_H

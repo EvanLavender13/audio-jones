@@ -204,8 +204,12 @@ void SpinCageRegisterParams(SpinCageConfig *cfg) {
                          5.0f);
 }
 
+SpinCageEffect *GetSpinCageEffect(PostEffect *pe) {
+  return (SpinCageEffect *)pe->effectStates[TRANSFORM_SPIN_CAGE_BLEND];
+}
+
 void SetupSpinCage(PostEffect *pe) {
-  SpinCageEffectSetup(&pe->spinCage, &pe->effects.spinCage,
+  SpinCageEffectSetup(GetSpinCageEffect(pe), &pe->effects.spinCage,
                       pe->currentDeltaTime, pe->fftTexture);
 }
 

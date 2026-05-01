@@ -4,6 +4,8 @@
 #include "raylib.h"
 #include <stdbool.h>
 
+struct PostEffect;
+
 // Radial Streak
 // Blurs pixels outward from the screen center along radial lines.
 // streakLength controls how far samples reach; more samples yield smoother
@@ -36,5 +38,7 @@ void RadialStreakEffectUninit(const RadialStreakEffect *e);
 
 // Registers modulatable params with the modulation engine
 void RadialStreakRegisterParams(RadialStreakConfig *cfg);
+
+RadialStreakEffect *GetRadialStreakEffect(PostEffect *pe);
 
 #endif // RADIAL_STREAK_H

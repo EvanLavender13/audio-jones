@@ -160,9 +160,13 @@ void NebulaRegisterParams(NebulaConfig *cfg) {
                          5.0f);
 }
 
+NebulaEffect *GetNebulaEffect(PostEffect *pe) {
+  return (NebulaEffect *)pe->effectStates[TRANSFORM_NEBULA_BLEND];
+}
+
 void SetupNebula(PostEffect *pe) {
-  NebulaEffectSetup(&pe->nebula, &pe->effects.nebula, pe->currentDeltaTime,
-                    pe->fftTexture);
+  NebulaEffectSetup(GetNebulaEffect(pe), &pe->effects.nebula,
+                    pe->currentDeltaTime, pe->fftTexture);
 }
 
 void SetupNebulaBlend(PostEffect *pe) {

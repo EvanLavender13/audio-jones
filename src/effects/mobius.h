@@ -6,6 +6,8 @@
 
 #include "config/dual_lissajous_config.h"
 
+struct PostEffect;
+
 // Mobius transformation: conformal mapping with animated control points
 struct MobiusConfig {
   bool enabled = false;
@@ -52,5 +54,7 @@ void MobiusEffectUninit(const MobiusEffect *e);
 
 // Registers modulatable params with the modulation engine
 void MobiusRegisterParams(MobiusConfig *cfg);
+
+MobiusEffect *GetMobiusEffect(PostEffect *pe);
 
 #endif // MOBIUS_H

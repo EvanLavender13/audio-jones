@@ -124,9 +124,13 @@ void SlashesRegisterParams(SlashesConfig *cfg) {
                          5.0f);
 }
 
+SlashesEffect *GetSlashesEffect(PostEffect *pe) {
+  return (SlashesEffect *)pe->effectStates[TRANSFORM_SLASHES_BLEND];
+}
+
 void SetupSlashes(PostEffect *pe) {
-  SlashesEffectSetup(&pe->slashes, &pe->effects.slashes, pe->currentDeltaTime,
-                     pe->fftTexture);
+  SlashesEffectSetup(GetSlashesEffect(pe), &pe->effects.slashes,
+                     pe->currentDeltaTime, pe->fftTexture);
 }
 
 void SetupSlashesBlend(PostEffect *pe) {

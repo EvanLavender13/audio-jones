@@ -180,20 +180,24 @@ void StarTrailRegisterParams(StarTrailConfig *cfg) {
                          5.0f);
 }
 
+StarTrailEffect *GetStarTrailEffect(PostEffect *pe) {
+  return (StarTrailEffect *)pe->effectStates[TRANSFORM_STAR_TRAIL_BLEND];
+}
+
 void SetupStarTrail(PostEffect *pe) {
-  StarTrailEffectSetup(&pe->starTrail, &pe->effects.starTrail,
+  StarTrailEffectSetup(GetStarTrailEffect(pe), &pe->effects.starTrail,
                        pe->currentDeltaTime, pe->fftTexture);
 }
 
 void SetupStarTrailBlend(PostEffect *pe) {
-  BlendCompositorApply(pe->blendCompositor,
-                       pe->starTrail.pingPong[pe->starTrail.readIdx].texture,
-                       pe->effects.starTrail.blendIntensity,
-                       pe->effects.starTrail.blendMode);
+  BlendCompositorApply(
+      pe->blendCompositor,
+      GetStarTrailEffect(pe)->pingPong[GetStarTrailEffect(pe)->readIdx].texture,
+      pe->effects.starTrail.blendIntensity, pe->effects.starTrail.blendMode);
 }
 
 void RenderStarTrail(PostEffect *pe) {
-  StarTrailEffectRender(&pe->starTrail, &pe->effects.starTrail,
+  StarTrailEffectRender(GetStarTrailEffect(pe), &pe->effects.starTrail,
                         pe->currentDeltaTime, pe->screenWidth,
                         pe->screenHeight);
 }

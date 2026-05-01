@@ -308,8 +308,12 @@ void PolymorphRegisterParams(PolymorphConfig *cfg) {
                          5.0f);
 }
 
+PolymorphEffect *GetPolymorphEffect(PostEffect *pe) {
+  return (PolymorphEffect *)pe->effectStates[TRANSFORM_POLYMORPH_BLEND];
+}
+
 void SetupPolymorph(PostEffect *pe) {
-  PolymorphEffectSetup(&pe->polymorph, &pe->effects.polymorph,
+  PolymorphEffectSetup(GetPolymorphEffect(pe), &pe->effects.polymorph,
                        pe->currentDeltaTime, pe->fftTexture);
 }
 

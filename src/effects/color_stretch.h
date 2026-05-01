@@ -8,6 +8,8 @@
 #include "render/color_config.h"
 #include <stdbool.h>
 
+struct PostEffect;
+
 struct ColorStretchConfig {
   bool enabled = false;
 
@@ -77,5 +79,7 @@ void ColorStretchEffectUninit(ColorStretchEffect *e);
 
 // Registers modulatable params with the modulation engine
 void ColorStretchRegisterParams(ColorStretchConfig *cfg);
+
+ColorStretchEffect *GetColorStretchEffect(PostEffect *pe);
 
 #endif // COLOR_STRETCH_H

@@ -9,6 +9,8 @@
 #include "render/color_config.h"
 #include <stdbool.h>
 
+struct PostEffect;
+
 struct PrismShatterConfig {
   bool enabled = false;
 
@@ -72,5 +74,7 @@ void PrismShatterEffectUninit(PrismShatterEffect *e);
 
 // Registers modulatable params with the modulation engine
 void PrismShatterRegisterParams(PrismShatterConfig *cfg);
+
+PrismShatterEffect *GetPrismShatterEffect(PostEffect *pe);
 
 #endif // PRISM_SHATTER_H

@@ -9,6 +9,8 @@
 #include "render/color_config.h"
 #include <stdbool.h>
 
+struct PostEffect;
+
 struct PlasmaConfig {
   bool enabled = false;
 
@@ -90,5 +92,7 @@ void PlasmaEffectUninit(PlasmaEffect *e);
 
 // Registers modulatable params with the modulation engine
 void PlasmaRegisterParams(PlasmaConfig *cfg);
+
+PlasmaEffect *GetPlasmaEffect(PostEffect *pe);
 
 #endif // PLASMA_H

@@ -156,8 +156,12 @@ void SpiralMarchRegisterParams(SpiralMarchConfig *cfg) {
                          0.0f, 5.0f);
 }
 
+SpiralMarchEffect *GetSpiralMarchEffect(PostEffect *pe) {
+  return (SpiralMarchEffect *)pe->effectStates[TRANSFORM_SPIRAL_MARCH_BLEND];
+}
+
 void SetupSpiralMarch(PostEffect *pe) {
-  SpiralMarchEffectSetup(&pe->spiralMarch, &pe->effects.spiralMarch,
+  SpiralMarchEffectSetup(GetSpiralMarchEffect(pe), &pe->effects.spiralMarch,
                          pe->currentDeltaTime, pe->fftTexture);
 }
 

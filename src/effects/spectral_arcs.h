@@ -11,6 +11,8 @@
 #include "render/color_config.h"
 #include <stdbool.h>
 
+struct PostEffect;
+
 struct SpectralArcsConfig {
   bool enabled = false;
 
@@ -87,5 +89,7 @@ void SpectralArcsEffectUninit(SpectralArcsEffect *e);
 
 // Registers modulatable params with the modulation engine
 void SpectralArcsRegisterParams(SpectralArcsConfig *cfg);
+
+SpectralArcsEffect *GetSpectralArcsEffect(PostEffect *pe);
 
 #endif // SPECTRAL_ARCS_H

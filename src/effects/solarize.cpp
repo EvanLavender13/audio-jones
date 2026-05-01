@@ -49,8 +49,12 @@ static void DrawSolarizeParams(EffectConfig *e, const ModSources *ms,
                     "solarize.threshold", "%.2f", ms);
 }
 
+SolarizeEffect *GetSolarizeEffect(PostEffect *pe) {
+  return (SolarizeEffect *)pe->effectStates[TRANSFORM_SOLARIZE];
+}
+
 void SetupSolarize(PostEffect *pe) {
-  SolarizeEffectSetup(&pe->solarize, &pe->effects.solarize);
+  SolarizeEffectSetup(GetSolarizeEffect(pe), &pe->effects.solarize);
 }
 
 // clang-format off

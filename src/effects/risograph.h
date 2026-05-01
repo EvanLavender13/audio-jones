@@ -7,6 +7,8 @@
 #include "raylib.h"
 #include <stdbool.h>
 
+struct PostEffect;
+
 struct RisographConfig {
   bool enabled = false;
   float grainScale = 200.0f;   // Noise sample scale (50-800)
@@ -50,5 +52,7 @@ void RisographEffectUninit(const RisographEffect *e);
 
 // Registers modulatable params with the modulation engine
 void RisographRegisterParams(RisographConfig *cfg);
+
+RisographEffect *GetRisographEffect(PostEffect *pe);
 
 #endif // RISOGRAPH_H

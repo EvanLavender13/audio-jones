@@ -415,8 +415,13 @@ static void DrawGlitchParams(EffectConfig *e, const ModSources *ms,
   ImGui::SliderFloat("Noise##glitch", &g->noiseAmount, 0.0f, 0.3f, "%.2f");
 }
 
+GlitchEffect *GetGlitchEffect(PostEffect *pe) {
+  return (GlitchEffect *)pe->effectStates[TRANSFORM_GLITCH];
+}
+
 void SetupGlitch(PostEffect *pe) {
-  GlitchEffectSetup(&pe->glitch, &pe->effects.glitch, pe->currentDeltaTime);
+  GlitchEffectSetup(GetGlitchEffect(pe), &pe->effects.glitch,
+                    pe->currentDeltaTime);
 }
 
 // clang-format off

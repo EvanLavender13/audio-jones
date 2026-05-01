@@ -7,6 +7,8 @@
 #include "raylib.h"
 #include <stdbool.h>
 
+struct PostEffect;
+
 struct MatrixRainConfig {
   bool enabled = false;
   float cellSize = 12.0f;        // Cell size in pixels (4-32)
@@ -49,5 +51,7 @@ void MatrixRainEffectUninit(const MatrixRainEffect *e);
 
 // Registers modulatable params with the modulation engine
 void MatrixRainRegisterParams(MatrixRainConfig *cfg);
+
+MatrixRainEffect *GetMatrixRainEffect(PostEffect *pe);
 
 #endif // MATRIX_RAIN_H
