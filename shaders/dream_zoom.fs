@@ -3,12 +3,14 @@
 // NR4's reference is GPL-3.0-or-later (incompatible with this project's
 // CC BY-NC-SA 3.0 license). NO source code from NR4's shader is reproduced
 // here. The technique - log-polar transport, Jacobi cn lattice tiling,
-// complex-map iteration with orbit-trap coloring - is reimplemented from
-// public-domain mathematical sources:
+// complex-map iteration with orbit-trap coloring, Vogel-disk DOF, hash
+// grain, temporal AA - is reimplemented from public-domain mathematical
+// sources:
 //   - DLMF Chapter 22 (Jacobian elliptic functions)
 //   - DLMF 22.20.1 (descending Landen / AGM iteration)
 //   - DLMF 22.6.1 (addition theorem for complex argument)
 //   - DLMF 19.2.8 (complete elliptic integral K)
+// hash12 is by David Hoskins, MIT, https://www.shadertoy.com/view/4djSRW.
 
 #version 330
 
@@ -20,18 +22,22 @@ uniform sampler2D fftTexture;
 uniform float sampleRate;
 uniform sampler2D gradientLUT;
 
-uniform int   variant;              // 0 = DREAM, 1 = JACOBI
-uniform float zoomPhase;            // CPU-accumulated, signed
-uniform float globalRotationPhase;  // CPU-accumulated, [-PI, PI]
-uniform float rotationPhase;        // CPU-accumulated, [-PI, PI]
+uniform float zoomPhase;
+uniform float globalRotationPhase;
+uniform float rotationPhase;
 uniform float jacobiRepeats;
+uniform float spiralWrap;
 uniform float formulaMix;
 uniform int   iterations;
+uniform float coordinateScale;
+uniform vec2  offset;
 uniform float cmapScale;
 uniform float cmapOffset;
 uniform vec2  trapOffset;
 uniform vec2  origin;
 uniform vec2  constantOffset;
+uniform int   sampleCount;
+uniform float grainAmount;
 
 uniform float baseFreq;
 uniform float maxFreq;
@@ -39,17 +45,19 @@ uniform float gain;
 uniform float curve;
 uniform float baseBright;
 
-// Calibration constants - MUST stay coupled (see Notes).
-//   CN_PERIOD_CALIB = 2*K(0.5)/pi, with K the complete elliptic integral
-//   of the first kind. Aligns one log-radius cycle to one real-period of
-//   cn(z, 0.5). Sources: DLMF 19.2.8, Wikipedia "Jacobi elliptic functions".
 const float CN_PERIOD_CALIB = 1.18034;
-//   3.7 = integer multiple of cn period along the real axis at m = 0.5.
 const float CN_WRAP_DISTANCE = 3.7;
+const float PI = 3.14159265358979;
+
+// hash12 - David Hoskins, MIT (CC0).
+float hash12(vec2 p) {
+    vec3 p3 = fract(vec3(p.xyx) * 0.1031);
+    p3 += dot(p3, p3.yzx + 33.33);
+    return fract((p3.x + p3.y) * p3.z);
+}
 
 // Jacobi sn, cn, dn for real argument u and parameter m = k^2.
-// Descending Landen / AGM iteration. 4 iterations is sufficient for shader
-// precision in our parameter range. Source: DLMF 22.20.1.
+// Descending Landen / AGM iteration. DLMF 22.20.1.
 void jacobi_sncndn(float u, float m, out float sn, out float cn, out float dn) {
     const int N = 4;
     float emc = 1.0 - m;
@@ -88,10 +96,7 @@ void jacobi_sncndn(float u, float m, out float sn, out float cn, out float dn) {
     }
 }
 
-// Complex Jacobi cn via the addition theorem. Source: DLMF 22.6.1.
-//   cn(x + iy | m) = ( cn(x|m)*cn(y|1-m)
-//                    - i sn(x|m)*dn(x|m)*sn(y|1-m)*dn(y|1-m) )
-//                    / ( 1 - dn(x|m)^2 * sn(y|1-m)^2 )
+// Complex Jacobi cn via the addition theorem. DLMF 22.6.1.
 vec2 cn_complex(vec2 z, float m) {
     float snu, cnu, dnu;
     float snv, cnv, dnv;
@@ -101,100 +106,86 @@ vec2 cn_complex(vec2 z, float m) {
     return invDenom * vec2(cnu * cnv, -snu * dnu * snv * dnv);
 }
 
-void main() {
-    // ----- 1. Per-pixel coordinate transport -----
+// Per-iteration map. The mod(abs(z.y))/sign(z.y) folding is load-bearing -
+// folds the imaginary axis differently than plain cos/sin would.
+vec2 formula(vec2 z) {
+    z -= 0.01 * origin;
+    float ay = mod(abs(z.y), 2.0 * PI);
+    vec2 expBranch =
+        min(exp(z.x), 2.0e4) * vec2(cos(ay), sign(z.y) * sin(ay));
+    vec2 sqBranch = vec2(z.x * z.x - z.y * z.y, 2.0 * z.x * z.y);
+    return mix(expBranch, sqBranch, formulaMix) + 0.01 * constantOffset + z;
+}
 
-    // Centered, isotropic UV in [-aspect, aspect] x [-1, 1].
-    vec2 uv = (fragTexCoord - 0.5) * resolution / resolution.y;
+vec4 pixelOf(vec2 fragCoord) {
+    float phi = rotationPhase;
+    vec2 cs = vec2(cos(phi), sin(phi));
+    mat2 rot = mat2(cs.x, cs.y, -cs.y, cs.x);
 
-    // Global rotation of the sampling plane (slow drift).
-    float gphi = globalRotationPhase;
-    mat2 grot = mat2(cos(gphi), -sin(gphi), sin(gphi), cos(gphi));
-    uv = grot * uv;
+    vec2 uv = (fragCoord - 0.5 * resolution) / resolution.y;
+    uv -= offset * 0.001;
+    vec2 z = exp(mix(log(1e-4), log(1.0), coordinateScale)) * rot * uv;
 
-    // Cartesian -> log-polar:  clog(z) = (log|z|, atan(z.y, z.x))
-    vec2 z = vec2(log(length(uv) + 1e-20), atan(uv.y, uv.x));
-
-    // Pre-scale to align one log-radius cycle with one cn period.
-    z *= CN_PERIOD_CALIB * 0.5 * jacobiRepeats;
-
-    // Continuous translation along real axis = continuous radial zoom.
-    // mod() wrap is seamless because 3.7 is a cn period at m = 0.5.
-    z.x -= mod(zoomPhase, 1.0) * CN_WRAP_DISTANCE;
-
-    // 45-degree shear places the doubly-periodic cn lattice diagonally so
-    // successive zoom steps don't alias into vertical bands.
-    z = mat2(1.0, 1.0, -1.0, 1.0) * z;
-
-    // Map through Jacobi cn at m = 0.5 (lemniscatic modulus).
-    z = cn_complex(z, 0.5);
-
-    // ----- 2. Variant pre-iteration affine -----
-
-    float coordinateScale;
-    vec2  preOffset;
-    if (variant == 0) {        // VARIANT_DREAM (identity)
-        coordinateScale = 1.0;
-        preOffset = vec2(0.0);
-    } else {                    // VARIANT_JACOBI
-        coordinateScale = 1.063;
-        preOffset = vec2(11.88, -23.33);
-    }
-
-    z -= preOffset * 0.001;
-    z *= exp(mix(log(1e-4), log(1.0), coordinateScale));
-
-    // ----- 3. Inner fractal rotation (rotationPhase) -----
-    // Applied to z after cn-tiling and variant scale, before the iteration
-    // loop. Symmetric with the global UV rotation in step 1.
-    float rphi = rotationPhase;
-    mat2 rrot = mat2(cos(rphi), -sin(rphi), sin(rphi), cos(rphi));
-    z = rrot * z;
-
-    // ----- 4. Per-pixel fractal iteration with orbit trap -----
-
-    vec2 zf = z - 0.01 * origin;
-    float tmin = 1e9;
-
+    float tm = 1e9;
     for (int i = 0; i < iterations; i++) {
-        if (dot(zf, zf) > 1e10) { break; }
-
-        // exp(zf) for complex zf, with x clamped to prevent overflow.
-        //   exp(x + iy) = exp(x) * (cos(y), sin(y))
-        vec2 expz = vec2(cos(zf.y), sin(zf.y)) * min(exp(zf.x), 2.0e4);
-
-        // zf * zf for complex zf:  (a + bi)^2 = (a*a - b*b) + 2ab*i
-        vec2 sqz = vec2(zf.x * zf.x - zf.y * zf.y, 2.0 * zf.x * zf.y);
-
-        // f(z) = mix(exp(z), z*z, formulaMix) + 0.01*constantOffset + z
-        zf = mix(expz, sqz, formulaMix) + 0.01 * constantOffset + zf;
-
-        // Moebius-style orbit trap: |z / (z - trapOffset)|
-        float t = length(zf / (zf - trapOffset));
-        tmin = min(tmin, t * cmapScale * 0.01);
+        if (dot(z, z) > 1e10) { break; }
+        z = formula(z);
+        tm = min(tm, length(z / (z - trapOffset)) * cmapScale * 0.01);
     }
+    float t = fract(cmapOffset - log(mix(exp(0.001), exp(1.0), tm)));
 
-    // ----- 5. Per-pixel depth coordinate -----
-    // Equal-tmin pixels lie on the same depth ring of the fractal.
-    float tLUT = fract(cmapOffset - log(mix(exp(0.001), exp(1.0), tmin)));
-
-    // ----- 6. FFT-reactive depth modulation (BAND_SAMPLES standard) -----
-    // tLUT drives both the gradient lookup AND the FFT band - depth rings
-    // respond to specific frequency bands. Per memory/generator_patterns.md:
-    // 4 adjacent bins around tLUT, log-spaced via baseFreq/maxFreq.
+    // BAND_SAMPLES standard - 4 adjacent FFT bins around t, log-spaced.
     float energy = 0.0;
     const int BAND_SAMPLES = 4;
     for (int s = 0; s < BAND_SAMPLES; s++) {
-        float ts = tLUT + (float(s) + 0.5)
-                          / float(BAND_SAMPLES)
-                          / float(textureSize(fftTexture, 0).x);
+        float ts = t + (float(s) + 0.5)
+                       / float(BAND_SAMPLES)
+                       / float(textureSize(fftTexture, 0).x);
         float freq = baseFreq * pow(maxFreq / baseFreq, ts);
         float bin = freq / (sampleRate * 0.5);
         if (bin <= 1.0) { energy += texture(fftTexture, vec2(bin, 0.5)).r; }
     }
     float mag = pow(clamp(energy / float(BAND_SAMPLES) * gain, 0.0, 1.0), curve);
-    float brightness = baseBright + mag;
+    float bright = baseBright + mag;
 
-    vec3 col = texture(gradientLUT, vec2(tLUT, 0.5)).rgb * brightness;
-    finalColor = vec4(col, 1.0);
+    return vec4(texture(gradientLUT, vec2(t, 0.5)).rgb * bright, 1.0);
+}
+
+vec4 spiralize(vec2 fragCoord) {
+    float gphi = globalRotationPhase;
+    vec2 gcs = vec2(cos(gphi), sin(gphi));
+    mat2 grot = mat2(gcs.x, gcs.y, -gcs.y, gcs.x);
+    vec2 uv0 = (fragCoord - 0.5 * resolution) / resolution.y;
+    vec2 z = grot * uv0;
+
+    z = vec2(log(length(z) + 1e-20), atan(z.y, z.x))
+        * CN_PERIOD_CALIB * 0.5 * jacobiRepeats;
+    z.x -= mod(zoomPhase / spiralWrap, 1.0) * CN_WRAP_DISTANCE;
+    z = mat2(1.0, 1.0, -1.0, 1.0) * z;
+    z = cn_complex(z, 0.5);
+
+    return pixelOf(z * resolution.y + 0.5 * resolution);
+}
+
+void main() {
+    vec2 fragCoord = fragTexCoord * resolution;
+    vec2 uv = (fragCoord - 0.5 * resolution) / resolution.y;
+
+    // Vogel-disk multi-sample for DOF blur.
+    int sc = max(sampleCount, 1);
+    vec4 col = vec4(0.0);
+    const float gold = 2.4;
+    for (int i = 0; i < sc; i++) {
+        float fi = float(i) + 0.5;
+        float x = fi / float(sc);
+        float p = gold * fi;
+        vec2 offsetPx = (0.5 / resolution.y) * sqrt(x) * vec2(cos(p), sin(p));
+        vec2 sampleFrag = (uv - offsetPx) * resolution.y + 0.5 * resolution;
+        col += spiralize(sampleFrag);
+    }
+    col /= float(sc);
+
+    col.rgb += grainAmount * (2.0 * hash12(1e4 * fragTexCoord) - 1.0);
+
+    finalColor = vec4(col.rgb, 1.0);
 }
