@@ -46,6 +46,7 @@
 | Galaxy | Spiral galaxy with glowing dust arms winding from a bright core, embedded stars twinkling in deep space |
 | Light Medley | Glowing point-cloud lattice twisting into depth like flying through a warped crystalline tunnel |
 | Dream Fractal | Swirling oil-paint caverns carved from infinite recursive spheres, drifting through psychedelic marbled tunnels |
+| Dream Zoom | Endless dive into a fractal coastline of ornate curls and spiral blossoms repeating at every scale |
 | Nebula | Drifting fractal gas clouds threaded with dark dust lanes and stars that twinkle and flare with shimmering cross-spikes |
 | Voxel March | Chunky iridescent tunnel of tiled sphere-shells rushing past like flying through an infinite disco ball |
 | Cyber March | Endless neon blocks streaking past like hurtling through a cyberpunk cityscape at warp speed |
