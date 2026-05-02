@@ -173,25 +173,24 @@ void BloomRegisterParams(BloomConfig *cfg) {
 // Manual registration: custom GetShader (compositeShader) and Resize wrapper
 static BloomEffect g_bloomState;
 
+BloomEffect *GetBloomEffect(PostEffect *pe) {
+  return (BloomEffect *)pe->effectStates[TRANSFORM_BLOOM];
+}
+
 static bool Init_bloom(PostEffect *pe, int w, int h) {
-  return BloomEffectInit((BloomEffect *)pe->effectStates[TRANSFORM_BLOOM], w,
-                         h);
+  return BloomEffectInit(GetBloomEffect(pe), w, h);
 }
 static void Uninit_bloom(PostEffect *pe) {
-  BloomEffectUninit((BloomEffect *)pe->effectStates[TRANSFORM_BLOOM]);
+  BloomEffectUninit(GetBloomEffect(pe));
 }
 static void Resize_bloom(PostEffect *pe, int w, int h) {
-  BloomEffectResize((BloomEffect *)pe->effectStates[TRANSFORM_BLOOM], w, h);
+  BloomEffectResize(GetBloomEffect(pe), w, h);
 }
 static void Register_bloom(EffectConfig *cfg) {
   BloomRegisterParams(&cfg->bloom);
 }
 static Shader *GetShader_bloom(PostEffect *pe) {
-  return &((BloomEffect *)pe->effectStates[TRANSFORM_BLOOM])->compositeShader;
-}
-
-BloomEffect *GetBloomEffect(PostEffect *pe) {
-  return (BloomEffect *)pe->effectStates[TRANSFORM_BLOOM];
+  return &GetBloomEffect(pe)->compositeShader;
 }
 
 void SetupBloom(PostEffect *pe) {

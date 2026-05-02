@@ -80,6 +80,7 @@ void OilPaintEffectResize(OilPaintEffect *e, int width, int height) {
 
 void ApplyHalfResOilPaint(PostEffect *pe, const RenderTexture2D *source,
                           const int *writeIdx) {
+  OilPaintEffect *e = GetOilPaintEffect(pe);
   const int halfW = pe->screenWidth / 2;
   const int halfH = pe->screenHeight / 2;
   const Rectangle srcRect = {0, 0, (float)source->texture.width,
@@ -94,34 +95,30 @@ void ApplyHalfResOilPaint(PostEffect *pe, const RenderTexture2D *source,
   DrawTexturePro(source->texture, srcRect, halfRect, {0, 0}, 0.0f, WHITE);
   EndTextureMode();
 
-  SetShaderValue(GetOilPaintEffect(pe)->strokeShader,
-                 GetOilPaintEffect(pe)->strokeResolutionLoc, halfRes,
+  SetShaderValue(e->strokeShader, e->strokeResolutionLoc, halfRes,
                  SHADER_UNIFORM_VEC2);
 
   BeginTextureMode(pe->halfResB);
-  BeginShaderMode(GetOilPaintEffect(pe)->strokeShader);
+  BeginShaderMode(e->strokeShader);
   DrawTexturePro(pe->halfResA.texture, {0, 0, (float)halfW, (float)-halfH},
                  halfRect, {0, 0}, 0.0f, WHITE);
   EndShaderMode();
   EndTextureMode();
 
-  SetShaderValue(GetOilPaintEffect(pe)->compositeShader,
-                 GetOilPaintEffect(pe)->compositeResolutionLoc, halfRes,
+  SetShaderValue(e->compositeShader, e->compositeResolutionLoc, halfRes,
                  SHADER_UNIFORM_VEC2);
 
   BeginTextureMode(pe->halfResA);
-  BeginShaderMode(GetOilPaintEffect(pe)->compositeShader);
+  BeginShaderMode(e->compositeShader);
   DrawTexturePro(pe->halfResB.texture, {0, 0, (float)halfW, (float)-halfH},
                  halfRect, {0, 0}, 0.0f, WHITE);
   EndShaderMode();
   EndTextureMode();
 
   // Subsequent effects may share these shaders
-  SetShaderValue(GetOilPaintEffect(pe)->strokeShader,
-                 GetOilPaintEffect(pe)->strokeResolutionLoc, fullRes,
+  SetShaderValue(e->strokeShader, e->strokeResolutionLoc, fullRes,
                  SHADER_UNIFORM_VEC2);
-  SetShaderValue(GetOilPaintEffect(pe)->compositeShader,
-                 GetOilPaintEffect(pe)->compositeResolutionLoc, fullRes,
+  SetShaderValue(e->compositeShader, e->compositeResolutionLoc, fullRes,
                  SHADER_UNIFORM_VEC2);
 
   BeginTextureMode(pe->pingPong[*writeIdx]);

@@ -190,10 +190,10 @@ void SetupFaraday(PostEffect *pe) {
 }
 
 void SetupFaradayBlend(PostEffect *pe) {
-  BlendCompositorApply(
-      pe->blendCompositor,
-      GetFaradayEffect(pe)->pingPong[GetFaradayEffect(pe)->readIdx].texture,
-      pe->effects.faraday.blendIntensity, pe->effects.faraday.blendMode);
+  FaradayEffect *e = GetFaradayEffect(pe);
+  BlendCompositorApply(pe->blendCompositor, e->pingPong[e->readIdx].texture,
+                       pe->effects.faraday.blendIntensity,
+                       pe->effects.faraday.blendMode);
 }
 
 void RenderFaraday(PostEffect *pe) {

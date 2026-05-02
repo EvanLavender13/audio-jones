@@ -167,10 +167,10 @@ void SetupChladni(PostEffect *pe) {
 }
 
 void SetupChladniBlend(PostEffect *pe) {
-  BlendCompositorApply(
-      pe->blendCompositor,
-      GetChladniEffect(pe)->pingPong[GetChladniEffect(pe)->readIdx].texture,
-      pe->effects.chladni.blendIntensity, pe->effects.chladni.blendMode);
+  ChladniEffect *e = GetChladniEffect(pe);
+  BlendCompositorApply(pe->blendCompositor, e->pingPong[e->readIdx].texture,
+                       pe->effects.chladni.blendIntensity,
+                       pe->effects.chladni.blendMode);
 }
 
 void RenderChladni(PostEffect *pe) {
