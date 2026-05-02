@@ -22,7 +22,7 @@ static void CacheLocations(RandomVolumetricEffect *e) {
   e->timeLoc = GetShaderLocation(e->shader, "time");
   e->cameraPhaseLoc = GetShaderLocation(e->shader, "cameraPhase");
   e->seedLoc = GetShaderLocation(e->shader, "seed");
-  e->cycleSpeedLoc = GetShaderLocation(e->shader, "cycleSpeed");
+  e->cyclePhaseLoc = GetShaderLocation(e->shader, "cyclePhase");
   e->iterMinLoc = GetShaderLocation(e->shader, "iterMin");
   e->iterMaxLoc = GetShaderLocation(e->shader, "iterMax");
   e->zoomLoc = GetShaderLocation(e->shader, "zoom");
@@ -54,6 +54,7 @@ bool RandomVolumetricEffectInit(RandomVolumetricEffect *e,
   CacheLocations(e);
   e->time = 0.0f;
   e->cameraPhase = 0.0f;
+  e->cyclePhase = 0.0f;
   return true;
 }
 
@@ -62,12 +63,16 @@ void RandomVolumetricEffectSetup(RandomVolumetricEffect *e,
                                  float deltaTime, const Texture2D &fftTexture) {
   e->time += deltaTime;
   e->cameraPhase += 4.0f * deltaTime;
+  e->cyclePhase += cfg->cycleSpeed * deltaTime;
   const float WRAP = 1000.0f;
   if (e->time > WRAP) {
     e->time -= WRAP;
   }
   if (e->cameraPhase > WRAP) {
     e->cameraPhase -= WRAP;
+  }
+  if (e->cyclePhase > WRAP) {
+    e->cyclePhase -= WRAP;
   }
 
   ColorLUTUpdate(e->gradientLUT, &cfg->gradient);
@@ -80,7 +85,7 @@ void RandomVolumetricEffectSetup(RandomVolumetricEffect *e,
   SetShaderValue(e->shader, e->cameraPhaseLoc, &e->cameraPhase,
                  SHADER_UNIFORM_FLOAT);
   SetShaderValue(e->shader, e->seedLoc, &cfg->seed, SHADER_UNIFORM_FLOAT);
-  SetShaderValue(e->shader, e->cycleSpeedLoc, &cfg->cycleSpeed,
+  SetShaderValue(e->shader, e->cyclePhaseLoc, &e->cyclePhase,
                  SHADER_UNIFORM_FLOAT);
   SetShaderValue(e->shader, e->iterMinLoc, &cfg->iterMin, SHADER_UNIFORM_FLOAT);
   SetShaderValue(e->shader, e->iterMaxLoc, &cfg->iterMax, SHADER_UNIFORM_FLOAT);

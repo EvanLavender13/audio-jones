@@ -48,12 +48,13 @@ typedef struct RandomVolumetricEffect {
 
   float time;
   float cameraPhase;
+  float cyclePhase;
 
   int resolutionLoc;
   int timeLoc;
   int cameraPhaseLoc;
   int seedLoc;
-  int cycleSpeedLoc;
+  int cyclePhaseLoc;
   int iterMinLoc;
   int iterMaxLoc;
   int zoomLoc;

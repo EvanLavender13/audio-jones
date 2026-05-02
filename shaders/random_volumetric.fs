@@ -14,7 +14,7 @@ uniform float time;
 uniform float cameraPhase;
 
 uniform float seed;
-uniform float cycleSpeed;
+uniform float cyclePhase;
 uniform float iterMin;
 uniform float iterMax;
 uniform float zoom;
@@ -168,7 +168,7 @@ void main() {
     float x = guv.x;
     float y = guv.y;
 
-    float effSeed = seed + floor(time * cycleSpeed);
+    float effSeed = seed + floor(cyclePhase);
     PALETTE = int(floor(8.0 * rand(effSeed + 66.0)));
 
     const int v = 24;
