@@ -37,6 +37,7 @@
 #include "effects/domain_warp.h"
 #include "effects/dot_matrix.h"
 #include "effects/dream_fractal.h"
+#include "effects/dream_zoom.h"
 #include "effects/drekker_paint.h"
 #include "effects/droste_zoom.h"
 #include "effects/escher_droste.h"
@@ -526,6 +527,8 @@ NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(NebulaConfig,
                                                 NEBULA_CONFIG_FIELDS)
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(DreamFractalConfig,
                                                 DREAM_FRACTAL_CONFIG_FIELDS)
+NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(DreamZoomConfig,
+                                                DREAM_ZOOM_CONFIG_FIELDS)
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(NeonLatticeConfig,
                                                 NEON_LATTICE_CONFIG_FIELDS)
 // Effect configs O-Z
@@ -768,6 +771,7 @@ static void TransformOrderFromJson(const json &j, TransformOrderConfig &t) {
   X(mazeWorms) \
   X(colorStretch) \
   X(infinityMatrix) \
+  X(dreamZoom) \
   X(spiralNest) \
   X(marble) X(butterflies) \
   X(dancingLines) \

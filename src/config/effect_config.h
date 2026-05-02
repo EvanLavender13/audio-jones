@@ -33,6 +33,7 @@
 #include "effects/domain_warp.h"
 #include "effects/dot_matrix.h"
 #include "effects/dream_fractal.h"
+#include "effects/dream_zoom.h"
 #include "effects/drekker_paint.h"
 #include "effects/droste_zoom.h"
 #include "effects/escher_droste.h"
@@ -314,6 +315,7 @@ enum TransformEffectType {
   TRANSFORM_LICHEN,
   TRANSFORM_SPIRAL_MARCH_BLEND,
   TRANSFORM_APOLLONIAN_TUNNEL_BLEND,
+  TRANSFORM_DREAM_ZOOM_BLEND,
   TRANSFORM_ACCUM_COMPOSITE,
   TRANSFORM_EFFECT_COUNT
 };
@@ -859,6 +861,9 @@ struct EffectConfig {
 
   // Infinity Matrix
   InfinityMatrixConfig infinityMatrix;
+
+  // Dream Zoom
+  DreamZoomConfig dreamZoom;
 
   // Spiral Nest (nested spiral-of-spirals generator)
   SpiralNestConfig spiralNest;
