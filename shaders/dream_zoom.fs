@@ -3,14 +3,12 @@
 // NR4's reference is GPL-3.0-or-later (incompatible with this project's
 // CC BY-NC-SA 3.0 license). NO source code from NR4's shader is reproduced
 // here. The technique - log-polar transport, Jacobi cn lattice tiling,
-// complex-map iteration with orbit-trap coloring, Vogel-disk DOF, hash
-// grain, temporal AA - is reimplemented from public-domain mathematical
-// sources:
+// complex-map iteration with orbit-trap coloring, Vogel-disk DOF, temporal
+// AA - is reimplemented from public-domain mathematical sources:
 //   - DLMF Chapter 22 (Jacobian elliptic functions)
 //   - DLMF 22.20.1 (descending Landen / AGM iteration)
 //   - DLMF 22.6.1 (addition theorem for complex argument)
 //   - DLMF 19.2.8 (complete elliptic integral K)
-// hash12 is by David Hoskins, MIT, https://www.shadertoy.com/view/4djSRW.
 
 #version 330
 
@@ -40,7 +38,6 @@ uniform vec2  trapOffset;
 uniform vec2  origin;
 uniform vec2  constantOffset;
 uniform int   sampleCount;
-uniform float grainAmount;
 uniform float taaMix;
 
 uniform float baseFreq;
@@ -52,13 +49,6 @@ uniform float baseBright;
 const float CN_PERIOD_CALIB = 1.18034;
 const float CN_WRAP_DISTANCE = 3.7;
 const float PI = 3.14159265358979;
-
-// hash12 - David Hoskins, MIT (CC0).
-float hash12(vec2 p) {
-    vec3 p3 = fract(vec3(p.xyx) * 0.1031);
-    p3 += dot(p3, p3.yzx + 33.33);
-    return fract((p3.x + p3.y) * p3.z);
-}
 
 // Jacobi sn, cn, dn for real argument u and parameter m = k^2.
 // Descending Landen / AGM iteration. DLMF 22.20.1.
@@ -121,14 +111,12 @@ vec2 formula(vec2 z) {
     return mix(expBranch, sqBranch, formulaMix) + 0.01 * constantOffset + z;
 }
 
-vec4 pixelOf(vec2 fragCoord) {
-    float phi = rotationPhase;
-    vec2 cs = vec2(cos(phi), sin(phi));
-    mat2 rot = mat2(cs.x, cs.y, -cs.y, cs.x);
-
-    vec2 uv = (fragCoord - 0.5 * resolution) / resolution.y;
+// uv is already centered (output of spiralize); rot and scale are uniforms-only
+// values hoisted into main() so they aren't recomputed per Vogel sample.
+vec4 pixelOf(vec2 uv, mat2 rot, float scale) {
     uv -= offset * 0.001;
-    vec2 z = exp(mix(log(1e-4), log(1.0), coordinateScale)) * rot * uv;
+    // exp(mix(log(1e-4), log(1.0), c)) = pow(1e-4, 1.0 - c), since log(1.0)=0.
+    vec2 z = scale * rot * uv;
 
     float tm = 1e9;
     for (int i = 0; i < iterations; i++) {
@@ -155,10 +143,7 @@ vec4 pixelOf(vec2 fragCoord) {
     return vec4(texture(gradientLUT, vec2(t, 0.5)).rgb * bright, 1.0);
 }
 
-vec4 spiralize(vec2 fragCoord) {
-    float gphi = globalRotationPhase;
-    vec2 gcs = vec2(cos(gphi), sin(gphi));
-    mat2 grot = mat2(gcs.x, gcs.y, -gcs.y, gcs.x);
+vec4 spiralize(vec2 fragCoord, mat2 grot, mat2 rot, float scale) {
     vec2 uv0 = (fragCoord - 0.5 * resolution) / resolution.y;
     vec2 z = grot * uv0;
 
@@ -168,12 +153,19 @@ vec4 spiralize(vec2 fragCoord) {
     z = mat2(1.0, 1.0, -1.0, 1.0) * z;
     z = cn_complex(z, 0.5);
 
-    return pixelOf(z * resolution.y + 0.5 * resolution);
+    return pixelOf(z, rot, scale);
 }
 
 void main() {
     vec2 fragCoord = fragTexCoord * resolution;
     vec2 uv = (fragCoord - 0.5 * resolution) / resolution.y;
+
+    // Hoisted uniforms-only values - reused across every Vogel sample.
+    vec2 gcs = vec2(cos(globalRotationPhase), sin(globalRotationPhase));
+    mat2 grot = mat2(gcs.x, gcs.y, -gcs.y, gcs.x);
+    vec2 rcs = vec2(cos(rotationPhase), sin(rotationPhase));
+    mat2 rot = mat2(rcs.x, rcs.y, -rcs.y, rcs.x);
+    float scale = pow(1e-4, 1.0 - coordinateScale);
 
     // Vogel-disk multi-sample for DOF blur.
     int sc = max(sampleCount, 1);
@@ -185,11 +177,9 @@ void main() {
         float p = gold * fi;
         vec2 offsetPx = (0.5 / resolution.y) * sqrt(x) * vec2(cos(p), sin(p));
         vec2 sampleFrag = (uv - offsetPx) * resolution.y + 0.5 * resolution;
-        col += spiralize(sampleFrag);
+        col += spiralize(sampleFrag, grot, rot, scale);
     }
     col /= float(sc);
-
-    col.rgb += grainAmount * (2.0 * hash12(1e4 * fragTexCoord) - 1.0);
 
     vec4 prev = texture(texture0, fragTexCoord);
     col = mix(col, prev, taaMix);

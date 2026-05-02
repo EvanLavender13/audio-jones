@@ -44,7 +44,6 @@ static void CacheLocations(DreamZoomEffect *e) {
   e->originLoc = GetShaderLocation(e->shader, "origin");
   e->constantOffsetLoc = GetShaderLocation(e->shader, "constantOffset");
   e->sampleCountLoc = GetShaderLocation(e->shader, "sampleCount");
-  e->grainAmountLoc = GetShaderLocation(e->shader, "grainAmount");
   e->taaMixLoc = GetShaderLocation(e->shader, "taaMix");
 
   e->baseFreqLoc = GetShaderLocation(e->shader, "baseFreq");
@@ -58,7 +57,6 @@ static void AllocPrevFrame(DreamZoomEffect *e, int width, int height) {
   RenderUtilsInitTextureHDR(&e->prevFrame, width, height, "DREAM_ZOOM");
   e->prevFrameWidth = width;
   e->prevFrameHeight = height;
-  e->prevFrameSeeded = false;
 }
 
 bool DreamZoomEffectInit(DreamZoomEffect *e, const DreamZoomConfig *cfg,
@@ -87,12 +85,12 @@ bool DreamZoomEffectInit(DreamZoomEffect *e, const DreamZoomConfig *cfg,
 
 void DreamZoomEffectSetup(DreamZoomEffect *e, const DreamZoomConfig *cfg,
                           float deltaTime) {
+  // Wrap zoomPhase modulo spiralWrap so the shader's mod(zoomPhase/spiralWrap,
+  // 1.0) stays seamless across the wrap. Wrapping at a fixed constant only
+  // stays seamless when spiralWrap divides it.
   e->zoomPhase += cfg->zoomSpeed * deltaTime;
-  if (e->zoomPhase > 1024.0f) {
-    e->zoomPhase -= 1024.0f;
-  }
-  if (e->zoomPhase < -1024.0f) {
-    e->zoomPhase += 1024.0f;
+  if (cfg->spiralWrap > 0.0f) {
+    e->zoomPhase -= floorf(e->zoomPhase / cfg->spiralWrap) * cfg->spiralWrap;
   }
 
   e->globalRotationPhase += cfg->globalRotationSpeed * deltaTime;
@@ -111,7 +109,6 @@ void DreamZoomEffectSetup(DreamZoomEffect *e, const DreamZoomConfig *cfg,
   const float trapVec[2] = {cfg->trapOffsetX, cfg->trapOffsetY};
   const float originVec[2] = {cfg->originX, cfg->originY};
   const float kVec[2] = {cfg->constantOffsetX, cfg->constantOffsetY};
-  const int sampleCountClamped = (cfg->sampleCount < 1) ? 1 : cfg->sampleCount;
 
   SetShaderValue(e->shader, e->resolutionLoc, resolution, SHADER_UNIFORM_VEC2);
   SetShaderValue(e->shader, e->sampleRateLoc, &sampleRate,
@@ -145,14 +142,9 @@ void DreamZoomEffectSetup(DreamZoomEffect *e, const DreamZoomConfig *cfg,
   SetShaderValue(e->shader, e->trapOffsetLoc, trapVec, SHADER_UNIFORM_VEC2);
   SetShaderValue(e->shader, e->originLoc, originVec, SHADER_UNIFORM_VEC2);
   SetShaderValue(e->shader, e->constantOffsetLoc, kVec, SHADER_UNIFORM_VEC2);
-  SetShaderValue(e->shader, e->sampleCountLoc, &sampleCountClamped,
+  SetShaderValue(e->shader, e->sampleCountLoc, &cfg->sampleCount,
                  SHADER_UNIFORM_INT);
-  SetShaderValue(e->shader, e->grainAmountLoc, &cfg->grainAmount,
-                 SHADER_UNIFORM_FLOAT);
-  // Suppress TAA on the very first frame; prevFrame is still black-cleared.
-  const float taaMixEffective = e->prevFrameSeeded ? cfg->taaMix : 0.0f;
-  SetShaderValue(e->shader, e->taaMixLoc, &taaMixEffective,
-                 SHADER_UNIFORM_FLOAT);
+  SetShaderValue(e->shader, e->taaMixLoc, &cfg->taaMix, SHADER_UNIFORM_FLOAT);
 
   SetShaderValue(e->shader, e->baseFreqLoc, &cfg->baseFreq,
                  SHADER_UNIFORM_FLOAT);
@@ -181,7 +173,6 @@ void DreamZoomEffectRender(DreamZoomEffect *e, PostEffect *pe) {
   RenderUtilsDrawFullscreenQuad(pe->generatorScratch.texture, pe->screenWidth,
                                 pe->screenHeight);
   EndTextureMode();
-  e->prevFrameSeeded = true;
 }
 
 void DreamZoomEffectResize(DreamZoomEffect *e, int width, int height) {
@@ -223,8 +214,6 @@ void DreamZoomRegisterParams(DreamZoomConfig *cfg) {
                          -300.0f, 300.0f);
   ModEngineRegisterParam("dreamZoom.constantOffsetY", &cfg->constantOffsetY,
                          -300.0f, 300.0f);
-  ModEngineRegisterParam("dreamZoom.grainAmount", &cfg->grainAmount, 0.0f,
-                         0.1f);
   ModEngineRegisterParam("dreamZoom.taaMix", &cfg->taaMix, 0.0f, 0.5f);
   ModEngineRegisterParam("dreamZoom.baseFreq", &cfg->baseFreq, 27.5f, 440.0f);
   ModEngineRegisterParam("dreamZoom.maxFreq", &cfg->maxFreq, 1000.0f, 16000.0f);
@@ -326,8 +315,6 @@ static void DrawDreamZoomParams(EffectConfig *e, const ModSources *ms,
 
   ImGui::SeparatorText("Polish");
   ImGui::SliderInt("DOF Samples##dreamZoom", &cfg->sampleCount, 1, 8);
-  ModulatableSlider("Grain##dreamZoom", &cfg->grainAmount,
-                    "dreamZoom.grainAmount", "%.3f", ms);
   ModulatableSlider("Temporal AA##dreamZoom", &cfg->taaMix, "dreamZoom.taaMix",
                     "%.3f", ms);
 }

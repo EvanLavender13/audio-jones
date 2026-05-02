@@ -45,9 +45,8 @@ struct DreamZoomConfig {
       -2.36f; // Per-iter add Y, scaled by 0.01 (-300 to 300)
 
   // Polish
-  int sampleCount = 2;        // Vogel-disk DOF samples per pixel (1-8)
-  float grainAmount = 0.025f; // Hash grain amplitude (0-0.1)
-  float taaMix = 0.1f;        // Temporal AA blend with previous frame (0-0.5)
+  int sampleCount = 2; // Vogel-disk DOF samples per pixel (1-8)
+  float taaMix = 0.1f; // Temporal AA blend with previous frame (0-0.5)
 
   // Audio (FFT)
   float baseFreq = 55.0f;
@@ -66,9 +65,8 @@ struct DreamZoomConfig {
   enabled, zoomSpeed, globalRotationSpeed, rotationSpeed, jacobiRepeats,       \
       spiralWrap, formulaMix, iterations, coordinateScale, offsetX, offsetY,   \
       cmapScale, cmapOffset, trapOffsetX, trapOffsetY, originX, originY,       \
-      constantOffsetX, constantOffsetY, sampleCount, grainAmount, taaMix,      \
-      baseFreq, maxFreq, gain, curve, baseBright, gradient, blendMode,         \
-      blendIntensity
+      constantOffsetX, constantOffsetY, sampleCount, taaMix, baseFreq,         \
+      maxFreq, gain, curve, baseBright, gradient, blendMode, blendIntensity
 
 typedef struct ColorLUT ColorLUT;
 
@@ -78,10 +76,11 @@ typedef struct DreamZoomEffect {
 
   // Previous-frame buffer for TAA. Bound as the fullscreen-quad source so
   // it lands in texture0 inside the shader (byzantine_display convention).
+  // Cleared to black at init so the first frame's mix() darkens by taaMix
+  // for one frame before converging - acceptable; not worth a guard flag.
   RenderTexture2D prevFrame;
   int prevFrameWidth;
   int prevFrameHeight;
-  bool prevFrameSeeded;
 
   // CPU-accumulated phases
   float zoomPhase;
@@ -109,7 +108,6 @@ typedef struct DreamZoomEffect {
   int originLoc;
   int constantOffsetLoc;
   int sampleCountLoc;
-  int grainAmountLoc;
   int taaMixLoc;
 
   int baseFreqLoc;
