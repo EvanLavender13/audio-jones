@@ -47,6 +47,7 @@ struct DreamZoomConfig {
   // Polish
   int sampleCount = 2;        // Vogel-disk DOF samples per pixel (1-8)
   float grainAmount = 0.025f; // Hash grain amplitude (0-0.1)
+  float taaMix = 0.1f;        // Temporal AA blend with previous frame (0-0.5)
 
   // Audio (FFT)
   float baseFreq = 55.0f;
@@ -65,14 +66,22 @@ struct DreamZoomConfig {
   enabled, zoomSpeed, globalRotationSpeed, rotationSpeed, jacobiRepeats,       \
       spiralWrap, formulaMix, iterations, coordinateScale, offsetX, offsetY,   \
       cmapScale, cmapOffset, trapOffsetX, trapOffsetY, originX, originY,       \
-      constantOffsetX, constantOffsetY, sampleCount, grainAmount, baseFreq,    \
-      maxFreq, gain, curve, baseBright, gradient, blendMode, blendIntensity
+      constantOffsetX, constantOffsetY, sampleCount, grainAmount, taaMix,      \
+      baseFreq, maxFreq, gain, curve, baseBright, gradient, blendMode,         \
+      blendIntensity
 
 typedef struct ColorLUT ColorLUT;
 
 typedef struct DreamZoomEffect {
   Shader shader;
   ColorLUT *gradientLUT;
+
+  // Previous-frame buffer for TAA. Bound as the fullscreen-quad source so
+  // it lands in texture0 inside the shader (byzantine_display convention).
+  RenderTexture2D prevFrame;
+  int prevFrameWidth;
+  int prevFrameHeight;
+  bool prevFrameSeeded;
 
   // CPU-accumulated phases
   float zoomPhase;
@@ -101,6 +110,7 @@ typedef struct DreamZoomEffect {
   int constantOffsetLoc;
   int sampleCountLoc;
   int grainAmountLoc;
+  int taaMixLoc;
 
   int baseFreqLoc;
   int maxFreqLoc;
@@ -109,9 +119,12 @@ typedef struct DreamZoomEffect {
   int baseBrightLoc;
 } DreamZoomEffect;
 
-bool DreamZoomEffectInit(DreamZoomEffect *e, const DreamZoomConfig *cfg);
+bool DreamZoomEffectInit(DreamZoomEffect *e, const DreamZoomConfig *cfg,
+                         int width, int height);
 void DreamZoomEffectSetup(DreamZoomEffect *e, const DreamZoomConfig *cfg,
-                          float deltaTime, const Texture2D &fftTexture);
+                          float deltaTime);
+void DreamZoomEffectRender(DreamZoomEffect *e, PostEffect *pe);
+void DreamZoomEffectResize(DreamZoomEffect *e, int width, int height);
 void DreamZoomEffectUninit(DreamZoomEffect *e);
 void DreamZoomRegisterParams(DreamZoomConfig *cfg);
 

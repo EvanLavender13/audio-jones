@@ -17,6 +17,9 @@
 in vec2 fragTexCoord;
 out vec4 finalColor;
 
+// texture0 holds the previous frame (bound by the fullscreen-quad source);
+// see byzantine_display.fs for the same convention.
+uniform sampler2D texture0;
 uniform vec2 resolution;
 uniform sampler2D fftTexture;
 uniform float sampleRate;
@@ -38,6 +41,7 @@ uniform vec2  origin;
 uniform vec2  constantOffset;
 uniform int   sampleCount;
 uniform float grainAmount;
+uniform float taaMix;
 
 uniform float baseFreq;
 uniform float maxFreq;
@@ -186,6 +190,9 @@ void main() {
     col /= float(sc);
 
     col.rgb += grainAmount * (2.0 * hash12(1e4 * fragTexCoord) - 1.0);
+
+    vec4 prev = texture(texture0, fragTexCoord);
+    col = mix(col, prev, taaMix);
 
     finalColor = vec4(col.rgb, 1.0);
 }

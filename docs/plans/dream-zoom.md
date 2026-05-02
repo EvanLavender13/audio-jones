@@ -566,3 +566,38 @@ The default `TransformOrderConfig` constructor auto-populates `order[]` by enum 
 - [ ] All registered modulation params route correctly (test by binding an LFO to each in turn)
 - [ ] Preset save/load round-trips all fields including the three embedded `DualLissajousConfig`s
 - [ ] No NaN regions appear at high `formulaMix` or `iterations` values
+
+---
+
+## Implementation Notes
+
+The shipped effect deviates from this plan in several material ways. The plan was based on a research doc that was wrong about multiple points; the shipped code follows NR4's actual reference source instead.
+
+**Variant dropped.** Dream-only. The plan's `VARIANT_DREAM` / `VARIANT_JACOBI` toggle was based on a research claim that the only difference between NR4's two source shaders was `iCoordinateScale` and `iOffset`. The actual references differ in 10+ params (cmapScale, cmapOffset, trapOffset, origin, constantMapOffset, formulaMix, jacobiRepeats, globalRotationSpeed, spiral wrap divisor, iter cap, plus a `z += 0.3*(cos(.4t),sin(.5t))` translation in Jacobi's spiralize). A working two-variant effect would either have to snap N other params on a dropdown change (rejected on UX grounds) or be split into two separate effect entries (rejected on scope). Single Dream effect ships with the reference's actual Dream constants.
+
+**Lissajous embeddings dropped.** The plan used `DualLissajousConfig` for `trapOffset`, `origin`, `constantOffset` per `feedback_lissajous_for_2d_positions.md`. That convention is wrong for orbit-trap fractals: the trap point determines the entire fractal structure, so animating it dissolves the coherent depth bands; and with `amplitude=0` the Lissajous parks at exactly `(0,0)`, which is the singularity in `length(z / (z - trapOffset))`. Replaced with plain `float trapOffsetX/Y, originX/Y, constantOffsetX/Y` defaulting to NR4's static reference values.
+
+**`formula()` body fixed.** The research's per-iteration map used `vec2(cos(zf.y), sin(zf.y)) * min(exp(zf.x), 2e4)` for the exp branch. The reference actually uses `vec2(cos(mod(abs(z.y), 2*pi)), sign(z.y) * sin(mod(abs(z.y), 2*pi))) * min(exp(z.x), 2e4)` — the `mod(abs(z.y))` / `sign(z.y)` folding of the imaginary axis is load-bearing. Without it the fractal looks structurally different.
+
+**`iOffset * 0.001` UV pre-shift added.** The research omitted the per-pixel UV shift `uv -= iOffset * 0.001` that runs inside the reference's `pixel()` function. Without it the fractal renders centered at the wrong viewpoint (the reference's `iOffset = (-1252.38, -1818.59)` puts the framing where it does in the reference image).
+
+**Per-pixel rotation moved.** The plan applied `rotationPhase` as a 2x2 rotation on `z` after `cn_complex` and before the iteration loop. The reference applies it to `uv` inside `pixelOf()` after the iOffset shift and before the coordinate-scale exp. Moved to match.
+
+**`jacobiRepeats` is `int`.** The plan had it as a modulatable float. Fractional values break the cn-tile periodicity (`mod(zoomPhase / spiralWrap, 1.0) * 3.7` only lands on a phase-equivalent lattice point when `jacobiRepeats` is an integer). Now `int`, no modulation, range 1-8, default 1, cast to `float` at the `SetShaderValue` call site.
+
+**Polish features added.** The plan deferred Vogel-disk DOF, hash grain, and temporal AA to "use AudioJones Bokeh and Film Grain transforms downstream." That doesn't reproduce what those features do baked into the per-sample loop. Added all three in-shader:
+- **Vogel DOF**: Multi-sample per-pixel via golden-angle disk offsets, `sampleCount` slider (default 2 = reference value).
+- **Hash grain**: `+= grainAmount * (2 * hash12(1e4 * uvn) - 1)`, default 0.025 = reference value.
+- **Temporal AA**: Owns its own HDR ping-pong texture (`prevFrame`). Uses `REGISTER_GENERATOR_FULL` with a custom `RenderFn` and `Resize` hook. Two render passes per frame:
+  1. Shader writes to `pe->generatorScratch` with `prevFrame.texture` as the fullscreen-quad source.
+  2. Default raylib shader copies `pe->generatorScratch` back into `prevFrame` for next frame.
+
+**TAA: previous-frame texture is bound via `texture0`, not a named sampler.** First TAA attempt used a separate `uniform sampler2D prevFrame` bound via `SetShaderValueTexture`. Black-screened. Root cause: passing `prevFrame.texture` as the fullscreen-quad source AND binding it to a second named sampler created two simultaneous bindings of the same texture to different slots, and raylib's slot allocator did the wrong thing. Fix follows the `byzantine_display.fs` convention: declare `uniform sampler2D texture0` in the shader, sample THAT for the previous frame, and let the fullscreen-quad source argument bind it implicitly.
+
+**Texture samplers must be bound INSIDE `BeginShaderMode` for `REGISTER_GENERATOR_FULL`.** Second black-screen during TAA wiring. The dispatcher's `REGISTER_GENERATOR_FULL` path calls `scratchSetup(pe)` BEFORE the custom `RenderFn`, with no shader active. Scalar uniforms set via `SetShaderValue` are cached in raylib's shader struct and reapplied at `glUseProgram`, but `SetShaderValueTexture` bindings need the shader active to land in the right texture unit. `byzantine.cpp` does this correctly: `gradientLUT` is bound inside the render's `BeginShaderMode` block. Followed the same pattern: `fftTexture` and `gradientLUT` are now bound inside `RenderDreamZoom`'s `BeginShaderMode`, not in `DreamZoomEffectSetup`.
+
+**FFT uses BAND_SAMPLES standard.** Per the original plan and `memory/generator_patterns.md`. The research's single-bin lookup was wrong. Field naming is `gain` / `curve` (not `contrast`) per AudioJones convention.
+
+**`spiralWrap` exposed as a slider.** The reference hardcoded `Speed = 4` for Dream and `Speed = 2` for Jacobi inside `spiralize()`. Surfaced as a user param so any cycle period is reachable.
+
+**Default `baseBright = 0.15`, `gain = 2.0`.** Convention defaults. Do not change.

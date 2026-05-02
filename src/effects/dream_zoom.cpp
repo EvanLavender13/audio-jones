@@ -15,6 +15,7 @@
 #include "render/blend_mode.h"
 #include "render/color_lut.h"
 #include "render/post_effect.h"
+#include "render/render_utils.h"
 #include "ui/imgui_panels.h"
 #include "ui/modulatable_slider.h"
 #include "ui/ui_units.h"
@@ -44,6 +45,7 @@ static void CacheLocations(DreamZoomEffect *e) {
   e->constantOffsetLoc = GetShaderLocation(e->shader, "constantOffset");
   e->sampleCountLoc = GetShaderLocation(e->shader, "sampleCount");
   e->grainAmountLoc = GetShaderLocation(e->shader, "grainAmount");
+  e->taaMixLoc = GetShaderLocation(e->shader, "taaMix");
 
   e->baseFreqLoc = GetShaderLocation(e->shader, "baseFreq");
   e->maxFreqLoc = GetShaderLocation(e->shader, "maxFreq");
@@ -52,7 +54,15 @@ static void CacheLocations(DreamZoomEffect *e) {
   e->baseBrightLoc = GetShaderLocation(e->shader, "baseBright");
 }
 
-bool DreamZoomEffectInit(DreamZoomEffect *e, const DreamZoomConfig *cfg) {
+static void AllocPrevFrame(DreamZoomEffect *e, int width, int height) {
+  RenderUtilsInitTextureHDR(&e->prevFrame, width, height, "DREAM_ZOOM");
+  e->prevFrameWidth = width;
+  e->prevFrameHeight = height;
+  e->prevFrameSeeded = false;
+}
+
+bool DreamZoomEffectInit(DreamZoomEffect *e, const DreamZoomConfig *cfg,
+                         int width, int height) {
   e->shader = LoadShader(NULL, "shaders/dream_zoom.fs");
   if (e->shader.id == 0) {
     return false;
@@ -66,6 +76,8 @@ bool DreamZoomEffectInit(DreamZoomEffect *e, const DreamZoomConfig *cfg) {
     return false;
   }
 
+  AllocPrevFrame(e, width, height);
+
   e->zoomPhase = 0.0f;
   e->globalRotationPhase = 0.0f;
   e->rotationPhase = 0.0f;
@@ -74,7 +86,7 @@ bool DreamZoomEffectInit(DreamZoomEffect *e, const DreamZoomConfig *cfg) {
 }
 
 void DreamZoomEffectSetup(DreamZoomEffect *e, const DreamZoomConfig *cfg,
-                          float deltaTime, const Texture2D &fftTexture) {
+                          float deltaTime) {
   e->zoomPhase += cfg->zoomSpeed * deltaTime;
   if (e->zoomPhase > 1024.0f) {
     e->zoomPhase -= 1024.0f;
@@ -102,11 +114,11 @@ void DreamZoomEffectSetup(DreamZoomEffect *e, const DreamZoomConfig *cfg,
   const int sampleCountClamped = (cfg->sampleCount < 1) ? 1 : cfg->sampleCount;
 
   SetShaderValue(e->shader, e->resolutionLoc, resolution, SHADER_UNIFORM_VEC2);
-  SetShaderValueTexture(e->shader, e->fftTextureLoc, fftTexture);
   SetShaderValue(e->shader, e->sampleRateLoc, &sampleRate,
                  SHADER_UNIFORM_FLOAT);
-  SetShaderValueTexture(e->shader, e->gradientLUTLoc,
-                        ColorLUTGetTexture(e->gradientLUT));
+  // fftTexture and gradientLUT are bound inside BeginShaderMode in
+  // DreamZoomEffectRender; the dispatcher calls this Setup before activating
+  // the shader, so SetShaderValueTexture here would land in the wrong slot.
 
   SetShaderValue(e->shader, e->zoomPhaseLoc, &e->zoomPhase,
                  SHADER_UNIFORM_FLOAT);
@@ -137,6 +149,10 @@ void DreamZoomEffectSetup(DreamZoomEffect *e, const DreamZoomConfig *cfg,
                  SHADER_UNIFORM_INT);
   SetShaderValue(e->shader, e->grainAmountLoc, &cfg->grainAmount,
                  SHADER_UNIFORM_FLOAT);
+  // Suppress TAA on the very first frame; prevFrame is still black-cleared.
+  const float taaMixEffective = e->prevFrameSeeded ? cfg->taaMix : 0.0f;
+  SetShaderValue(e->shader, e->taaMixLoc, &taaMixEffective,
+                 SHADER_UNIFORM_FLOAT);
 
   SetShaderValue(e->shader, e->baseFreqLoc, &cfg->baseFreq,
                  SHADER_UNIFORM_FLOAT);
@@ -147,9 +163,39 @@ void DreamZoomEffectSetup(DreamZoomEffect *e, const DreamZoomConfig *cfg,
                  SHADER_UNIFORM_FLOAT);
 }
 
+void DreamZoomEffectRender(DreamZoomEffect *e, PostEffect *pe) {
+  // Pass 1: render shader into pe->generatorScratch with prevFrame.texture
+  // as the fullscreen-quad source (binds to texture0 in the shader).
+  BeginTextureMode(pe->generatorScratch);
+  BeginShaderMode(e->shader);
+  SetShaderValueTexture(e->shader, e->fftTextureLoc, pe->fftTexture);
+  SetShaderValueTexture(e->shader, e->gradientLUTLoc,
+                        ColorLUTGetTexture(e->gradientLUT));
+  RenderUtilsDrawFullscreenQuad(e->prevFrame.texture, pe->screenWidth,
+                                pe->screenHeight);
+  EndShaderMode();
+  EndTextureMode();
+
+  // Pass 2: copy fresh output back into prevFrame for next frame's TAA.
+  BeginTextureMode(e->prevFrame);
+  RenderUtilsDrawFullscreenQuad(pe->generatorScratch.texture, pe->screenWidth,
+                                pe->screenHeight);
+  EndTextureMode();
+  e->prevFrameSeeded = true;
+}
+
+void DreamZoomEffectResize(DreamZoomEffect *e, int width, int height) {
+  if (width == e->prevFrameWidth && height == e->prevFrameHeight) {
+    return;
+  }
+  UnloadRenderTexture(e->prevFrame);
+  AllocPrevFrame(e, width, height);
+}
+
 void DreamZoomEffectUninit(DreamZoomEffect *e) {
   UnloadShader(e->shader);
   ColorLUTUninit(e->gradientLUT);
+  UnloadRenderTexture(e->prevFrame);
 }
 
 void DreamZoomRegisterParams(DreamZoomConfig *cfg) {
@@ -179,6 +225,7 @@ void DreamZoomRegisterParams(DreamZoomConfig *cfg) {
                          -300.0f, 300.0f);
   ModEngineRegisterParam("dreamZoom.grainAmount", &cfg->grainAmount, 0.0f,
                          0.1f);
+  ModEngineRegisterParam("dreamZoom.taaMix", &cfg->taaMix, 0.0f, 0.5f);
   ModEngineRegisterParam("dreamZoom.baseFreq", &cfg->baseFreq, 27.5f, 440.0f);
   ModEngineRegisterParam("dreamZoom.maxFreq", &cfg->maxFreq, 1000.0f, 16000.0f);
   ModEngineRegisterParam("dreamZoom.gain", &cfg->gain, 0.1f, 10.0f);
@@ -194,13 +241,17 @@ DreamZoomEffect *GetDreamZoomEffect(PostEffect *pe) {
 
 void SetupDreamZoom(PostEffect *pe) {
   DreamZoomEffectSetup(GetDreamZoomEffect(pe), &pe->effects.dreamZoom,
-                       pe->currentDeltaTime, pe->fftTexture);
+                       pe->currentDeltaTime);
 }
 
 void SetupDreamZoomBlend(PostEffect *pe) {
   BlendCompositorApply(pe->blendCompositor, pe->generatorScratch.texture,
                        pe->effects.dreamZoom.blendIntensity,
                        pe->effects.dreamZoom.blendMode);
+}
+
+void RenderDreamZoom(PostEffect *pe) {
+  DreamZoomEffectRender(GetDreamZoomEffect(pe), pe);
 }
 
 // === UI ===
@@ -277,11 +328,14 @@ static void DrawDreamZoomParams(EffectConfig *e, const ModSources *ms,
   ImGui::SliderInt("DOF Samples##dreamZoom", &cfg->sampleCount, 1, 8);
   ModulatableSlider("Grain##dreamZoom", &cfg->grainAmount,
                     "dreamZoom.grainAmount", "%.3f", ms);
+  ModulatableSlider("Temporal AA##dreamZoom", &cfg->taaMix, "dreamZoom.taaMix",
+                    "%.3f", ms);
 }
 
 // clang-format off
 STANDARD_GENERATOR_OUTPUT(dreamZoom)
-REGISTER_GENERATOR(TRANSFORM_DREAM_ZOOM_BLEND, DreamZoom, dreamZoom,
-                   "Dream Zoom", SetupDreamZoomBlend, SetupDreamZoom, 12,
-                   DrawDreamZoomParams, DrawOutput_dreamZoom)
+REGISTER_GENERATOR_FULL(TRANSFORM_DREAM_ZOOM_BLEND, DreamZoom, dreamZoom,
+                        "Dream Zoom", SetupDreamZoomBlend, SetupDreamZoom,
+                        RenderDreamZoom, 12,
+                        DrawDreamZoomParams, DrawOutput_dreamZoom)
 // clang-format on
