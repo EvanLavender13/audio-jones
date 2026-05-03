@@ -261,11 +261,3 @@ Reorderable effects with sub-categories:
 | Palette Quantization | Reduces colors to limited palette with Bayer dithering for retro/pixel-art look |
 | Hue Remap | Custom color wheel replacing every hue, fading and shifting differently across the image like stained light |
 | Solarize | Overexposed darkroom negative where tones flip into psychedelic neon banding |
-
----
-
-## Pipeline Order
-
-1. **Feedback stage** — Particle compute → Flow Field shader → Blur
-2. **Drawable stage** — Waveforms to accumulation texture
-3. **Output stage** — Trail boost → Generators → Transforms (user order) → Clarity → FXAA → Gamma

@@ -1,6 +1,6 @@
 # Codebase Concerns
 
-> Last sync: 2026-04-26 | Commit: d3121df1
+> Last sync: 2026-05-03 | Commit: 633041d0
 
 ## Tech Debt
 
@@ -11,22 +11,22 @@
 - Impact: Inconsistent behavior (BT.601 `vec3(0.299, 0.587, 0.114)` vs BT.709 `vec3(0.2126, 0.7152, 0.0722)` luma weights), maintenance burden when fixing shared functions
 - Fix approach: Shader include preprocessor per `docs/plans/shader-includes.md`
 
-**PostEffect struct bloat (partially mitigated):**
-- Issue: Effect modules own their shader handles and uniform locations. PostEffect struct holds ~150 named effect struct fields as flat members plus 30+ feedback-related uniform location ints.
-- Files: `src/render/post_effect.h` (414 lines), `src/render/post_effect.cpp` (381 lines)
-- Impact: Each new effect adds one struct field to PostEffect plus init/uninit/register calls in post_effect.cpp.
-- Fix approach: Store effects in an array indexed by type
+**EffectConfig flat struct still grows per effect:**
+- Issue: `EffectConfig` in `src/config/effect_config.h` (898 lines) embeds one config field per effect. The `TransformEffectType` enum has 157 entries. Each new effect adds an enum row, a config field, and a serialization macro.
+- Files: `src/config/effect_config.h` (898 lines), `src/config/effect_serialization.cpp` (858 lines, 161 NLOHMANN macros)
+- Impact: Single header touched on every new effect; recompilation cascade across all `.cpp` files that include `effect_config.h`
+- Fix approach: Heterogeneous storage keyed by `TransformEffectType` (the descriptor refactor for runtime state has already proven the pattern; configs are next)
 
 **Static UI section state (nearly resolved):**
-- Issue: UI colocation replaced 90+ `static bool section*` variables across 16 category UI files with a single `g_effectSectionOpen[TRANSFORM_EFFECT_COUNT]` array in `src/ui/imgui_effects_dispatch.cpp`. 1 `static bool section*` variable remains in 1 file for a non-effect UI section (flow field).
-- Files: `src/ui/imgui_effects.cpp` (1 var)
+- Issue: UI colocation replaced 90+ `static bool section*` variables across 16 category UI files with a single `g_effectSectionOpen[TRANSFORM_EFFECT_COUNT]` array in `src/ui/imgui_effects_dispatch.cpp`. 1 `static bool sectionFlowField` remains for a non-effect UI section (flow field).
+- Files: `src/ui/imgui_effects.cpp:15`
 - Impact: Remaining state resets on hot reload; cannot persist user preferences
-- Fix approach: Move remaining into a UIState struct stored alongside app config
+- Fix approach: Move remaining flag into a UIState struct stored alongside app config
 
-**Preset serialization split but still growing:**
-- Issue: Preset serialization was split from a single 1132-line `preset.cpp` into `preset.cpp` (277 lines) + `effect_serialization.cpp` (842 lines, 157 NLOHMANN macros + 3 manual to_json/from_json pairs). The serialization file keeps growing with each new effect.
-- Files: `src/config/preset.cpp`, `src/config/effect_serialization.cpp`
-- Impact: Every new config struct requires a manual NLOHMANN_DEFINE macro and field listing. Missing fields silently load as defaults.
+**Preset serialization grows linearly with effects:**
+- Issue: `effect_serialization.cpp` defines 161 `NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT` macros plus 3 manual `to_json`/`from_json` pairs. Every new config struct requires a manual macro and field listing.
+- Files: `src/config/preset.cpp` (277 lines), `src/config/effect_serialization.cpp` (858 lines)
+- Impact: Missing fields silently load as defaults (accepted tradeoff -- no schema versioning while solo-developing).
 - Fix approach: Code generation or reflection-based serialization
 
 ## Known Bugs
@@ -43,19 +43,19 @@ None detected.
 
 ## Fragile Areas
 
-**PostEffect Init/Uninit Sequence:**
-- Files: `src/render/post_effect.cpp`
-- Why fragile: Sequential effect init calls with individual failure checks. Uninit order does not mirror init order. Adding an effect requires matching additions in init, uninit, resize, and register functions.
-- Safe modification: Follow existing pattern exactly. Add new effect init in the same sequence block. Add matching uninit call.
+**PostEffect feedback uniform location block:**
+- Files: `src/render/post_effect.h` (130 lines), `src/render/post_effect.cpp` (388 lines)
+- Why fragile: Effect-specific state is now a `void* effectStates[TRANSFORM_EFFECT_COUNT]` array driven by `EFFECT_DESCRIPTORS[]`, but the feedback shader still has ~30 named uniform location ints in `PostEffect`. Adding a feedback parameter requires touching the struct, the loc cache, and the shader bind site.
+- Safe modification: Mirror the descriptor pattern only when feedback gains a clear sub-effect boundary; until then, keep all three sites in sync
 
 **Preset Serialization:**
-- Files: `src/config/effect_serialization.cpp` (842 lines), `src/config/preset.cpp` (277 lines)
+- Files: `src/config/effect_serialization.cpp` (858 lines), `src/config/preset.cpp` (277 lines)
 - Why fragile: Every config struct requires a NLOHMANN_DEFINE macro and manual field listing. Missing fields silently load as defaults.
 - Safe modification: Always test round-trip (save then load) when adding config fields
 
 **Simulation init/uninit with goto cleanup:**
-- Files: `src/simulation/physarum.cpp`, `src/simulation/boids.cpp`, `src/simulation/curl_flow.cpp`, `src/simulation/attractor_flow.cpp`, `src/simulation/particle_life.cpp`, `src/simulation/trail_map.cpp`, `src/simulation/spatial_hash.cpp`, `src/simulation/maze_worms.cpp`
-- Why fragile: Each simulation uses goto-based cleanup; missing a goto path on new allocation leaks resources
+- Files: `src/simulation/physarum.cpp`, `src/simulation/boids.cpp`, `src/simulation/curl_flow.cpp`, `src/simulation/attractor_flow.cpp`, `src/simulation/particle_life.cpp`, `src/simulation/maze_worms.cpp`, `src/simulation/spatial_hash.cpp`
+- Why fragile: 29 goto statements across simulation files; each simulation uses goto-based cleanup. Missing a goto path on new allocation leaks resources.
 - Safe modification: Add new allocations immediately before the corresponding goto check; uninit in reverse order
 
 **Drawable ID management:**
@@ -72,38 +72,41 @@ None detected.
 
 | File | Lines | Concern |
 |------|-------|---------|
-| `src/config/effect_config.h` | 877 | ~152-entry enum, ~152 effect config fields |
-| `src/config/effect_serialization.cpp` | 842 | 157 NLOHMANN macros + 3 manual serializers |
+| `src/config/effect_config.h` | 898 | 157-entry `TransformEffectType` enum + one config field per effect |
+| `src/config/effect_serialization.cpp` | 858 | 161 NLOHMANN macros + 3 manual serializers |
 | `src/ui/imgui_analysis.cpp` | 614 | Audio visualization UI |
 | `src/simulation/particle_life.cpp` | 579 | GPU compute simulation |
 | `src/simulation/attractor_flow.cpp` | 530 | GPU compute simulation with colocated UI |
 | `src/simulation/physarum.cpp` | 527 | GPU compute simulation with colocated UI |
-| `src/ui/imgui_widgets.cpp` | 487 | Custom ImGui widgets |
 | `src/ui/modulatable_slider.cpp` | 490 | LFO-modulatable slider widget |
+| `src/ui/imgui_widgets.cpp` | 487 | Custom ImGui widgets |
 | `src/simulation/curl_flow.cpp` | 482 | GPU compute simulation |
 | `src/simulation/boids.cpp` | 482 | GPU compute simulation |
 | `src/render/waveform.cpp` | 479 | Waveform rendering |
-| `src/effects/glitch.cpp` | 425 | Multi-sub-effect module with colocated UI |
+| `src/effects/lichen.cpp` | 464 | Multi-species reaction-diffusion generator with colocated UI |
+| `src/effects/glitch.cpp` | 430 | Multi-sub-effect module with colocated UI |
 | `src/ui/imgui_playlist.cpp` | 411 | Playlist management UI |
-| `src/render/post_effect.h` | 414 | PostEffect struct with ~152 effect fields |
-| `src/effects/ripple_tank.cpp` | 397 | Cymatics simulation with colocated UI |
+| `src/effects/ripple_tank.cpp` | 403 | Cymatics simulation with colocated UI |
+| `src/render/post_effect.cpp` | 388 | Effect init/uninit/resize orchestration (descriptor-driven) |
+| `src/effects/polymorph.cpp` | 386 | Generator with colocated UI |
 | `src/main.cpp` | 384 | Application entry point and main loop |
-| `src/effects/polymorph.cpp` | 382 | Generator with colocated UI |
-| `src/render/post_effect.cpp` | 381 | Effect init/uninit/resize orchestration |
-| `src/effects/curl_advection.cpp` | 381 | GPU compute simulation with colocated UI |
-| `src/effects/attractor_lines.cpp` | 373 | Generator with colocated UI |
+| `src/effects/curl_advection.cpp` | 384 | GPU compute simulation with colocated UI |
 | `src/simulation/maze_worms.cpp` | 377 | GPU compute simulation with colocated UI |
+| `src/effects/attractor_lines.cpp` | 377 | Generator with colocated UI |
 | `src/ui/gradient_editor.cpp` | 350 | Gradient editor widget |
 | `src/render/render_pipeline.cpp` | 331 | Frame rendering orchestration |
 | `src/ui/imgui_bus.cpp` | 330 | Mod bus management UI |
 | `src/ui/imgui_presets.cpp` | 328 | Preset management UI |
+| `src/effects/dream_zoom.cpp` | 328 | Generator with colocated UI |
+| `src/effects/data_traffic.cpp` | 325 | Generator with colocated UI |
 | `src/ui/imgui_effects.cpp` | 322 | Effects panel orchestration |
-| `src/effects/data_traffic.cpp` | 321 | Generator with colocated UI |
 | `src/simulation/spatial_hash.cpp` | 318 | Spatial hash grid implementation |
 | `src/ui/imgui_drawables.cpp` | 317 | Drawable management UI |
 | `src/render/drawable.cpp` | 312 | Drawable rendering |
-| `src/effects/muons.cpp` | 299 | Generator with colocated UI |
-| `src/effects/constellation.cpp` | 298 | Generator with colocated UI |
+| `src/effects/muons.cpp` | 304 | Generator with colocated UI |
+| `src/effects/constellation.cpp` | 303 | Generator with colocated UI |
+| `src/effects/polyhedral_mirror.cpp` | 300 | Generator with colocated UI |
+| `src/config/effect_descriptor.h` | 296 | Effect descriptor table + 5 registration macros |
 
 ## Complexity Hotspots
 
@@ -114,7 +117,7 @@ Functions with cyclomatic complexity > 15 (measured via lizard):
 | ImGuiDrawDrawablesPanel | `src/ui/imgui_drawables.cpp:22` | 37 | 228 | Drawable management with add/remove/reorder logic |
 | ModSourceGetName | `src/automation/mod_sources.cpp:55` | 27 | 58 | Switch over modulation source types |
 | ModSourceGetColor | `src/automation/mod_sources.cpp:114` | 27 | 50 | Switch over modulation source types |
-| from_json | `src/config/effect_serialization.cpp:205` | 25 | 76 | Deserializes 150+ config structs with fallback handling |
+| from_json | `src/config/effect_serialization.cpp:209` | 25 | 76 | Deserializes 150+ config structs with fallback handling |
 | DrawPresetList | `src/ui/imgui_presets.cpp:134` | 23 | 93 | Preset list UI with rename/delete/drag-reorder |
 | ColorConfigEquals | `src/render/color_config.cpp:38` | 23 | 34 | Field-by-field equality comparison for 23 color config fields |
 | ImGuiDrawEffectsPanel | `src/ui/imgui_effects.cpp:22` | 21 | 232 | Orchestrates effect category dispatch and simulation UI |
@@ -145,24 +148,26 @@ Functions with cyclomatic complexity > 15 (measured via lizard):
 
 ## TODO/FIXME Inventory
 
-None detected. All lint suppressions have justification comments:
+No `TODO`, `FIXME`, `HACK`, `XXX`, `NotImplemented`, or `assert(false)` markers in `src/`. All lint suppressions have justification comments:
 
 | Location | Type | Note |
 |----------|------|------|
 | `src/analysis/analysis_pipeline.cpp:88` | NOLINTNEXTLINE | bugprone-integer-division - intentional sample-rate division |
 | `src/main.cpp:164,168,172,175,179,183,187` | NOLINTNEXTLINE | cert-err33-c - snprintf into fixed-size paramId buffer |
-| `src/render/post_effect.cpp:59` | NOLINTNEXTLINE | readability-function-size - caches all shader uniform locations |
+| `src/render/post_effect.cpp:61` | NOLINTNEXTLINE | readability-function-size - caches all shader uniform locations |
+| `src/render/spectrum_bars.cpp:109,167` | NOLINT | misc-unused-parameters - globalTick reserved for future per-frame seeding |
 | `src/ui/imgui_effects.cpp:20` | NOLINTNEXTLINE | readability-function-size - immediate-mode UI requires sequential widget calls |
 | `src/ui/imgui_panels.cpp:5` | NOLINTNEXTLINE | readability-function-size - theme setup requires setting all ImGui style colors |
 | `src/ui/imgui_widgets.cpp:178,303` | NOLINTNEXTLINE | readability-function-size - widget with header drawing and complex rendering |
 | `src/ui/imgui_drawables.cpp:20` | NOLINTNEXTLINE | readability-function-size - immediate-mode UI requires sequential widget calls |
 | `src/ui/drawable_type_controls.cpp:131` | NOLINTNEXTLINE | readability-function-size - immediate-mode UI requires sequential widget calls |
 | `src/ui/gradient_editor.cpp:138` | NOLINTNEXTLINE | readability-function-size - UI function with multiple input handling paths |
-| `src/ui/modulatable_slider.cpp:177` | NOLINTNEXTLINE | readability-function-size - UI widget with detailed visual rendering |
+| `src/ui/modulatable_slider.cpp:178` | NOLINTNEXTLINE | readability-function-size - UI widget with detailed visual rendering |
 | `src/ui/imgui_analysis.cpp:228,269,308,378` | NOLINTNEXTLINE | cert-err33-c - snprintf into fixed-size display buffer |
 | `src/ui/imgui_analysis.cpp:389` | NOLINTNEXTLINE | readability-function-size - immediate-mode UI requires sequential widget calls |
 | `src/automation/lfo.cpp:45,47,64` | NOLINTNEXTLINE | concurrency-mt-unsafe - single-threaded visualizer, simple randomness sufficient |
 | `src/effects/curl_advection.cpp:50,52` | NOLINTNEXTLINE | concurrency-mt-unsafe - single-threaded init |
+| `src/effects/lichen.cpp:82` | NOLINTNEXTLINE | concurrency-mt-unsafe - single-threaded init |
 
 ---
 

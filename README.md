@@ -14,10 +14,10 @@ Real-time audio visualizer. Captures system audio and renders reactive visuals.
 - **Layered Drawables** - Stack waveforms, spectrum bars, and textured shapes into composite scenes
 - **Generators** - Procedural content engines: spirals, constellations, plasma, glyphs, nebulae, and more
 - **Transforms** - Reorderable effect chain spanning symmetry, warp, cellular, artistic, graphic, retro, optical, motion, and color categories
-- **Simulations** - GPU compute agents (slime mold, flocking, curl flow, cymatics, attractors) deposit audio-reactive trails
+- **Simulations** - GPU compute agents deposit audio-reactive trails
 - **Feedback** - Frame-to-frame blur, flow fields, and edge-following smear build up over time
-- **Modulation** - LFOs and audio bands automate any parameter, compounding into vast combinatorial space
-- **Presets** - Save and load full configurations as JSON
+- **Modulation** - LFOs, audio bands, and mod buses (combiners, envelope followers, slew limiters) automate any parameter
+- **Presets** - Save and load full configurations as JSON, sequence them into playlists
 
 ## Quick Start
 
@@ -54,6 +54,7 @@ See [docs/effects.md](docs/effects.md) for effects list.
 | Key | Action |
 |-----|--------|
 | Tab | Toggle UI |
+| Left / Right | Previous / next preset in playlist |
 
 ## Demo Videos
 
