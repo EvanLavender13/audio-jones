@@ -1,5 +1,21 @@
 # Changelog
 
+## 2026-05-03 — LICHRUS
+
+### New Effects
+- **Lichen** generator — three-species reaction-diffusion with cyclic predator/prey coupling, 8-octave sinusoidal coordinate warp, per-species FFT brightness, per-clump hue advection, and a Sim Steps control
+- **Spiral March** generator — raymarched flight through an infinite tumbling lattice of SDF primitives (octahedron/box/sphere/torus) where the sample point rotates as it marches, tracing helical paths
+- **Apollonian Tunnel** generator — raymarched flythrough of an Apollonian gasket fractal carved into a sinusoidal tunnel with FFT-driven volumetric glow
+- **Dream Zoom** generator — per-pixel iterated complex-map fractal with seamless infinite zoom, depth-of-field, and temporal AA; FFT energy modulates depth-band brightness so bass lights inner rings and treble outer rings
+- **BOIDINGO**, **BUTTERFRIES**, **XORCEROR**, and **ZUMBA** presets
+
+### Enhancements
+- Physarum agent slider max raised to 5M
+- Impressionist canvas now defaults to black
+
+### Fixes
+- Random Volumetric `cycleSpeed` modulation no longer causes instantaneous phase jumps (phase now accumulates on CPU)
+
 ## 2026-04-26 — DROSTLE
 
 ### New Effects
