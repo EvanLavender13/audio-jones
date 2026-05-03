@@ -56,7 +56,6 @@
 | LED Cube | Rotating 3D lattice of colored LED points like a tabletop LED cube display |
 | Geode | Spherical cluster of tumbled crystal cubes hollowed by winding caverns like a cracked-open mineral geode |
 | Random Volumetric | Fractal mathematical universes shuffling like a slot machine of generative art |
-| Lichen | Three colors of speckled colonies pushing into each other like territorial lichen on damp rock |
 | Spiral March | Tunnel of jagged crystalline shards twisting into a glowing vanishing point like a hypnotic vortex |
 | Apollonian Tunnel | Flythrough past cavern walls of recursive bubble clusters, like fossilized coral lit in jewel tones |
 
@@ -127,6 +126,7 @@
 | Polygon Subdivide | Jagged stained-glass shards cracking apart at wild angles like a cathedral window hit by a stone |
 | Viscera | Glistening fleshy terrain with bulging lobes and dark crevices pulsing like a living organ |
 | Infinity Matrix | Glowing binary digits nested inside binary digits, endlessly zooming inward like a fractal digital rain |
+| Lichen | Three colors of speckled colonies pushing into each other like territorial lichen on damp rock |
 | Snake Skin | Rippling rows of glowing fish scales like a neon snake slithering across a dark wall |
 | Solid Color | Flat color fill blended onto the scene |
 

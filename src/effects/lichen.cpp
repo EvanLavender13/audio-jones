@@ -46,6 +46,27 @@ static void UnloadTextures(const LichenEffect *e) {
   UnloadRenderTexture(e->colorRT);
 }
 
+static float HueHash(float ix, float iy) {
+  const float s = sinf(ix * 127.1f + iy * 311.7f) * 43758.5453f;
+  return s - floorf(s);
+}
+
+static float HueValueNoise(float px, float py) {
+  const float ix = floorf(px);
+  const float iy = floorf(py);
+  float fx = px - ix;
+  float fy = py - iy;
+  fx = fx * fx * (3.0f - 2.0f * fx);
+  fy = fy * fy * (3.0f - 2.0f * fy);
+  const float a = HueHash(ix, iy);
+  const float b = HueHash(ix + 1.0f, iy);
+  const float c = HueHash(ix, iy + 1.0f);
+  const float d = HueHash(ix + 1.0f, iy + 1.0f);
+  const float ab = a + (b - a) * fx;
+  const float cd = c + (d - c) * fx;
+  return ab + (cd - ab) * fy;
+}
+
 static void InitializeSeed(LichenEffect *e, int w, int h) {
   const int count = w * h * 4;
   float *pixels0 = static_cast<float *>(malloc(count * sizeof(float)));
@@ -61,23 +82,28 @@ static void InitializeSeed(LichenEffect *e, int w, int h) {
   // NOLINTNEXTLINE(concurrency-mt-unsafe) - single-threaded init
   const float dateOffset = (float)rand() / (float)RAND_MAX;
   const float seedPos[3] = {0.16f, 0.5f, 0.84f};
+  const float seedHue[3] = {0.15f, 0.50f, 0.85f};
   const float seedRadius = 28.5f;
   const float noiseAmp = 10.5f;
+  const float hueNoiseScale = 1.0f / 96.0f;
 
   for (int y = 0; y < h; y++) {
     for (int x = 0; x < w; x++) {
       const float px = (float)x;
       const float py = (float)y;
       float v[3] = {0.0f, 0.0f, 0.0f};
+      float hue = HueValueNoise(px * hueNoiseScale, py * hueNoiseScale);
+      const float noise =
+          (HueHash(px + dateOffset, py + dateOffset) - 0.5f) * 2.0f * noiseAmp;
       for (int k = 0; k < 3; k++) {
         const float cx = (float)w * seedPos[k];
         const float cy = (float)h * seedPos[k];
         const float dx = px - cx;
         const float dy = py - cy;
         const float dist = sqrtf(dx * dx + dy * dy);
-        const float noise = sinf(px * py + dateOffset) * noiseAmp;
         if (dist + noise < seedRadius) {
           v[k] = 1.0f;
+          hue = seedHue[k];
         }
       }
       const int idx = (y * w + x) * 4;
@@ -87,7 +113,7 @@ static void InitializeSeed(LichenEffect *e, int w, int h) {
       pixels0[idx + 3] = v[1];
       pixels1[idx + 0] = 1.0f;
       pixels1[idx + 1] = v[2];
-      pixels1[idx + 2] = 0.0f;
+      pixels1[idx + 2] = hue;
       pixels1[idx + 3] = 0.0f;
     }
   }
@@ -112,20 +138,20 @@ static void CacheStateLocations(LichenEffect *e) {
   e->statePredatorAdvantageLoc =
       GetShaderLocation(e->stateShader, "predatorAdvantage");
   e->stateWarpIntensityLoc = GetShaderLocation(e->stateShader, "warpIntensity");
-  e->stateWarpSpeedLoc = GetShaderLocation(e->stateShader, "warpSpeed");
+  e->stateWarpPhaseLoc = GetShaderLocation(e->stateShader, "warpPhase");
   e->stateActivatorRadiusLoc =
       GetShaderLocation(e->stateShader, "activatorRadius");
   e->stateInhibitorRadiusLoc =
       GetShaderLocation(e->stateShader, "inhibitorRadius");
   e->stateReactionStepsLoc = GetShaderLocation(e->stateShader, "reactionSteps");
   e->stateReactionRateLoc = GetShaderLocation(e->stateShader, "reactionRate");
+  e->stateHueDriftLoc = GetShaderLocation(e->stateShader, "hueDrift");
   e->stateTex1Loc = GetShaderLocation(e->stateShader, "stateTex1");
 }
 
 static void CacheColorLocations(LichenEffect *e) {
   e->colorResolutionLoc = GetShaderLocation(e->shader, "resolution");
   e->colorBrightnessLoc = GetShaderLocation(e->shader, "brightness");
-  e->colorScatterLoc = GetShaderLocation(e->shader, "colorScatter");
   e->colorStateTex0Loc = GetShaderLocation(e->shader, "stateTex0");
   e->colorStateTex1Loc = GetShaderLocation(e->shader, "stateTex1");
   e->colorGradientLUTLoc = GetShaderLocation(e->shader, "gradientLUT");
@@ -152,7 +178,7 @@ static void BindStateUniforms(const LichenEffect *e, const LichenConfig *cfg,
                  &cfg->predatorAdvantage, SHADER_UNIFORM_FLOAT);
   SetShaderValue(e->stateShader, e->stateWarpIntensityLoc, &cfg->warpIntensity,
                  SHADER_UNIFORM_FLOAT);
-  SetShaderValue(e->stateShader, e->stateWarpSpeedLoc, &cfg->warpSpeed,
+  SetShaderValue(e->stateShader, e->stateWarpPhaseLoc, &e->warpPhase,
                  SHADER_UNIFORM_FLOAT);
   SetShaderValue(e->stateShader, e->stateActivatorRadiusLoc,
                  &cfg->activatorRadius, SHADER_UNIFORM_FLOAT);
@@ -162,6 +188,8 @@ static void BindStateUniforms(const LichenEffect *e, const LichenConfig *cfg,
                  SHADER_UNIFORM_INT);
   SetShaderValue(e->stateShader, e->stateReactionRateLoc, &cfg->reactionRate,
                  SHADER_UNIFORM_FLOAT);
+  SetShaderValue(e->stateShader, e->stateHueDriftLoc, &cfg->hueDrift,
+                 SHADER_UNIFORM_FLOAT);
 }
 
 static void BindColorUniforms(const LichenEffect *e, const LichenConfig *cfg,
@@ -170,8 +198,6 @@ static void BindColorUniforms(const LichenEffect *e, const LichenConfig *cfg,
   SetShaderValue(e->shader, e->colorResolutionLoc, resolution,
                  SHADER_UNIFORM_VEC2);
   SetShaderValue(e->shader, e->colorBrightnessLoc, &cfg->brightness,
-                 SHADER_UNIFORM_FLOAT);
-  SetShaderValue(e->shader, e->colorScatterLoc, &cfg->colorScatter,
                  SHADER_UNIFORM_FLOAT);
   SetShaderValue(e->shader, e->colorSampleRateLoc, &sampleRate,
                  SHADER_UNIFORM_FLOAT);
@@ -216,6 +242,7 @@ bool LichenEffectInit(LichenEffect *e, const LichenConfig *cfg, int width,
   e->readIdx0 = 0;
   e->readIdx1 = 0;
   e->time = 0.0f;
+  e->warpPhase = 0.0f;
 
   return true;
 }
@@ -223,9 +250,13 @@ bool LichenEffectInit(LichenEffect *e, const LichenConfig *cfg, int width,
 void LichenEffectSetup(LichenEffect *e, const LichenConfig *cfg,
                        float deltaTime, const Texture2D &fftTexture) {
   e->time += deltaTime;
+  e->warpPhase += cfg->warpSpeed * deltaTime;
   const float WRAP = 1000.0f;
   if (e->time > WRAP) {
     e->time -= WRAP;
+  }
+  if (e->warpPhase > WRAP) {
+    e->warpPhase -= WRAP;
   }
 
   ColorLUTUpdate(e->gradientLUT, &cfg->gradient);
@@ -342,8 +373,7 @@ void LichenRegisterParams(LichenConfig *cfg) {
                          3.0f);
   ModEngineRegisterParam("lichen.reactionRate", &cfg->reactionRate, 0.1f, 0.8f);
   ModEngineRegisterParam("lichen.brightness", &cfg->brightness, 0.5f, 4.0f);
-  ModEngineRegisterParam("lichen.colorScatter", &cfg->colorScatter, 1.0f,
-                         120.0f);
+  ModEngineRegisterParam("lichen.hueDrift", &cfg->hueDrift, 0.0f, 0.1f);
   ModEngineRegisterParam("lichen.baseFreq", &cfg->baseFreq, 27.5f, 440.0f);
   ModEngineRegisterParam("lichen.maxFreq", &cfg->maxFreq, 1000.0f, 16000.0f);
   ModEngineRegisterParam("lichen.gain", &cfg->gain, 0.1f, 10.0f);
@@ -421,14 +451,14 @@ static void DrawLichenParams(EffectConfig *e, const ModSources *modSources,
   ImGui::SeparatorText("Output");
   ModulatableSlider("Brightness##lichen", &cfg->brightness, "lichen.brightness",
                     "%.2f", modSources);
-  ModulatableSlider("Color Scatter##lichen", &cfg->colorScatter,
-                    "lichen.colorScatter", "%.1f", modSources);
+  ModulatableSlider("Hue Drift##lichen", &cfg->hueDrift, "lichen.hueDrift",
+                    "%.3f", modSources);
 }
 
 // clang-format off
 STANDARD_GENERATOR_OUTPUT(lichen)
 REGISTER_GENERATOR_FULL(TRANSFORM_LICHEN, Lichen, lichen,
                         "Lichen", SetupLichenBlend,
-                        SetupLichen, RenderLichen, 13,
+                        SetupLichen, RenderLichen, 12,
                         DrawLichenParams, DrawOutput_lichen)
 // clang-format on

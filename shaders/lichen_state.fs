@@ -12,6 +12,7 @@ uniform sampler2D texture0;       // statePingPong0[readIdx0] (species 0 rg, spe
 uniform sampler2D stateTex1;      // statePingPong1[readIdx1] (species 2 rg)
 uniform vec2 resolution;
 uniform float time;
+uniform float warpPhase;          // CPU-accumulated warpSpeed * deltaTime
 uniform int passIndex;            // 0 = output species 0+1; 1 = output species 2
 
 uniform float feedRate;
@@ -19,13 +20,17 @@ uniform float killRateBase;
 uniform float couplingStrength;
 uniform float predatorAdvantage;
 uniform float warpIntensity;
-uniform float warpSpeed;
 uniform float activatorRadius;
 uniform float inhibitorRadius;
 uniform int reactionSteps;
 uniform float reactionRate;
+uniform float hueDrift;
 
 const float PI = 3.14159265358979;
+
+float hash(vec2 p) {
+    return fract(sin(dot(p, vec2(127.1, 311.7))) * 43758.5453);
+}
 
 void main() {
     vec2 r = resolution;
@@ -39,8 +44,8 @@ void main() {
 
     float q = 1.0;
     for (int i = 0; i < 8; i++) {
-        p.x += sin(p.y / r.y * PI * 2.0 * q + time * (fract(q / 4.0) - 0.3) * warpSpeed) / q * warpIntensity;
-        p.y -= sin(p.x / r.x * PI * 2.0 * q + time * (fract(q / 5.0) - 0.2) * warpSpeed) / q * warpIntensity;
+        p.x += sin(p.y / r.y * PI * 2.0 * q + warpPhase * (fract(q / 4.0) - 0.3)) / q * warpIntensity;
+        p.y -= sin(p.x / r.x * PI * 2.0 * q + warpPhase * (fract(q / 5.0) - 0.2)) / q * warpIntensity;
         q *= -1.681;
         q = fract(q / 10.0) * 10.0 - 5.0;
         q = floor(q) + 1.0;
@@ -84,6 +89,44 @@ void main() {
     c2.y += texture(stateTex1, (p - vec2(0.0, inhibitorRadius)) / r).y;
     c2 /= 5.0;
 
+    float newHue = 0.0;
+    if (passIndex == 1) {
+        // Hue inheritance - new growth picks up hue from the most-alive neighbor,
+        // stable cells preserve their hue. Avoids the homogenizing churn of a
+        // weighted-average Laplacian; mimics colonization (one parent, not blend).
+        float selfLife = self0.y + self0.w + self1.y;
+        float selfHue  = self1.b;
+
+        float maxLife = selfLife;
+        float bestHue = selfHue;
+
+        vec2 dirs[4] = vec2[4](
+            vec2( activatorRadius, 0.0),
+            vec2(-activatorRadius, 0.0),
+            vec2(0.0,  activatorRadius),
+            vec2(0.0, -activatorRadius)
+        );
+        for (int i = 0; i < 4; i++) {
+            vec4 ns0 = texture(texture0,  (p + dirs[i]) / r);
+            vec4 ns1 = texture(stateTex1, (p + dirs[i]) / r);
+            float life = ns0.y + ns0.w + ns1.y;
+            if (life > maxLife) {
+                maxLife = life;
+                bestHue = ns1.b;
+            }
+        }
+
+        // Growth detection: difference between new total inhibitor and old total inhibitor.
+        // Positive when this cell is being newly colonized.
+        float newLife = c0.y + c1.y + c2.y;
+        float growth  = max(0.0, newLife - selfLife);
+
+        // Inherit only when the cell is meaningfully growing; otherwise lock the hue.
+        float inherited = (growth > 0.001) ? bestHue : selfHue;
+        float drift     = (hash(p + time) - 0.5) * hueDrift * growth;
+        newHue          = fract(inherited + drift);
+    }
+
     // Cyclic coupling on the activator (.x) channel - matches reference's GLSL truncation
     // of vec2(scalar, vec4) which takes .x of the vec4 expression.
     // species 0: predator = c2, prey = c1
@@ -108,6 +151,6 @@ void main() {
     if (passIndex == 0) {
         finalColor = vec4(c0.x, c0.y, c1.x, c1.y);
     } else {
-        finalColor = vec4(c2.x, c2.y, 0.0, 0.0);
+        finalColor = vec4(c2.x, c2.y, newHue, 0.0);
     }
 }

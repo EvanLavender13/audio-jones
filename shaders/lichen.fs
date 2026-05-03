@@ -18,7 +18,6 @@ uniform float maxFreq;
 uniform float gain;
 uniform float curve;
 uniform float baseBright;
-uniform float colorScatter;
 
 float fftAt(float t) {
     float freq = baseFreq * pow(maxFreq / baseFreq, t);
@@ -28,24 +27,8 @@ float fftAt(float t) {
     return pow(clamp(mag * gain, 0.0, 1.0), curve);
 }
 
-float hash(vec2 p) {
-    return fract(sin(dot(p, vec2(127.1, 311.7))) * 43758.5453);
-}
-
-float valueNoise(vec2 p) {
-    vec2 i = floor(p);
-    vec2 f = fract(p);
-    f = f * f * (3.0 - 2.0 * f);
-    float a = hash(i);
-    float b = hash(i + vec2(1.0, 0.0));
-    float c = hash(i + vec2(0.0, 1.0));
-    float d = hash(i + vec2(1.0, 1.0));
-    return mix(mix(a, b, f.x), mix(c, d, f.x), f.y);
-}
-
-vec3 speciesColor(float v, float sliceOffset, vec2 uv) {
-    float spatial = valueNoise(uv * colorScatter);
-    float t = sliceOffset + spatial * (1.0 / 3.0);
+vec3 speciesColor(float v, float sliceOffset, float hue) {
+    float t = sliceOffset + hue * (1.0 / 3.0);
     vec3 col = texture(gradientLUT, vec2(t, 0.5)).rgb;
     float mag = fftAt(t);
     return col * v * (baseBright + mag);
@@ -58,11 +41,12 @@ void main() {
     float v0 = s0.y;
     float v1 = s0.w;
     float v2 = s1.y;
+    float hue = s1.b;
 
     const float SLICE = 1.0 / 3.0;
-    vec3 col0 = speciesColor(v0, 0.0, uv);
-    vec3 col1 = speciesColor(v1, SLICE, uv);
-    vec3 col2 = speciesColor(v2, 2.0 * SLICE, uv);
+    vec3 col0 = speciesColor(v0, 0.0,         hue);
+    vec3 col1 = speciesColor(v1, SLICE,       hue);
+    vec3 col2 = speciesColor(v2, 2.0 * SLICE, hue);
 
     vec3 col = brightness * (col0 + col1 + col2);
     finalColor = vec4(clamp(col, 0.0, 1.0), 1.0);
