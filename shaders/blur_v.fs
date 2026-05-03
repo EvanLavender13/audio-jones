@@ -22,17 +22,22 @@ void main()
     if (blurScale < 0.01) {
         result = texture(texture0, fragTexCoord).rgb;
     } else {
-        vec2 texelSize = (1.0 / resolution) * blurScale;
+        // Dense unit-stride Gaussian: sigma = blurScale, radius = ceil(3 sigma)
+        vec2 texelSize = 1.0 / resolution;
 
-        // 5-tap Gaussian kernel [1, 4, 6, 4, 1] / 16
+        float sigma = blurScale;
+        float twoSigma2 = 2.0 * sigma * sigma;
+        int radius = int(ceil(3.0 * sigma));
+
         result = vec3(0.0);
-
-        // Clamp UVs to prevent wrapping at screen edges
-        result += texture(texture0, clamp(fragTexCoord + vec2(0.0, -2.0 * texelSize.y), 0.0, 1.0)).rgb * 0.0625;  // 1/16
-        result += texture(texture0, clamp(fragTexCoord + vec2(0.0, -1.0 * texelSize.y), 0.0, 1.0)).rgb * 0.25;    // 4/16
-        result += texture(texture0, fragTexCoord).rgb * 0.375;                                                     // 6/16
-        result += texture(texture0, clamp(fragTexCoord + vec2(0.0,  1.0 * texelSize.y), 0.0, 1.0)).rgb * 0.25;    // 4/16
-        result += texture(texture0, clamp(fragTexCoord + vec2(0.0,  2.0 * texelSize.y), 0.0, 1.0)).rgb * 0.0625;  // 1/16
+        float wsum = 0.0;
+        for (int i = -radius; i <= radius; i++) {
+            float w = exp(-float(i * i) / twoSigma2);
+            vec2 uv = clamp(fragTexCoord + vec2(0.0, float(i) * texelSize.y), 0.0, 1.0);
+            result += texture(texture0, uv).rgb * w;
+            wsum += w;
+        }
+        result /= wsum;
     }
 
     // Framerate-independent exponential decay (evaporation)

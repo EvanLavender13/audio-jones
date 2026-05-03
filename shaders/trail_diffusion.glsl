@@ -22,20 +22,23 @@ void main()
     if (diffusionScale == 0) {
         result = imageLoad(inputMap, coord);
     } else {
-        // 5-tap Gaussian with wrapping (mod() handles negative coords correctly)
+        // Dense unit-stride Gaussian: sigma = diffusionScale, radius = ceil(3 sigma)
         ivec2 offset = (direction == 0) ? ivec2(1, 0) : ivec2(0, 1);
-        vec2 res = resolution;
+        ivec2 res = ivec2(resolution);
 
-        ivec2 s0 = ivec2(mod(vec2(coord - 2 * offset * diffusionScale), res));
-        ivec2 s1 = ivec2(mod(vec2(coord - 1 * offset * diffusionScale), res));
-        ivec2 s3 = ivec2(mod(vec2(coord + 1 * offset * diffusionScale), res));
-        ivec2 s4 = ivec2(mod(vec2(coord + 2 * offset * diffusionScale), res));
+        float sigma = float(diffusionScale);
+        float twoSigma2 = 2.0 * sigma * sigma;
+        int radius = int(ceil(3.0 * sigma));
 
-        result = imageLoad(inputMap, s0) * 0.0625
-               + imageLoad(inputMap, s1) * 0.25
-               + imageLoad(inputMap, coord) * 0.375
-               + imageLoad(inputMap, s3) * 0.25
-               + imageLoad(inputMap, s4) * 0.0625;
+        vec4 sum = vec4(0.0);
+        float wsum = 0.0;
+        for (int i = -radius; i <= radius; i++) {
+            float w = exp(-float(i * i) / twoSigma2);
+            ivec2 s = ivec2(mod(vec2(coord + i * offset), vec2(res)));
+            sum += imageLoad(inputMap, s) * w;
+            wsum += w;
+        }
+        result = sum / wsum;
     }
 
     if (applyDecay == 1) {
