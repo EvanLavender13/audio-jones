@@ -16,11 +16,15 @@ Create a git commit following project conventions.
 
 **Body:** Optional. Most commits need only a subject line. When included:
 
-- State WHAT capability exists after this commit (1-2 sentences max)
-- Skip if subject line is self-explanatory
+- List the changes factually. No problem framing, no rationale, no prose.
+- Skip if the subject line covers it.
 
 **Anti-patterns** (never include):
 
+- Problem framing ("The kernel was aliasing because...")
+- Motivation or justification ("to improve...", "this is needed so that...")
+- Praise adjectives ("clean", "robust", "proper", "correct", "improved")
+- Mentions of areas that were not modified ("no preset changes", "no API changes")
 - Implementation journey ("was implemented and reverted", "tried X then Y")
 - Redundant expansion of subject ("This adds..." when subject says "Add...")
 - Phase/step references from planning docs
