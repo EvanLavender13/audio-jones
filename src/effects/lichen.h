@@ -34,6 +34,7 @@ typedef struct LichenConfig {
       1.2f; // Inhibitor (.y) sample radius in pixels (0.5-3.0)
 
   // Reaction
+  int simSteps = 3;          // Full diffusion+reaction passes per frame (1-8)
   int reactionSteps = 10;    // Reaction iterations per frame (5-50)
   float reactionRate = 0.4f; // Time step per iteration (0.1-0.8)
 
@@ -57,7 +58,7 @@ typedef struct LichenConfig {
 
 #define LICHEN_CONFIG_FIELDS                                                   \
   enabled, feedRate, killRateBase, couplingStrength, predatorAdvantage,        \
-      warpIntensity, warpSpeed, activatorRadius, inhibitorRadius,              \
+      warpIntensity, warpSpeed, activatorRadius, inhibitorRadius, simSteps,    \
       reactionSteps, reactionRate, brightness, colorScatter, baseFreq,         \
       maxFreq, gain, curve, baseBright, gradient, blendMode, blendIntensity
 
@@ -115,7 +116,8 @@ void LichenEffectSetup(LichenEffect *e, const LichenConfig *cfg,
                        float deltaTime, const Texture2D &fftTexture);
 
 // Renders state update and color output passes
-void LichenEffectRender(LichenEffect *e, int screenWidth, int screenHeight);
+void LichenEffectRender(LichenEffect *e, const LichenConfig *cfg,
+                        int screenWidth, int screenHeight);
 
 // Reallocates ping-pong textures at new dimensions
 void LichenEffectResize(LichenEffect *e, int width, int height);

@@ -241,59 +241,65 @@ void LichenEffectSetup(LichenEffect *e, const LichenConfig *cfg,
   e->fftTexture = fftTexture;
 }
 
-void LichenEffectRender(LichenEffect *e, int screenWidth, int screenHeight) {
-  const int writeIdx0 = 1 - e->readIdx0;
-  const int writeIdx1 = 1 - e->readIdx1;
+void LichenEffectRender(LichenEffect *e, const LichenConfig *cfg,
+                        int screenWidth, int screenHeight) {
+  int writeIdx0 = 1 - e->readIdx0;
+  int writeIdx1 = 1 - e->readIdx1;
 
-  // Pass 0: write species 0+1 to statePingPong0[writeIdx0]
-  // Both passes share the same readIdx0/readIdx1 source so coupling is
-  // consistent within a frame
-  BeginTextureMode(e->statePingPong0[writeIdx0]);
-  rlDisableColorBlend();
-  BeginShaderMode(e->stateShader);
-  SetShaderValueTexture(e->stateShader, e->stateTex1Loc,
-                        e->statePingPong1[e->readIdx1].texture);
-  const int passIdx0 = 0;
-  SetShaderValue(e->stateShader, e->statePassIndexLoc, &passIdx0,
-                 SHADER_UNIFORM_INT);
-  RenderUtilsDrawFullscreenQuad(e->statePingPong0[e->readIdx0].texture,
-                                screenWidth, screenHeight);
-  EndShaderMode();
-  rlEnableColorBlend();
-  EndTextureMode();
+  const int steps = cfg->simSteps < 1 ? 1 : cfg->simSteps;
+  for (int s = 0; s < steps; s++) {
+    // Pass 0: write species 0+1 to statePingPong0[writeIdx0]
+    // Both passes share the same readIdx0/readIdx1 source so coupling is
+    // consistent within a sim step
+    BeginTextureMode(e->statePingPong0[writeIdx0]);
+    rlDisableColorBlend();
+    BeginShaderMode(e->stateShader);
+    SetShaderValueTexture(e->stateShader, e->stateTex1Loc,
+                          e->statePingPong1[e->readIdx1].texture);
+    const int passIdx0 = 0;
+    SetShaderValue(e->stateShader, e->statePassIndexLoc, &passIdx0,
+                   SHADER_UNIFORM_INT);
+    RenderUtilsDrawFullscreenQuad(e->statePingPong0[e->readIdx0].texture,
+                                  screenWidth, screenHeight);
+    EndShaderMode();
+    rlEnableColorBlend();
+    EndTextureMode();
 
-  // Pass 1: write species 2 to statePingPong1[writeIdx1]
-  BeginTextureMode(e->statePingPong1[writeIdx1]);
-  rlDisableColorBlend();
-  BeginShaderMode(e->stateShader);
-  SetShaderValueTexture(e->stateShader, e->stateTex1Loc,
-                        e->statePingPong1[e->readIdx1].texture);
-  const int passIdx1 = 1;
-  SetShaderValue(e->stateShader, e->statePassIndexLoc, &passIdx1,
-                 SHADER_UNIFORM_INT);
-  RenderUtilsDrawFullscreenQuad(e->statePingPong0[e->readIdx0].texture,
-                                screenWidth, screenHeight);
-  EndShaderMode();
-  rlEnableColorBlend();
-  EndTextureMode();
+    // Pass 1: write species 2 to statePingPong1[writeIdx1]
+    BeginTextureMode(e->statePingPong1[writeIdx1]);
+    rlDisableColorBlend();
+    BeginShaderMode(e->stateShader);
+    SetShaderValueTexture(e->stateShader, e->stateTex1Loc,
+                          e->statePingPong1[e->readIdx1].texture);
+    const int passIdx1 = 1;
+    SetShaderValue(e->stateShader, e->statePassIndexLoc, &passIdx1,
+                   SHADER_UNIFORM_INT);
+    RenderUtilsDrawFullscreenQuad(e->statePingPong0[e->readIdx0].texture,
+                                  screenWidth, screenHeight);
+    EndShaderMode();
+    rlEnableColorBlend();
+    EndTextureMode();
 
-  // Color pass: read freshly written state textures, write to colorRT
+    e->readIdx0 = writeIdx0;
+    e->readIdx1 = writeIdx1;
+    writeIdx0 = 1 - e->readIdx0;
+    writeIdx1 = 1 - e->readIdx1;
+  }
+
+  // Color pass: read latest state textures, write to colorRT
   BeginTextureMode(e->colorRT);
   BeginShaderMode(e->shader);
   SetShaderValueTexture(e->shader, e->colorStateTex0Loc,
-                        e->statePingPong0[writeIdx0].texture);
+                        e->statePingPong0[e->readIdx0].texture);
   SetShaderValueTexture(e->shader, e->colorStateTex1Loc,
-                        e->statePingPong1[writeIdx1].texture);
+                        e->statePingPong1[e->readIdx1].texture);
   SetShaderValueTexture(e->shader, e->colorGradientLUTLoc,
                         ColorLUTGetTexture(e->gradientLUT));
   SetShaderValueTexture(e->shader, e->colorFftTextureLoc, e->fftTexture);
-  RenderUtilsDrawFullscreenQuad(e->statePingPong0[writeIdx0].texture,
+  RenderUtilsDrawFullscreenQuad(e->statePingPong0[e->readIdx0].texture,
                                 screenWidth, screenHeight);
   EndShaderMode();
   EndTextureMode();
-
-  e->readIdx0 = writeIdx0;
-  e->readIdx1 = writeIdx1;
 }
 
 void LichenEffectResize(LichenEffect *e, int width, int height) {
@@ -363,7 +369,8 @@ void SetupLichenBlend(PostEffect *pe) {
 }
 
 void RenderLichen(PostEffect *pe) {
-  LichenEffectRender(GetLichenEffect(pe), pe->screenWidth, pe->screenHeight);
+  LichenEffectRender(GetLichenEffect(pe), &pe->effects.lichen, pe->screenWidth,
+                     pe->screenHeight);
 }
 
 // === UI ===
@@ -397,6 +404,7 @@ static void DrawLichenParams(EffectConfig *e, const ModSources *modSources,
   ModulatableSlider("Reaction Rate##lichen", &cfg->reactionRate,
                     "lichen.reactionRate", "%.2f", modSources);
   ImGui::SliderInt("Reaction Steps##lichen", &cfg->reactionSteps, 5, 50);
+  ImGui::SliderInt("Sim Steps##lichen", &cfg->simSteps, 1, 8);
 
   ImGui::SeparatorText("Diffusion");
   ModulatableSlider("Activator Radius##lichen", &cfg->activatorRadius,
