@@ -18,13 +18,15 @@ struct DataTrafficConfig {
   // Geometry
   int lanes = 20;          // Number of horizontal lanes (4-60)
   float cellWidth = 0.08f; // Base cell width before random variation (0.01-0.3)
-  float spacing = 3.0f;    // Cell spacing multiplier (1.5-6.0)
+  float spacing = 3.0f;    // Cell spacing multiplier (1.0-6.0)
   float gapSize = 0.08f;   // Dark gap between lanes (0.02-0.3)
   float scrollAngle = 0.0f; // Lane direction angle in radians (-PI..PI)
 
   // Animation
   float scrollSpeed = 0.8f;    // Global scroll speed multiplier (0.0-3.0)
   float widthVariation = 0.6f; // Cell width randomization amount (0.0-1.0)
+  float rowSizeVariation =
+      0.0f; // Per-lane size variation: 0=uniform rows, 1=fat+thin mix (0.0-1.0)
   float colorMix =
       0.5f; // Fraction of cells colored/reactive vs grayscale (0.0-1.0)
   float jitter = 0.3f;      // Gentle positional jitter amplitude (0.0-1.0)
@@ -69,12 +71,12 @@ struct DataTrafficConfig {
 
 #define DATA_TRAFFIC_CONFIG_FIELDS                                             \
   enabled, lanes, cellWidth, spacing, gapSize, scrollAngle, scrollSpeed,       \
-      widthVariation, colorMix, jitter, changeRate, sparkIntensity,            \
-      breathProb, breathRate, glowIntensity, glowRadius, twitchProb,           \
-      twitchIntensity, splitProb, mergeProb, fissionProb, phaseShiftProb,      \
-      phaseShiftIntensity, springProb, springIntensity, widthSpringProb,       \
-      widthSpringIntensity, baseFreq, maxFreq, gain, curve, baseBright,        \
-      gradient, blendMode, blendIntensity
+      widthVariation, rowSizeVariation, colorMix, jitter, changeRate,          \
+      sparkIntensity, breathProb, breathRate, glowIntensity, glowRadius,       \
+      twitchProb, twitchIntensity, splitProb, mergeProb, fissionProb,          \
+      phaseShiftProb, phaseShiftIntensity, springProb, springIntensity,        \
+      widthSpringProb, widthSpringIntensity, baseFreq, maxFreq, gain, curve,   \
+      baseBright, gradient, blendMode, blendIntensity
 
 typedef struct ColorLUT ColorLUT;
 
@@ -91,6 +93,7 @@ typedef struct DataTrafficEffect {
   int scrollAngleLoc;
   int scrollSpeedLoc;
   int widthVariationLoc;
+  int rowSizeVariationLoc;
   int colorMixLoc;
   int jitterLoc;
   int changeRateLoc;

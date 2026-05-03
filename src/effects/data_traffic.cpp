@@ -34,6 +34,7 @@ bool DataTrafficEffectInit(DataTrafficEffect *e, const DataTrafficConfig *cfg) {
   e->scrollAngleLoc = GetShaderLocation(e->shader, "scrollAngle");
   e->scrollSpeedLoc = GetShaderLocation(e->shader, "scrollSpeed");
   e->widthVariationLoc = GetShaderLocation(e->shader, "widthVariation");
+  e->rowSizeVariationLoc = GetShaderLocation(e->shader, "rowSizeVariation");
   e->colorMixLoc = GetShaderLocation(e->shader, "colorMix");
   e->jitterLoc = GetShaderLocation(e->shader, "jitter");
   e->changeRateLoc = GetShaderLocation(e->shader, "changeRate");
@@ -97,6 +98,8 @@ void DataTrafficEffectSetup(DataTrafficEffect *e, const DataTrafficConfig *cfg,
   SetShaderValue(e->shader, e->scrollSpeedLoc, &cfg->scrollSpeed,
                  SHADER_UNIFORM_FLOAT);
   SetShaderValue(e->shader, e->widthVariationLoc, &cfg->widthVariation,
+                 SHADER_UNIFORM_FLOAT);
+  SetShaderValue(e->shader, e->rowSizeVariationLoc, &cfg->rowSizeVariation,
                  SHADER_UNIFORM_FLOAT);
   SetShaderValue(e->shader, e->colorMixLoc, &cfg->colorMix,
                  SHADER_UNIFORM_FLOAT);
@@ -164,11 +167,13 @@ void DataTrafficEffectUninit(DataTrafficEffect *e) {
 
 void DataTrafficRegisterParams(DataTrafficConfig *cfg) {
   ModEngineRegisterParam("dataTraffic.cellWidth", &cfg->cellWidth, 0.01f, 0.3f);
-  ModEngineRegisterParam("dataTraffic.spacing", &cfg->spacing, 1.5f, 6.0f);
+  ModEngineRegisterParam("dataTraffic.spacing", &cfg->spacing, 1.0f, 6.0f);
   ModEngineRegisterParam("dataTraffic.gapSize", &cfg->gapSize, 0.02f, 0.3f);
   ModEngineRegisterParam("dataTraffic.scrollAngle", &cfg->scrollAngle,
                          -ROTATION_OFFSET_MAX, ROTATION_OFFSET_MAX);
   ModEngineRegisterParam("dataTraffic.widthVariation", &cfg->widthVariation,
+                         0.0f, 1.0f);
+  ModEngineRegisterParam("dataTraffic.rowSizeVariation", &cfg->rowSizeVariation,
                          0.0f, 1.0f);
   ModEngineRegisterParam("dataTraffic.colorMix", &cfg->colorMix, 0.0f, 1.0f);
   ModEngineRegisterParam("dataTraffic.jitter", &cfg->jitter, 0.0f, 1.0f);
@@ -308,6 +313,8 @@ static void DrawDataTrafficParams(EffectConfig *e, const ModSources *modSources,
                      "%.2f");
   ModulatableSlider("Width Variation##datatraffic", &cfg->widthVariation,
                     "dataTraffic.widthVariation", "%.2f", modSources);
+  ModulatableSlider("Row Size Variation##datatraffic", &cfg->rowSizeVariation,
+                    "dataTraffic.rowSizeVariation", "%.2f", modSources);
   ModulatableSlider("Color Mix##datatraffic", &cfg->colorMix,
                     "dataTraffic.colorMix", "%.2f", modSources);
   ModulatableSlider("Jitter##datatraffic", &cfg->jitter, "dataTraffic.jitter",

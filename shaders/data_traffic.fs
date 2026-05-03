@@ -12,6 +12,7 @@ uniform float gapSize;
 uniform float scrollAngle;
 uniform float scrollSpeed;
 uniform float widthVariation;
+uniform float rowSizeVariation;
 uniform float colorMix;
 uniform float jitter;
 uniform float changeRate;
@@ -129,7 +130,11 @@ void main() {
     float scrolledX = laneScrolledX(float(laneIdx), ruv.x);
 
     // --- Cell identification ---
-    float slotWidth = cellWidth * spacing;
+    // Per-lane width multiplier: lets some rows have fat blocks/slots, others thin
+    float rowSeed = h11(float(laneIdx) * 0.291 + 13.7);
+    float rowMul = mix(1.0, mix(0.2, 2.5, rowSeed * rowSeed), rowSizeVariation);
+    float effCellWidth = cellWidth * rowMul;
+    float slotWidth = effCellWidth * spacing;
     float cellIdxF = floor(scrolledX / slotWidth);
 
     vec3 color = vec3(0.0);
@@ -154,7 +159,8 @@ void main() {
             h21(vec2(widthEpoch + idx + 1.0, float(laneIdx) + 1.0)),
             smoothstep(0.0, 1.0, widthProgress)
         );
-        float halfW = cellWidth * 0.5 * (1.0 - widthVariation + widthVariation * widthRand);
+        float fill = mix(0.05, 3.0, widthVariation * widthRand + (1.0 - widthVariation) * widthRand * widthRand);
+        float halfW = effCellWidth * 0.5 * fill;
 
         // Split - momentary width shrink
         float spS = h21(vec2(idx + widthEpoch * 11.3, float(laneIdx) + 77.0));
@@ -186,7 +192,7 @@ void main() {
         }
 
         // Jitter
-        float jitterOffset = (h21(vec2(idx * 3.7, float(laneIdx) * 2.3 + widthEpoch)) - 0.5) * jitter * cellWidth;
+        float jitterOffset = (h21(vec2(idx * 3.7, float(laneIdx) * 2.3 + widthEpoch)) - 0.5) * jitter * effCellWidth;
         float jitteredCenter = cellCenter + jitterOffset;
 
         // Per-cell twitch: rapid oscillation bursts
@@ -242,19 +248,23 @@ void main() {
             cellHalfWs[i] = halfW;
         }
 
-        // Pixel half-width for analytical AA
-        float pw = 0.5 * aspect / resolution.x;
+        // Pixel half-width for analytical AA - widened so rim highlight spans multiple pixels
+        float pw = 1.5 * aspect / resolution.x;
+
+        // Per-cell edge inset: thin dark seam between adjacent cells
+        float edgeS = h21(vec2(idx + 300.0, float(laneIdx)));
+        float edgeInset = (0.05 + 0.05 * edgeS) * cellWidth;
 
         // Coverage - two sub-cells when fissioning, one otherwise
         float covX;
         if (fissionPhase > 0.0) {
             float subHW = halfW * mix(1.0, 0.45, fissionPhase);
             covX = max(
-                boxCov(jitteredCenter - fissionDrift - subHW, jitteredCenter - fissionDrift + subHW, scrolledX, pw),
-                boxCov(jitteredCenter + fissionDrift - subHW, jitteredCenter + fissionDrift + subHW, scrolledX, pw)
+                boxCov(jitteredCenter - fissionDrift - subHW + edgeInset, jitteredCenter - fissionDrift + subHW - edgeInset, scrolledX, pw),
+                boxCov(jitteredCenter + fissionDrift - subHW + edgeInset, jitteredCenter + fissionDrift + subHW - edgeInset, scrolledX, pw)
             );
         } else {
-            covX = boxCov(jitteredCenter - halfW, jitteredCenter + halfW, scrolledX, pw);
+            covX = boxCov(jitteredCenter - halfW + edgeInset, jitteredCenter + halfW - edgeInset, scrolledX, pw);
         }
         float covY = gapMask;
         float cov = covX * covY;
@@ -302,7 +312,7 @@ void main() {
         cellIsColor[i] = isColorCell;
 
         if (cov > 0.001) {
-            color += cCol * cov;
+            color += cCol * (1.0 + 0.5 * (1.0 - cov)) * cov;
         }
     }
 
@@ -351,14 +361,19 @@ void main() {
     vec3 glow = vec3(0.0);
     if (glowIntensity > 0.0) {
         float lhAspect = laneHeight * aspect;
-        float gr = cellWidth * glowRadius;
-        float gr2inv = 1.0 / (gr * gr * 0.5);
-        float gSlotW = cellWidth * spacing;
 
         for (int rowOff = -1; rowOff <= 1; rowOff++) {
             int gLane = laneIdx + rowOff;
             if (gLane < 0 || gLane >= lanes) continue;
             float gLaneF = float(gLane);
+
+            // Per-lane width multiplier (matches main pass)
+            float gRowSeed = h11(gLaneF * 0.291 + 13.7);
+            float gRowMul = mix(1.0, mix(0.2, 2.5, gRowSeed * gRowSeed), rowSizeVariation);
+            float gEffCellWidth = cellWidth * gRowMul;
+            float gSlotW = gEffCellWidth * spacing;
+            float gr = gEffCellWidth * glowRadius;
+            float gr2inv = 1.0 / (gr * gr * 0.5);
 
             float gScrollX = laneScrolledX(gLaneF, ruv.x);
             float gCellIdx = floor(gScrollX / gSlotW);
@@ -372,7 +387,7 @@ void main() {
 
                 // Jitter
                 float gWE = floor(time * changeRate + h21(vec2(gIdx, gLaneF)) * 100.0);
-                gCenter += (h21(vec2(gIdx * 3.7, gLaneF * 2.3 + gWE)) - 0.5) * jitter * cellWidth;
+                gCenter += (h21(vec2(gIdx * 3.7, gLaneF * 2.3 + gWE)) - 0.5) * jitter * gEffCellWidth;
 
                 float gBright = epochBrightness(gIdx, gLaneF);
 
