@@ -418,7 +418,7 @@ static const char *PHYSARUM_WALK_MODES[] = {"Normal", "Levy",        "Adaptive",
 static const int PHYSARUM_WALK_MODE_COUNT = 8;
 
 static void DrawPhysarumParams(EffectConfig *e, const ModSources *ms, ImU32) {
-  ImGui::SliderInt("Agents", &e->physarum.agentCount, 10000, 1000000);
+  ImGui::SliderInt("Agents", &e->physarum.agentCount, 10000, 5000000);
 
   ImGui::SeparatorText("Bounds");
   int boundsMode = (int)e->physarum.boundsMode;
