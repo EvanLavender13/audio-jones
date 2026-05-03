@@ -259,6 +259,6 @@ static void DrawGeodeParams(EffectConfig *e, const ModSources *modSources,
 // clang-format off
 STANDARD_GENERATOR_OUTPUT(geode)
 REGISTER_GENERATOR(TRANSFORM_GEODE_BLEND, Geode, geode, "Geode",
-                   SetupGeodeBlend, SetupGeode, 13,
+                   SetupGeodeBlend, SetupGeode, 17,
                    DrawGeodeParams, DrawOutput_geode)
 // clang-format on

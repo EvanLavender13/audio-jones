@@ -46,18 +46,16 @@
 | Galaxy | Spiral galaxy with glowing dust arms winding from a bright core, embedded stars twinkling in deep space |
 | Light Medley | Glowing point-cloud lattice twisting into depth like flying through a warped crystalline tunnel |
 | Dream Fractal | Swirling oil-paint caverns carved from infinite recursive spheres, drifting through psychedelic marbled tunnels |
-| Dream Zoom | Endless dive into a fractal coastline of ornate curls and spiral blossoms repeating at every scale |
 | Nebula | Drifting fractal gas clouds threaded with dark dust lanes and stars that twinkle and flare with shimmering cross-spikes |
 | Voxel March | Chunky iridescent tunnel of tiled sphere-shells rushing past like flying through an infinite disco ball |
 | Cyber March | Endless neon blocks streaking past like hurtling through a cyberpunk cityscape at warp speed |
 | Protean Clouds | Flying through a billowing cloud tunnel toward a glowing core, like diving into a thunderhead at twilight |
 | Isoflow | Flowing neon veins rippling through organic cave walls like flying through a bioluminescent deep-sea organism |
-| Marble | Glowing glass marble floating in darkness with luminous fractal filaments swirling inside like a living cat's-eye |
 | LED Cube | Rotating 3D lattice of colored LED points like a tabletop LED cube display |
-| Geode | Spherical cluster of tumbled crystal cubes hollowed by winding caverns like a cracked-open mineral geode |
 | Random Volumetric | Fractal mathematical universes shuffling like a slot machine of generative art |
 | Spiral March | Tunnel of jagged crystalline shards twisting into a glowing vanishing point like a hypnotic vortex |
 | Apollonian Tunnel | Flythrough past cavern walls of recursive bubble clusters, like fossilized coral lit in jewel tones |
+| Neon Lattice | Luminous torus columns rushing past in infinite depth like flying through a neon-lit digital cathedral |
 
 ### Filament
 
@@ -92,7 +90,6 @@
 | Spectral Rings | Dense luminous elliptical rings with noise-textured color banding like Saturn's rings lit from within |
 | Triskelion | Neon circles blooming through a fractal hexagonal grid like bioluminescent spiderwebs dividing endlessly |
 | Twist Cage | Neon wireframe solids spiraling inward with per-layer 3-axis twist |
-| Neon Lattice | Luminous torus columns rushing past in infinite depth like flying through a neon-lit digital cathedral |
 | Polyhedral Mirror | Inside a crystalline polyhedron, colored faces recede infinitely through mirrored reflections like a stained-glass kaleidoscope |
 | Star Trail | Glowing star arcs wheeling around a bright core like a long-exposure night sky photograph |
 | Fractal Tree | Endlessly zooming self-similar tree with glowing depth-colored branches pulsing to music like a neon bonsai |
@@ -106,6 +103,13 @@
 | Fireworks | Rockets climb and burst into arcing sparks that droop under gravity like a municipal fireworks finale |
 | Spark Flash | Neon crosshair sparks flashing across the dark like welding arcs caught in a time-lapse |
 | Butterflies | Glowing rainbow butterflies tiled like a backlit specimen case, scrolling past with wings pulsing in unison |
+
+### Sculpture
+
+| Effect | Description |
+|--------|-------------|
+| Geode | Spherical cluster of tumbled crystal cubes hollowed by winding caverns like a cracked-open mineral geode |
+| Marble | Glowing glass marble floating in darkness with luminous fractal filaments swirling inside like a living cat's-eye |
 
 ### Texture
 
@@ -128,6 +132,7 @@
 | Infinity Matrix | Glowing binary digits nested inside binary digits, endlessly zooming inward like a fractal digital rain |
 | Lichen | Three colors of speckled colonies pushing into each other like territorial lichen on damp rock |
 | Snake Skin | Rippling rows of glowing fish scales like a neon snake slithering across a dark wall |
+| Dream Zoom | Endless dive into a fractal coastline of ornate curls and spiral blossoms repeating at every scale |
 | Solid Color | Flat color fill blended onto the scene |
 
 ## TRANSFORMS

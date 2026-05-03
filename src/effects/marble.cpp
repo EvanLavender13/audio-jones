@@ -195,5 +195,5 @@ static void DrawMarbleParams(EffectConfig *e, const ModSources *modSources,
 // clang-format off
 STANDARD_GENERATOR_OUTPUT(marble)
 REGISTER_GENERATOR(TRANSFORM_MARBLE_BLEND, Marble, marble, "Marble",
-                   SetupMarbleBlend, SetupMarble, 13, DrawMarbleParams, DrawOutput_marble)
+                   SetupMarbleBlend, SetupMarble, 17, DrawMarbleParams, DrawOutput_marble)
 // clang-format on

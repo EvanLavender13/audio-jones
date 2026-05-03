@@ -226,6 +226,6 @@ static void DrawNeonLatticeParams(EffectConfig *e, const ModSources *modSources,
 // clang-format off
 STANDARD_GENERATOR_OUTPUT(neonLattice)
 REGISTER_GENERATOR(TRANSFORM_NEON_LATTICE_BLEND, NeonLattice, neonLattice,
-                   "Neon Lattice", SetupNeonLatticeBlend, SetupNeonLattice, 10,
+                   "Neon Lattice", SetupNeonLatticeBlend, SetupNeonLattice, 13,
                    DrawNeonLatticeParams, DrawOutput_neonLattice)
 // clang-format on

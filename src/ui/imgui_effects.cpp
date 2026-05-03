@@ -143,6 +143,8 @@ void ImGuiDrawEffectsPanel(EffectConfig *e, const ModSources *modSources) {
   ImGui::Spacing();
   DrawEffectCategory(e, modSources, 15); // Scatter
   ImGui::Spacing();
+  DrawEffectCategory(e, modSources, 17); // Sculpture
+  ImGui::Spacing();
   DrawEffectCategory(e, modSources, 12); // Texture
 
   // -------------------------------------------------------------------------

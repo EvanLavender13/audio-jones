@@ -39,7 +39,7 @@ static const CategoryInfo CATEGORY_INFO[] = {
     {/* 10 */ "Geometric", 3}, {/* 11 */ "Filament", 2},
     {/* 12 */ "Texture", 5},   {/* 13 */ "Field", 1},
     {/* 14 */ "Novelty", 6},   {/* 15 */ "Scatter", 4},
-    {/* 16 */ "Cymatics", 0},
+    {/* 16 */ "Cymatics", 0},  {/* 17 */ "Sculpture", 6},
 };
 
 static const int CATEGORY_INFO_COUNT =
