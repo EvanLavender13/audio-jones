@@ -41,9 +41,10 @@ Draft a changelog entry, commit it, and tag locally. User pushes when ready.
 1. Read full commit messages and sort each change into one of three categories:
    - **New Effects**: new generators, transforms, simulations, presets
    - **Enhancements**: reworks, new params/modes on existing effects, UI improvements, infrastructure that's user-facing
-   - **Fixes**: bug fixes
-2. Draft one bullet per distinct feature under its category. Describe what the user gets, not what files changed. Omit a category if it has no entries.
-3. Present the draft to the user for editing
+   - **Fixes**: bug fixes to effects that already shipped in a prior release
+2. If an effect appears under **New Effects**, do NOT list fixes to it under **Fixes**. New effects cannot have fixes in the same release.
+3. Draft one bullet per distinct feature under its category. Describe what the user gets, not what files changed. Omit a category if it has no entries.
+4. Present the draft to the user for editing
 
 **STOP**: Wait for user approval or edits before proceeding.
 
@@ -125,3 +126,4 @@ Draft a changelog entry, commit it, and tag locally. User pushes when ready.
 | "This refactor is worth mentioning" | User-facing changes only. |
 | "No commits since last tag" | Nothing to release. Tell user and stop. |
 | "I'll pick the tag name myself" | Suggest options. User decides. |
+| "This new effect had a follow-up fix - I'll list both" | New effects cannot have fixes in the same release. Drop the fix bullet. |
