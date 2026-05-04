@@ -74,9 +74,13 @@ typedef struct JellyfishEffect {
   Shader shader;
   ColorLUT *gradientLUT;
   float time;
+  float pulsePhase;
+  float driftPhase;
 
   int resolutionLoc;
   int timeLoc;
+  int pulsePhaseLoc;
+  int driftPhaseLoc;
   int fftTextureLoc;
   int gradientLUTLoc;
   int sampleRateLoc;
@@ -91,9 +95,7 @@ typedef struct JellyfishEffect {
   int sizeBaseLoc;
   int sizeVarianceLoc;
   int pulseDepthLoc;
-  int pulseSpeedLoc;
   int driftAmpLoc;
-  int driftSpeedLoc;
   int tentacleWaveLoc;
   int bellGlowLoc;
   int rimGlowLoc;

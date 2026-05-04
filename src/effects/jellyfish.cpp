@@ -25,6 +25,8 @@ bool JellyfishEffectInit(JellyfishEffect *e, const JellyfishConfig *cfg) {
 
   e->resolutionLoc = GetShaderLocation(e->shader, "resolution");
   e->timeLoc = GetShaderLocation(e->shader, "time");
+  e->pulsePhaseLoc = GetShaderLocation(e->shader, "pulsePhase");
+  e->driftPhaseLoc = GetShaderLocation(e->shader, "driftPhase");
   e->fftTextureLoc = GetShaderLocation(e->shader, "fftTexture");
   e->gradientLUTLoc = GetShaderLocation(e->shader, "gradientLUT");
   e->sampleRateLoc = GetShaderLocation(e->shader, "sampleRate");
@@ -39,9 +41,7 @@ bool JellyfishEffectInit(JellyfishEffect *e, const JellyfishConfig *cfg) {
   e->sizeBaseLoc = GetShaderLocation(e->shader, "sizeBase");
   e->sizeVarianceLoc = GetShaderLocation(e->shader, "sizeVariance");
   e->pulseDepthLoc = GetShaderLocation(e->shader, "pulseDepth");
-  e->pulseSpeedLoc = GetShaderLocation(e->shader, "pulseSpeed");
   e->driftAmpLoc = GetShaderLocation(e->shader, "driftAmp");
-  e->driftSpeedLoc = GetShaderLocation(e->shader, "driftSpeed");
   e->tentacleWaveLoc = GetShaderLocation(e->shader, "tentacleWave");
   e->bellGlowLoc = GetShaderLocation(e->shader, "bellGlow");
   e->rimGlowLoc = GetShaderLocation(e->shader, "rimGlow");
@@ -58,6 +58,8 @@ bool JellyfishEffectInit(JellyfishEffect *e, const JellyfishConfig *cfg) {
   }
 
   e->time = 0.0f;
+  e->pulsePhase = 0.0f;
+  e->driftPhase = 0.0f;
 
   return true;
 }
@@ -65,6 +67,8 @@ bool JellyfishEffectInit(JellyfishEffect *e, const JellyfishConfig *cfg) {
 void JellyfishEffectSetup(JellyfishEffect *e, const JellyfishConfig *cfg,
                           float deltaTime, const Texture2D &fftTexture) {
   e->time += deltaTime;
+  e->pulsePhase += cfg->pulseSpeed * deltaTime;
+  e->driftPhase += cfg->driftSpeed * deltaTime;
 
   ColorLUTUpdate(e->gradientLUT, &cfg->gradient);
 
@@ -74,6 +78,10 @@ void JellyfishEffectSetup(JellyfishEffect *e, const JellyfishConfig *cfg,
 
   SetShaderValue(e->shader, e->resolutionLoc, resolution, SHADER_UNIFORM_VEC2);
   SetShaderValue(e->shader, e->timeLoc, &e->time, SHADER_UNIFORM_FLOAT);
+  SetShaderValue(e->shader, e->pulsePhaseLoc, &e->pulsePhase,
+                 SHADER_UNIFORM_FLOAT);
+  SetShaderValue(e->shader, e->driftPhaseLoc, &e->driftPhase,
+                 SHADER_UNIFORM_FLOAT);
   SetShaderValue(e->shader, e->sampleRateLoc, &sampleRate,
                  SHADER_UNIFORM_FLOAT);
   SetShaderValueTexture(e->shader, e->fftTextureLoc, fftTexture);
@@ -96,11 +104,7 @@ void JellyfishEffectSetup(JellyfishEffect *e, const JellyfishConfig *cfg,
                  SHADER_UNIFORM_FLOAT);
   SetShaderValue(e->shader, e->pulseDepthLoc, &cfg->pulseDepth,
                  SHADER_UNIFORM_FLOAT);
-  SetShaderValue(e->shader, e->pulseSpeedLoc, &cfg->pulseSpeed,
-                 SHADER_UNIFORM_FLOAT);
   SetShaderValue(e->shader, e->driftAmpLoc, &cfg->driftAmp,
-                 SHADER_UNIFORM_FLOAT);
-  SetShaderValue(e->shader, e->driftSpeedLoc, &cfg->driftSpeed,
                  SHADER_UNIFORM_FLOAT);
   SetShaderValue(e->shader, e->tentacleWaveLoc, &cfg->tentacleWave,
                  SHADER_UNIFORM_FLOAT);

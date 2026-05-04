@@ -11,6 +11,8 @@ out vec4 finalColor;
 
 uniform vec2 resolution;
 uniform float time;
+uniform float pulsePhase;
+uniform float driftPhase;
 uniform sampler2D fftTexture;
 uniform sampler2D gradientLUT;
 uniform float sampleRate;
@@ -25,9 +27,7 @@ uniform int jellyCount;
 uniform float sizeBase;
 uniform float sizeVariance;
 uniform float pulseDepth;
-uniform float pulseSpeed;
 uniform float driftAmp;
-uniform float driftSpeed;
 uniform float tentacleWave;
 uniform float bellGlow;
 uniform float rimGlow;
@@ -107,23 +107,23 @@ float smax(float a, float b, float k) {
     return max(a, b) + h * h * k * 0.25;
 }
 
-vec2 jellyPath(float s, float t) {
+vec2 jellyPath(float s, float dPhase) {
     float ax = (0.09 + hash21(vec2(s, 1.5)) * 0.07) * driftAmp;
     float ay = (0.06 + hash21(vec2(s, 1.6)) * 0.05) * driftAmp;
-    float fx = (0.22 + hash21(vec2(s, 1.1)) * 0.16) * driftSpeed;
-    float fy = (0.17 + hash21(vec2(s, 1.2)) * 0.12) * driftSpeed;
+    float fx = 0.22 + hash21(vec2(s, 1.1)) * 0.16;
+    float fy = 0.17 + hash21(vec2(s, 1.2)) * 0.12;
     float px = hash21(vec2(s, 1.3)) * 6.283;
     float py = hash21(vec2(s, 1.4)) * 6.283;
-    return vec2(ax * sin(t * fx + px), ay * sin(t * fy + py));
+    return vec2(ax * sin(dPhase * fx + px), ay * sin(dPhase * fy + py));
 }
 
 vec3 jellyfish(vec2 uv, vec2 ctr, float s, vec3 hue, float phase, float t) {
     float sz   = sizeBase + hash21(vec2(s, 9.2)) * sizeVariance;
-    float pSpd = (0.55 + hash21(vec2(s, 9.1)) * 0.35) * pulseSpeed;
+    float pSpd = 0.55 + hash21(vec2(s, 9.1)) * 0.35;
 
-    float pulse = 1.0 + pulseDepth * sin(t * pSpd * 3.14159 + phase);
+    float pulse = 1.0 + pulseDepth * sin(pulsePhase * pSpd * 3.14159 + phase);
     float pz    = sz * pulse;
-    vec2  pos   = ctr + jellyPath(s, t);
+    vec2  pos   = ctr + jellyPath(s, driftPhase);
     vec2  lp    = uv - pos;
 
     float bellBody = sdEllipse(lp, vec2(pz * 0.76, pz * 0.38));

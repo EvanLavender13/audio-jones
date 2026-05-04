@@ -383,6 +383,7 @@ Substitutions applied vs reference:
 - `0.14` marineSnow brightness -> `snowBrightness`.
 - `0.26` caustic scalar -> `causticIntensity`.
 - New `backdropDepth` multiplier on the assembled backdrop col (depth gradient + fbm tint).
+- **Implementation note (post-plan)**: `pulseSpeed` and `driftSpeed` are CPU-accumulated into `pulsePhase` and `driftPhase` floats on `JellyfishEffect`, bound as uniforms instead of the speed scalars. The shader uses `sin(pulsePhase * pSpd * 3.14159 + phase)` where `pSpd = 0.55 + hash21*0.35` (seeded variation only), and `jellyPath(s, driftPhase)` with `fx = 0.22 + hash21*0.16` (no driftSpeed factor). Speed in shader is forbidden — see `memory/feedback_speed_accumulation.md`.
 - Hardcoded scalars kept verbatim (no parameter): `bellRim` `300.0`, `cavRim` `0.12`, `interior` `0.04 + 0.10 * cavMask`, `nVar` `0.3 + 0.7`, `rimGlowVal` exp shaper `5500.0`, vignette `mix(0.22, 1.0, pow(vq.x * vq.y * 15.0, 0.32))`, fbm tint `vec3(0.0, 0.007, 0.022)`, snow color `vec3(0.62, 0.82, 1.0)`, caustic tint `vec3(0.6, 0.8, 1.0)`.
 - The five jellyfish-call hue constants are replaced by gradient-LUT samples; the `mix(hue, vec3(1.0), 0.7)` rim-color shift is preserved so silhouettes stay legible.
 
