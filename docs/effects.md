@@ -102,6 +102,7 @@
 | Fireworks | Rockets climb and burst into arcing sparks that droop under gravity like a municipal fireworks finale |
 | Spark Flash | Neon crosshair sparks flashing across the dark like welding arcs caught in a time-lapse |
 | Butterflies | Glowing rainbow butterflies tiled like a backlit specimen case, scrolling past with wings pulsing in unison |
+| Jellyfish | Glowing jellyfish drifting in deep water with trailing luminous tentacles like a bioluminescent aquarium at night |
 
 ### Sculpture
 

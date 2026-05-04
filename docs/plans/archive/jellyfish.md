@@ -533,7 +533,7 @@ Substitutions applied vs reference:
   ```cpp
   STANDARD_GENERATOR_OUTPUT(jellyfish)
   REGISTER_GENERATOR(TRANSFORM_JELLYFISH_BLEND, Jellyfish, jellyfish, "Jellyfish",
-                     SetupJellyfishBlend, SetupJellyfish, 13, DrawJellyfishParams, DrawOutput_jellyfish)
+                     SetupJellyfishBlend, SetupJellyfish, 15, DrawJellyfishParams, DrawOutput_jellyfish)
   ```
 
 **Verify**:
