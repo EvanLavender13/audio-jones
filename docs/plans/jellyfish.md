@@ -422,7 +422,7 @@ Substitutions applied vs reference:
 - Enum: `TRANSFORM_JELLYFISH_BLEND` (added before `TRANSFORM_ACCUM_COMPOSITE`)
 - Display name: `"Jellyfish"`
 - Category badge: `"GEN"` (set by `REGISTER_GENERATOR`)
-- Section index: `13` (Field)
+- Section index: `15` (Scatter)
 - Effect field name on `EffectConfig` and modulation prefix: `jellyfish`
 
 ---
