@@ -61,6 +61,7 @@
 #include "effects/interference_warp.h"
 #include "effects/iris_rings.h"
 #include "effects/isoflow.h"
+#include "effects/jellyfish.h"
 #include "effects/kaleidoscope.h"
 #include "effects/kifs.h"
 #include "effects/kuwahara.h"
@@ -316,6 +317,7 @@ enum TransformEffectType {
   TRANSFORM_SPIRAL_MARCH_BLEND,
   TRANSFORM_APOLLONIAN_TUNNEL_BLEND,
   TRANSFORM_DREAM_ZOOM_BLEND,
+  TRANSFORM_JELLYFISH_BLEND,
   TRANSFORM_ACCUM_COMPOSITE,
   TRANSFORM_EFFECT_COUNT
 };
@@ -890,6 +892,9 @@ struct EffectConfig {
   // Apollonian Tunnel (raymarched Apollonian fractal tunnel flythrough
   // generator)
   ApollonianTunnelConfig apollonianTunnel;
+
+  // Jellyfish (procedural deep-sea field with pulsing jellies and snow)
+  JellyfishConfig jellyfish;
 
   // Transform effect execution order
   TransformOrderConfig transformOrder;
