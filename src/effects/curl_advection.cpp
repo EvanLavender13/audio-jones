@@ -379,6 +379,6 @@ static void DrawOutput_curlAdvection(EffectConfig *e, const ModSources *ms) {
 // clang-format off
 REGISTER_GENERATOR_FULL(TRANSFORM_CURL_ADVECTION, CurlAdvection, curlAdvection,
                         "Curl Advection", SetupCurlAdvectionBlend,
-                        SetupCurlAdvection, RenderCurlAdvection, 13,
+                        SetupCurlAdvection, RenderCurlAdvection, 12,
                         DrawCurlAdvectionParams, DrawOutput_curlAdvection)
 // clang-format on

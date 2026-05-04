@@ -22,7 +22,6 @@
 |--------|-------------|
 | Physarum | Slime mold simulation where agents leave trails and form organic networks |
 | Curl Flow | Particles follow swirling smoke-like paths that evolve over time |
-| Curl Advection | Flowing vein-like patterns that organically evolve and branch |
 | Attractor Flow | Chaotic butterfly-effect particle paths (Lorenz, Rössler, etc.) |
 | Boids | Flocking bird/fish swarm that moves together in coordinated groups |
 | Particle Life | Colored species orbiting, chasing, and clustering like microscopic organisms competing for territory |
@@ -133,6 +132,7 @@
 | Lichen | Three colors of speckled colonies pushing into each other like territorial lichen on damp rock |
 | Snake Skin | Rippling rows of glowing fish scales like a neon snake slithering across a dark wall |
 | Dream Zoom | Endless dive into a fractal coastline of ornate curls and spiral blossoms repeating at every scale |
+| Curl Advection | Flowing vein-like patterns that organically evolve and branch |
 | Solid Color | Flat color fill blended onto the scene |
 
 ## TRANSFORMS
