@@ -46,6 +46,7 @@
 #include "effects/flux_warp.h"
 #include "effects/fractal_tree.h"
 #include "effects/fracture_grid.h"
+#include "effects/frame_recursion.h"
 #include "effects/galaxy.h"
 #include "effects/geode.h"
 #include "effects/glitch.h"
@@ -318,6 +319,7 @@ enum TransformEffectType {
   TRANSFORM_APOLLONIAN_TUNNEL_BLEND,
   TRANSFORM_DREAM_ZOOM_BLEND,
   TRANSFORM_JELLYFISH_BLEND,
+  TRANSFORM_FRAME_RECURSION_BLEND,
   TRANSFORM_ACCUM_COMPOSITE,
   TRANSFORM_EFFECT_COUNT
 };
@@ -895,6 +897,9 @@ struct EffectConfig {
 
   // Jellyfish (procedural deep-sea field with pulsing jellies and snow)
   JellyfishConfig jellyfish;
+
+  // Frame Recursion (raymarched platonic-solid wireframe tunnel generator)
+  FrameRecursionConfig frameRecursion;
 
   // Transform effect execution order
   TransformOrderConfig transformOrder;

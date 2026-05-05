@@ -50,6 +50,7 @@
 #include "effects/flux_warp.h"
 #include "effects/fractal_tree.h"
 #include "effects/fracture_grid.h"
+#include "effects/frame_recursion.h"
 #include "effects/galaxy.h"
 #include "effects/geode.h"
 #include "effects/glitch.h"
@@ -399,6 +400,8 @@ NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(FractalTreeConfig,
                                                 FRACTAL_TREE_CONFIG_FIELDS)
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(FractureGridConfig,
                                                 FRACTURE_GRID_CONFIG_FIELDS)
+NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(FrameRecursionConfig,
+                                                FRAME_RECURSION_CONFIG_FIELDS)
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(GalaxyConfig,
                                                 GALAXY_CONFIG_FIELDS)
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(GeodeConfig,
@@ -787,7 +790,8 @@ static void TransformOrderFromJson(const json &j, TransformOrderConfig &t) {
   X(randomVolumetric) \
   X(lichen) \
   X(spiralMarch) \
-  X(apollonianTunnel)
+  X(apollonianTunnel) \
+  X(frameRecursion)
 // clang-format on
 
 void to_json(json &j, const EffectConfig &e) {
