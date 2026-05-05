@@ -9,6 +9,7 @@
 #include <filesystem>
 #include <fstream>
 #include <nlohmann/json.hpp>
+#include <string>
 
 using json = nlohmann::json;
 namespace fs = std::filesystem;
@@ -103,13 +104,17 @@ void to_json(json &j, const Preset &p) {
     j["drawables"].push_back(p.drawables[i]);
   }
   j["modulation"] = p.modulation;
-  j["lfos"] = json::array();
+  j["lfos"] = json::object();
   for (int i = 0; i < NUM_LFOS; i++) {
-    j["lfos"].push_back(p.lfos[i]);
+    if (p.lfos[i].enabled) {
+      j["lfos"][std::to_string(i)] = p.lfos[i];
+    }
   }
-  j["modBuses"] = json::array();
+  j["modBuses"] = json::object();
   for (int i = 0; i < NUM_MOD_BUSES; i++) {
-    j["modBuses"].push_back(p.modBuses[i]);
+    if (p.modBuses[i].enabled) {
+      j["modBuses"][std::to_string(i)] = p.modBuses[i];
+    }
   }
 }
 
@@ -131,16 +136,19 @@ void from_json(const json &j, Preset &p) {
   }
   p.modulation = j.value("modulation", ModulationConfig{});
   if (j.contains("lfos")) {
-    const auto &lfoArr = j["lfos"];
-    for (int i = 0; i < NUM_LFOS && i < (int)lfoArr.size(); i++) {
-      p.lfos[i] = lfoArr[i].get<LFOConfig>();
+    for (const auto &[key, value] : j["lfos"].items()) {
+      const int slot = std::stoi(key);
+      if (slot >= 0 && slot < NUM_LFOS) {
+        p.lfos[slot] = value.get<LFOConfig>();
+      }
     }
   }
   if (j.contains("modBuses")) {
-    const auto &busArr = j["modBuses"];
-    for (int i = 0; i < NUM_MOD_BUSES && i < static_cast<int>(busArr.size());
-         i++) {
-      p.modBuses[i] = busArr[i].get<ModBusConfig>();
+    for (const auto &[key, value] : j["modBuses"].items()) {
+      const int slot = std::stoi(key);
+      if (slot >= 0 && slot < NUM_MOD_BUSES) {
+        p.modBuses[slot] = value.get<ModBusConfig>();
+      }
     }
   }
 }
