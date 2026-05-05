@@ -187,58 +187,9 @@
       "Color Grade"
     ]
   },
-  "lfos": [
-    {
-      "enabled": false,
-      "phaseOffset": 0.0,
-      "rate": 0.10000000149011612,
-      "waveform": 0
-    },
-    {
-      "enabled": false,
-      "phaseOffset": 0.0,
-      "rate": 0.10000000149011612,
-      "waveform": 0
-    },
-    {
-      "enabled": false,
-      "phaseOffset": 0.0,
-      "rate": 0.10000000149011612,
-      "waveform": 0
-    },
-    {
-      "enabled": false,
-      "phaseOffset": 0.0,
-      "rate": 0.10000000149011612,
-      "waveform": 0
-    },
-    {
-      "enabled": false,
-      "phaseOffset": 0.0,
-      "rate": 0.10000000149011612,
-      "waveform": 0
-    },
-    {
-      "enabled": false,
-      "phaseOffset": 0.0,
-      "rate": 0.10000000149011612,
-      "waveform": 0
-    },
-    {
-      "enabled": false,
-      "phaseOffset": 0.0,
-      "rate": 0.10000000149011612,
-      "waveform": 0
-    },
-    {
-      "enabled": false,
-      "phaseOffset": 0.0,
-      "rate": 0.10000000149011612,
-      "waveform": 0
-    }
-  ],
-  "modBuses": [
-    {
+  "lfos": {},
+  "modBuses": {
+    "0": {
       "asymmetric": false,
       "attack": 0.009999999776482582,
       "enabled": true,
@@ -251,124 +202,20 @@
       "release": 0.30000001192092896,
       "riseTime": 0.20000000298023224,
       "threshold": 0.30000001192092896
-    },
-    {
-      "asymmetric": false,
-      "attack": 0.009999999776482582,
-      "enabled": false,
-      "fallTime": 0.20000000298023224,
-      "hold": 0.0,
-      "inputA": 0,
-      "inputB": 4,
-      "lagTime": 0.20000000298023224,
-      "op": 1,
-      "release": 0.30000001192092896,
-      "riseTime": 0.20000000298023224,
-      "threshold": 0.30000001192092896
-    },
-    {
-      "asymmetric": false,
-      "attack": 0.009999999776482582,
-      "enabled": false,
-      "fallTime": 0.20000000298023224,
-      "hold": 0.0,
-      "inputA": 0,
-      "inputB": 4,
-      "lagTime": 0.20000000298023224,
-      "op": 1,
-      "release": 0.30000001192092896,
-      "riseTime": 0.20000000298023224,
-      "threshold": 0.30000001192092896
-    },
-    {
-      "asymmetric": false,
-      "attack": 0.009999999776482582,
-      "enabled": false,
-      "fallTime": 0.20000000298023224,
-      "hold": 0.0,
-      "inputA": 0,
-      "inputB": 4,
-      "lagTime": 0.20000000298023224,
-      "op": 1,
-      "release": 0.30000001192092896,
-      "riseTime": 0.20000000298023224,
-      "threshold": 0.30000001192092896
-    },
-    {
-      "asymmetric": false,
-      "attack": 0.009999999776482582,
-      "enabled": false,
-      "fallTime": 0.20000000298023224,
-      "hold": 0.0,
-      "inputA": 0,
-      "inputB": 4,
-      "lagTime": 0.20000000298023224,
-      "op": 1,
-      "release": 0.30000001192092896,
-      "riseTime": 0.20000000298023224,
-      "threshold": 0.30000001192092896
-    },
-    {
-      "asymmetric": false,
-      "attack": 0.009999999776482582,
-      "enabled": false,
-      "fallTime": 0.20000000298023224,
-      "hold": 0.0,
-      "inputA": 0,
-      "inputB": 4,
-      "lagTime": 0.20000000298023224,
-      "op": 1,
-      "release": 0.30000001192092896,
-      "riseTime": 0.20000000298023224,
-      "threshold": 0.30000001192092896
-    },
-    {
-      "asymmetric": false,
-      "attack": 0.009999999776482582,
-      "enabled": false,
-      "fallTime": 0.20000000298023224,
-      "hold": 0.0,
-      "inputA": 0,
-      "inputB": 4,
-      "lagTime": 0.20000000298023224,
-      "op": 1,
-      "release": 0.30000001192092896,
-      "riseTime": 0.20000000298023224,
-      "threshold": 0.30000001192092896
-    },
-    {
-      "asymmetric": false,
-      "attack": 0.009999999776482582,
-      "enabled": false,
-      "fallTime": 0.20000000298023224,
-      "hold": 0.0,
-      "inputA": 0,
-      "inputB": 4,
-      "lagTime": 0.20000000298023224,
-      "op": 1,
-      "release": 0.30000001192092896,
-      "riseTime": 0.20000000298023224,
-      "threshold": 0.30000001192092896
     }
-  ],
+  },
   "modulation": {
     "routes": [
       {
-        "amount": -0.5,
+        "amount": 0.3499999940395355,
         "curve": 0,
-        "paramId": "flowField.zoomBase",
-        "source": 0
+        "paramId": "colorGrade.brightness",
+        "source": 18
       },
       {
-        "amount": 1.0,
+        "amount": 0.5,
         "curve": 0,
-        "paramId": "randomVolumetric.cycleSpeed",
-        "source": 0
-      },
-      {
-        "amount": 1.0,
-        "curve": 0,
-        "paramId": "colorGrade.hueShift",
+        "paramId": "colorGrade.saturation",
         "source": 18
       },
       {
@@ -378,16 +225,22 @@
         "source": 0
       },
       {
-        "amount": 0.5,
+        "amount": 1.0,
         "curve": 0,
-        "paramId": "colorGrade.saturation",
+        "paramId": "colorGrade.hueShift",
         "source": 18
       },
       {
-        "amount": 0.3499999940395355,
+        "amount": 1.0,
         "curve": 0,
-        "paramId": "colorGrade.brightness",
-        "source": 18
+        "paramId": "randomVolumetric.cycleSpeed",
+        "source": 0
+      },
+      {
+        "amount": -0.5,
+        "curve": 0,
+        "paramId": "flowField.zoomBase",
+        "source": 0
       }
     ]
   },
