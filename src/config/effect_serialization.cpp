@@ -16,6 +16,7 @@
 #include "effects/bokeh.h"
 #include "effects/butterflies.h"
 #include "effects/byzantine.h"
+#include "effects/calligraph.h"
 #include "effects/chladni.h"
 #include "effects/chladni_warp.h"
 #include "effects/chromatic_aberration.h"
@@ -63,7 +64,6 @@
 #include "effects/infinite_zoom.h"
 #include "effects/infinity_matrix.h"
 #include "effects/ink_wash.h"
-#include "effects/inkelly.h"
 #include "effects/interference_warp.h"
 #include "effects/iris_rings.h"
 #include "effects/isoflow.h"
@@ -448,8 +448,8 @@ NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(LedCubeConfig,
                                                 LED_CUBE_CONFIG_FIELDS)
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(LichenConfig,
                                                 LICHEN_CONFIG_FIELDS)
-NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(InkellyConfig,
-                                                INKELLY_CONFIG_FIELDS)
+NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(CalligraphConfig,
+                                                CALLIGRAPH_CONFIG_FIELDS)
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(LightMedleyConfig,
                                                 LIGHT_MEDLEY_CONFIG_FIELDS)
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(LotusWarpConfig,
@@ -792,7 +792,7 @@ static void TransformOrderFromJson(const json &j, TransformOrderConfig &t) {
   X(geode) \
   X(randomVolumetric) \
   X(lichen) \
-  X(inkelly) \
+  X(calligraph) \
   X(spiralMarch) \
   X(apollonianTunnel) \
   X(frameRecursion)

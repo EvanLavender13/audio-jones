@@ -1,9 +1,9 @@
-// Inkelly effect module implementation
+// Calligraph effect module implementation
 // Two-pass ping-pong feedback ink simulation: lissajous-traced curve seeds a
 // mask field that gets advected by procedural curl-noise and rendered with
 // edge detection through a gradient LUT
 
-#include "inkelly.h"
+#include "calligraph.h"
 #include "audio/audio.h"
 #include "automation/mod_sources.h"
 #include "automation/modulation_engine.h"
@@ -24,7 +24,7 @@
 #include <math.h>
 #include <stddef.h>
 
-static void CacheStateLocations(InkellyEffect *e) {
+static void CacheStateLocations(CalligraphEffect *e) {
   e->stateResolutionLoc = GetShaderLocation(e->stateShader, "resolution");
   e->stateMorphPhaseLoc = GetShaderLocation(e->stateShader, "morphPhase");
   e->stateDeltaTimeLoc = GetShaderLocation(e->stateShader, "deltaTime");
@@ -44,7 +44,7 @@ static void CacheStateLocations(InkellyEffect *e) {
   e->stateLissOffsetY2Loc = GetShaderLocation(e->stateShader, "lissOffsetY2");
 }
 
-static void CacheColorLocations(InkellyEffect *e) {
+static void CacheColorLocations(CalligraphEffect *e) {
   e->colorResolutionLoc = GetShaderLocation(e->shader, "resolution");
   e->colorEdgeFeatherLoc = GetShaderLocation(e->shader, "edgeFeather");
   e->colorFftTextureLoc = GetShaderLocation(e->shader, "fftTexture");
@@ -57,29 +57,29 @@ static void CacheColorLocations(InkellyEffect *e) {
   e->colorBaseBrightLoc = GetShaderLocation(e->shader, "baseBright");
 }
 
-static void InitTextures(InkellyEffect *e, int width, int height) {
-  RenderUtilsInitTextureHDR(&e->maskPingPong[0], width, height, "INKELLY_MASK");
-  RenderUtilsInitTextureHDR(&e->maskPingPong[1], width, height, "INKELLY_MASK");
-  RenderUtilsInitTextureHDR(&e->colorRT, width, height, "INKELLY_COLOR");
+static void InitTextures(CalligraphEffect *e, int width, int height) {
+  RenderUtilsInitTextureHDR(&e->maskPingPong[0], width, height, "CALLIGRAPH_MASK");
+  RenderUtilsInitTextureHDR(&e->maskPingPong[1], width, height, "CALLIGRAPH_MASK");
+  RenderUtilsInitTextureHDR(&e->colorRT, width, height, "CALLIGRAPH_COLOR");
   RenderUtilsClearTexture(&e->maskPingPong[0]);
   RenderUtilsClearTexture(&e->maskPingPong[1]);
   RenderUtilsClearTexture(&e->colorRT);
 }
 
-static void UnloadTextures(const InkellyEffect *e) {
+static void UnloadTextures(const CalligraphEffect *e) {
   UnloadRenderTexture(e->maskPingPong[0]);
   UnloadRenderTexture(e->maskPingPong[1]);
   UnloadRenderTexture(e->colorRT);
 }
 
-bool InkellyEffectInit(InkellyEffect *e, const InkellyConfig *cfg, int width,
+bool CalligraphEffectInit(CalligraphEffect *e, const CalligraphConfig *cfg, int width,
                        int height) {
-  e->stateShader = LoadShader(NULL, "shaders/inkelly_state.fs");
+  e->stateShader = LoadShader(NULL, "shaders/calligraph_state.fs");
   if (e->stateShader.id == 0) {
     return false;
   }
 
-  e->shader = LoadShader(NULL, "shaders/inkelly_color.fs");
+  e->shader = LoadShader(NULL, "shaders/calligraph_color.fs");
   if (e->shader.id == 0) {
     UnloadShader(e->stateShader);
     return false;
@@ -103,7 +103,7 @@ bool InkellyEffectInit(InkellyEffect *e, const InkellyConfig *cfg, int width,
   return true;
 }
 
-static void BindStateUniforms(const InkellyEffect *e, const InkellyConfig *cfg,
+static void BindStateUniforms(const CalligraphEffect *e, const CalligraphConfig *cfg,
                               float deltaTime, const float *resolution) {
   SetShaderValue(e->stateShader, e->stateResolutionLoc, resolution,
                  SHADER_UNIFORM_VEC2);
@@ -139,16 +139,12 @@ static void BindStateUniforms(const InkellyEffect *e, const InkellyConfig *cfg,
                  &cfg->lissajous.offsetY2, SHADER_UNIFORM_FLOAT);
 }
 
-static void BindColorUniforms(const InkellyEffect *e, const InkellyConfig *cfg,
-                              const float *resolution,
-                              const Texture2D &fftTexture) {
+static void BindColorUniforms(const CalligraphEffect *e, const CalligraphConfig *cfg,
+                              const float *resolution) {
   SetShaderValue(e->shader, e->colorResolutionLoc, resolution,
                  SHADER_UNIFORM_VEC2);
   SetShaderValue(e->shader, e->colorEdgeFeatherLoc, &cfg->edgeFeather,
                  SHADER_UNIFORM_FLOAT);
-  SetShaderValueTexture(e->shader, e->colorFftTextureLoc, fftTexture);
-  SetShaderValueTexture(e->shader, e->colorGradientLUTLoc,
-                        ColorLUTGetTexture(e->gradientLUT));
 
   const float sampleRate = (float)AUDIO_SAMPLE_RATE;
   SetShaderValue(e->shader, e->colorSampleRateLoc, &sampleRate,
@@ -164,7 +160,7 @@ static void BindColorUniforms(const InkellyEffect *e, const InkellyConfig *cfg,
                  SHADER_UNIFORM_FLOAT);
 }
 
-void InkellyEffectSetup(InkellyEffect *e, InkellyConfig *cfg, float deltaTime,
+void CalligraphEffectSetup(CalligraphEffect *e, CalligraphConfig *cfg, float deltaTime,
                         const Texture2D &fftTexture) {
   e->morphPhase += cfg->morphSpeed * deltaTime;
   cfg->lissajous.phase += cfg->lissajous.motionSpeed * deltaTime;
@@ -174,10 +170,11 @@ void InkellyEffectSetup(InkellyEffect *e, InkellyConfig *cfg, float deltaTime,
   const float resolution[2] = {(float)GetScreenWidth(),
                                (float)GetScreenHeight()};
   BindStateUniforms(e, cfg, deltaTime, resolution);
-  BindColorUniforms(e, cfg, resolution, fftTexture);
+  BindColorUniforms(e, cfg, resolution);
+  e->fftTexture = fftTexture;
 }
 
-void InkellyEffectRender(InkellyEffect *e, const InkellyConfig *cfg,
+void CalligraphEffectRender(CalligraphEffect *e, const CalligraphConfig *cfg,
                          int screenWidth, int screenHeight) {
   (void)cfg;
   const int writeIdx = 1 - e->readIdx;
@@ -191,6 +188,9 @@ void InkellyEffectRender(InkellyEffect *e, const InkellyConfig *cfg,
 
   BeginTextureMode(e->colorRT);
   BeginShaderMode(e->shader);
+  SetShaderValueTexture(e->shader, e->colorGradientLUTLoc,
+                        ColorLUTGetTexture(e->gradientLUT));
+  SetShaderValueTexture(e->shader, e->colorFftTextureLoc, e->fftTexture);
   RenderUtilsDrawFullscreenQuad(e->maskPingPong[writeIdx].texture, screenWidth,
                                 screenHeight);
   EndShaderMode();
@@ -199,112 +199,112 @@ void InkellyEffectRender(InkellyEffect *e, const InkellyConfig *cfg,
   e->readIdx = writeIdx;
 }
 
-void InkellyEffectResize(InkellyEffect *e, int width, int height) {
+void CalligraphEffectResize(CalligraphEffect *e, int width, int height) {
   UnloadTextures(e);
   InitTextures(e, width, height);
   e->readIdx = 0;
 }
 
-void InkellyEffectUninit(InkellyEffect *e) {
+void CalligraphEffectUninit(CalligraphEffect *e) {
   UnloadShader(e->stateShader);
   UnloadShader(e->shader);
   ColorLUTUninit(e->gradientLUT);
   UnloadTextures(e);
 }
 
-void InkellyRegisterParams(InkellyConfig *cfg) {
-  ModEngineRegisterParam("inkelly.morphSpeed", &cfg->morphSpeed, 0.0f, 2.0f);
-  ModEngineRegisterParam("inkelly.decayRate", &cfg->decayRate, 0.05f, 5.0f);
-  ModEngineRegisterParam("inkelly.spawnDistort", &cfg->spawnDistort, 0.0f,
+void CalligraphRegisterParams(CalligraphConfig *cfg) {
+  ModEngineRegisterParam("calligraph.morphSpeed", &cfg->morphSpeed, 0.0f, 2.0f);
+  ModEngineRegisterParam("calligraph.decayRate", &cfg->decayRate, 0.05f, 5.0f);
+  ModEngineRegisterParam("calligraph.spawnDistort", &cfg->spawnDistort, 0.0f,
                          0.2f);
-  ModEngineRegisterParam("inkelly.advectScale", &cfg->advectScale, 0.0f, 0.02f);
-  ModEngineRegisterParam("inkelly.lineThickness", &cfg->lineThickness, 0.005f,
+  ModEngineRegisterParam("calligraph.advectScale", &cfg->advectScale, 0.0f, 0.02f);
+  ModEngineRegisterParam("calligraph.lineThickness", &cfg->lineThickness, 0.005f,
                          0.1f);
-  ModEngineRegisterParam("inkelly.edgeFeather", &cfg->edgeFeather, 0.005f,
+  ModEngineRegisterParam("calligraph.edgeFeather", &cfg->edgeFeather, 0.005f,
                          0.1f);
-  ModEngineRegisterParam("inkelly.lissajous.amplitude",
+  ModEngineRegisterParam("calligraph.lissajous.amplitude",
                          &cfg->lissajous.amplitude, 0.05f, 2.0f);
-  ModEngineRegisterParam("inkelly.lissajous.motionSpeed",
+  ModEngineRegisterParam("calligraph.lissajous.motionSpeed",
                          &cfg->lissajous.motionSpeed, 0.0f, 5.0f);
-  ModEngineRegisterParam("inkelly.lissajous.offsetX2", &cfg->lissajous.offsetX2,
+  ModEngineRegisterParam("calligraph.lissajous.offsetX2", &cfg->lissajous.offsetX2,
                          -ROTATION_OFFSET_MAX, ROTATION_OFFSET_MAX);
-  ModEngineRegisterParam("inkelly.lissajous.offsetY2", &cfg->lissajous.offsetY2,
+  ModEngineRegisterParam("calligraph.lissajous.offsetY2", &cfg->lissajous.offsetY2,
                          -ROTATION_OFFSET_MAX, ROTATION_OFFSET_MAX);
-  ModEngineRegisterParam("inkelly.baseFreq", &cfg->baseFreq, 27.5f, 440.0f);
-  ModEngineRegisterParam("inkelly.maxFreq", &cfg->maxFreq, 1000.0f, 16000.0f);
-  ModEngineRegisterParam("inkelly.gain", &cfg->gain, 0.1f, 10.0f);
-  ModEngineRegisterParam("inkelly.curve", &cfg->curve, 0.1f, 3.0f);
-  ModEngineRegisterParam("inkelly.baseBright", &cfg->baseBright, 0.0f, 1.0f);
-  ModEngineRegisterParam("inkelly.blendIntensity", &cfg->blendIntensity, 0.0f,
+  ModEngineRegisterParam("calligraph.baseFreq", &cfg->baseFreq, 27.5f, 440.0f);
+  ModEngineRegisterParam("calligraph.maxFreq", &cfg->maxFreq, 1000.0f, 16000.0f);
+  ModEngineRegisterParam("calligraph.gain", &cfg->gain, 0.1f, 10.0f);
+  ModEngineRegisterParam("calligraph.curve", &cfg->curve, 0.1f, 3.0f);
+  ModEngineRegisterParam("calligraph.baseBright", &cfg->baseBright, 0.0f, 1.0f);
+  ModEngineRegisterParam("calligraph.blendIntensity", &cfg->blendIntensity, 0.0f,
                          5.0f);
 }
 
-InkellyEffect *GetInkellyEffect(PostEffect *pe) {
-  return (InkellyEffect *)pe->effectStates[TRANSFORM_INKELLY];
+CalligraphEffect *GetCalligraphEffect(PostEffect *pe) {
+  return (CalligraphEffect *)pe->effectStates[TRANSFORM_CALLIGRAPH];
 }
 
-void SetupInkelly(PostEffect *pe) {
-  InkellyEffect *e = GetInkellyEffect(pe);
-  InkellyEffectSetup(e, &pe->effects.inkelly, GetFrameTime(), pe->fftTexture);
+void SetupCalligraph(PostEffect *pe) {
+  CalligraphEffect *e = GetCalligraphEffect(pe);
+  CalligraphEffectSetup(e, &pe->effects.calligraph, GetFrameTime(), pe->fftTexture);
 }
 
-void SetupInkellyBlend(PostEffect *pe) {
-  InkellyEffect *e = GetInkellyEffect(pe);
+void SetupCalligraphBlend(PostEffect *pe) {
+  CalligraphEffect *e = GetCalligraphEffect(pe);
   BlendCompositorApply(pe->blendCompositor, e->colorRT.texture,
-                       pe->effects.inkelly.blendIntensity,
-                       pe->effects.inkelly.blendMode);
+                       pe->effects.calligraph.blendIntensity,
+                       pe->effects.calligraph.blendMode);
 }
 
-void RenderInkelly(PostEffect *pe) {
-  InkellyEffect *e = GetInkellyEffect(pe);
-  InkellyEffectRender(e, &pe->effects.inkelly, pe->screenWidth,
+void RenderCalligraph(PostEffect *pe) {
+  CalligraphEffect *e = GetCalligraphEffect(pe);
+  CalligraphEffectRender(e, &pe->effects.calligraph, pe->screenWidth,
                       pe->screenHeight);
 }
 
 // === UI ===
 
-static void DrawInkellyParams(EffectConfig *e, const ModSources *ms,
+static void DrawCalligraphParams(EffectConfig *e, const ModSources *ms,
                               ImU32 glow) {
   (void)glow;
-  InkellyConfig *cfg = &e->inkelly;
+  CalligraphConfig *cfg = &e->calligraph;
+
+  ImGui::SeparatorText("Audio");
+  ModulatableSlider("Base Freq (Hz)##calligraph", &cfg->baseFreq,
+                    "calligraph.baseFreq", "%.1f", ms);
+  ModulatableSlider("Max Freq (Hz)##calligraph", &cfg->maxFreq, "calligraph.maxFreq",
+                    "%.0f", ms);
+  ModulatableSlider("Gain##calligraph", &cfg->gain, "calligraph.gain", "%.1f", ms);
+  ModulatableSlider("Contrast##calligraph", &cfg->curve, "calligraph.curve", "%.2f",
+                    ms);
+  ModulatableSlider("Base Bright##calligraph", &cfg->baseBright,
+                    "calligraph.baseBright", "%.2f", ms);
 
   ImGui::SeparatorText("Field");
-  ModulatableSlider("Morph Speed##inkelly", &cfg->morphSpeed,
-                    "inkelly.morphSpeed", "%.2f", ms);
-  ModulatableSlider("Decay##inkelly", &cfg->decayRate, "inkelly.decayRate",
+  ModulatableSlider("Morph Speed##calligraph", &cfg->morphSpeed,
+                    "calligraph.morphSpeed", "%.2f", ms);
+  ModulatableSlider("Decay##calligraph", &cfg->decayRate, "calligraph.decayRate",
                     "%.2f s", ms);
-  ModulatableSlider("Spawn Distort##inkelly", &cfg->spawnDistort,
-                    "inkelly.spawnDistort", "%.2f", ms);
-  ModulatableSlider("Advect##inkelly", &cfg->advectScale, "inkelly.advectScale",
+  ModulatableSlider("Spawn Distort##calligraph", &cfg->spawnDistort,
+                    "calligraph.spawnDistort", "%.2f", ms);
+  ModulatableSlider("Advect##calligraph", &cfg->advectScale, "calligraph.advectScale",
                     "%.4f", ms);
 
   ImGui::SeparatorText("Spawn");
-  ModulatableSlider("Thickness##inkelly", &cfg->lineThickness,
-                    "inkelly.lineThickness", "%.3f", ms);
-  ImGui::SliderInt("Samples##inkelly", &cfg->lissajousSamples, 16, 256);
-  DrawLissajousControls(&cfg->lissajous, "inkelly_liss", "inkelly.lissajous",
+  ModulatableSlider("Thickness##calligraph", &cfg->lineThickness,
+                    "calligraph.lineThickness", "%.3f", ms);
+  ImGui::SliderInt("Samples##calligraph", &cfg->lissajousSamples, 16, 256);
+  DrawLissajousControls(&cfg->lissajous, "calligraph_liss", "calligraph.lissajous",
                         ms, 5.0f);
 
-  ImGui::SeparatorText("Render");
-  ModulatableSlider("Edge Feather##inkelly", &cfg->edgeFeather,
-                    "inkelly.edgeFeather", "%.3f", ms);
-
-  ImGui::SeparatorText("Audio");
-  ModulatableSlider("Base Freq (Hz)##inkelly", &cfg->baseFreq,
-                    "inkelly.baseFreq", "%.1f", ms);
-  ModulatableSlider("Max Freq (Hz)##inkelly", &cfg->maxFreq, "inkelly.maxFreq",
-                    "%.0f", ms);
-  ModulatableSlider("Gain##inkelly", &cfg->gain, "inkelly.gain", "%.1f", ms);
-  ModulatableSlider("Contrast##inkelly", &cfg->curve, "inkelly.curve", "%.2f",
-                    ms);
-  ModulatableSlider("Base Bright##inkelly", &cfg->baseBright,
-                    "inkelly.baseBright", "%.2f", ms);
+  ImGui::SeparatorText("Glow");
+  ModulatableSlider("Edge Feather##calligraph", &cfg->edgeFeather,
+                    "calligraph.edgeFeather", "%.3f", ms);
 }
 
 // clang-format off
-STANDARD_GENERATOR_OUTPUT(inkelly)
-REGISTER_GENERATOR_FULL(TRANSFORM_INKELLY, Inkelly, inkelly,
-                        "Inkelly", SetupInkellyBlend,
-                        SetupInkelly, RenderInkelly, 12,
-                        DrawInkellyParams, DrawOutput_inkelly)
+STANDARD_GENERATOR_OUTPUT(calligraph)
+REGISTER_GENERATOR_FULL(TRANSFORM_CALLIGRAPH, Calligraph, calligraph,
+                        "Calligraph", SetupCalligraphBlend,
+                        SetupCalligraph, RenderCalligraph, 12,
+                        DrawCalligraphParams, DrawOutput_calligraph)
 // clang-format on
