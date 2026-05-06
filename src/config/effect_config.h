@@ -59,6 +59,7 @@
 #include "effects/infinite_zoom.h"
 #include "effects/infinity_matrix.h"
 #include "effects/ink_wash.h"
+#include "effects/inkelly.h"
 #include "effects/interference_warp.h"
 #include "effects/iris_rings.h"
 #include "effects/isoflow.h"
@@ -320,6 +321,7 @@ enum TransformEffectType {
   TRANSFORM_DREAM_ZOOM_BLEND,
   TRANSFORM_JELLYFISH_BLEND,
   TRANSFORM_FRAME_RECURSION_BLEND,
+  TRANSFORM_INKELLY,
   TRANSFORM_ACCUM_COMPOSITE,
   TRANSFORM_EFFECT_COUNT
 };
@@ -890,6 +892,9 @@ struct EffectConfig {
 
   // Lichen (organic crust growth generator)
   LichenConfig lichen;
+
+  // Inkelly
+  InkellyConfig inkelly;
 
   // Apollonian Tunnel (raymarched Apollonian fractal tunnel flythrough
   // generator)
