@@ -93,6 +93,7 @@
 | Star Trail | Glowing star arcs wheeling around a bright core like a long-exposure night sky photograph |
 | Fractal Tree | Endlessly zooming self-similar tree with glowing depth-colored branches pulsing to music like a neon bonsai |
 | Orrery | Nested luminous rings orbiting their parents in a clockwork tree with lines spanning the outermost leaves |
+| Frame Recursion | Glowing wireframe polyhedra nested infinitely down a recursive tunnel, edges striped with shifting neon |
 
 ### Scatter
 
