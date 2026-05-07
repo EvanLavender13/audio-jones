@@ -94,6 +94,7 @@
 | Fractal Tree | Endlessly zooming self-similar tree with glowing depth-colored branches pulsing to music like a neon bonsai |
 | Orrery | Nested luminous rings orbiting their parents in a clockwork tree with lines spanning the outermost leaves |
 | Frame Recursion | Glowing wireframe polyhedra nested infinitely down a recursive tunnel, edges striped with shifting neon |
+| Rotor Grid | Spinning radial mosaic where each ring outward splits into more cells, scattered ones lit like a carnival prize wheel |
 
 ### Scatter
 
