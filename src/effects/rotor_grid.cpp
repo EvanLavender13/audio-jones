@@ -1,5 +1,5 @@
-// Rotor Grid generator - radial cell-grid coloring driven by FFT energy with
-// three modes (smooth gradient, wedge mask, random hash drift)
+// Rotor Grid generator - radial cell-grid with density and randomness controls,
+// per-cell discrete coloring driven by FFT energy
 
 #include "rotor_grid.h"
 #include "audio/audio.h"
@@ -32,15 +32,14 @@ bool RotorGridEffectInit(RotorGridEffect *e, const RotorGridConfig *cfg) {
   e->gainLoc = GetShaderLocation(e->shader, "gain");
   e->curveLoc = GetShaderLocation(e->shader, "curve");
   e->baseBrightLoc = GetShaderLocation(e->shader, "baseBright");
-  e->modeLoc = GetShaderLocation(e->shader, "mode");
+  e->densityLoc = GetShaderLocation(e->shader, "density");
+  e->randomnessLoc = GetShaderLocation(e->shader, "randomness");
   e->ringSpacingLoc = GetShaderLocation(e->shader, "ringSpacing");
   e->baseDivisionsLoc = GetShaderLocation(e->shader, "baseDivisions");
   e->ringFrequencyLoc = GetShaderLocation(e->shader, "ringFrequency");
-  e->radialDriftLoc = GetShaderLocation(e->shader, "radialDrift");
   e->spinPhaseLoc = GetShaderLocation(e->shader, "spinPhase");
-  e->differentialTwistLoc = GetShaderLocation(e->shader, "differentialTwist");
+  e->twistPhaseLoc = GetShaderLocation(e->shader, "twistPhase");
   e->driftPhaseLoc = GetShaderLocation(e->shader, "driftPhase");
-  e->wedgeWidthLoc = GetShaderLocation(e->shader, "wedgeWidth");
 
   e->gradientLUT = ColorLUTInit(&cfg->gradient);
   if (e->gradientLUT == NULL) {
@@ -49,6 +48,7 @@ bool RotorGridEffectInit(RotorGridEffect *e, const RotorGridConfig *cfg) {
   }
 
   e->spinPhase = 0.0f;
+  e->twistPhase = 0.0f;
   e->driftPhase = 0.0f;
 
   return true;
@@ -57,6 +57,7 @@ bool RotorGridEffectInit(RotorGridEffect *e, const RotorGridConfig *cfg) {
 void RotorGridEffectSetup(RotorGridEffect *e, const RotorGridConfig *cfg,
                           float deltaTime, const Texture2D &fftTexture) {
   e->spinPhase += cfg->spinSpeed * deltaTime;
+  e->twistPhase += cfg->spinSpeed * cfg->differentialTwist * deltaTime;
   e->driftPhase += cfg->driftRate * deltaTime;
 
   ColorLUTUpdate(e->gradientLUT, &cfg->gradient);
@@ -78,22 +79,20 @@ void RotorGridEffectSetup(RotorGridEffect *e, const RotorGridConfig *cfg,
   SetShaderValue(e->shader, e->curveLoc, &cfg->curve, SHADER_UNIFORM_FLOAT);
   SetShaderValue(e->shader, e->baseBrightLoc, &cfg->baseBright,
                  SHADER_UNIFORM_FLOAT);
-  SetShaderValue(e->shader, e->modeLoc, &cfg->mode, SHADER_UNIFORM_INT);
+  SetShaderValue(e->shader, e->densityLoc, &cfg->density, SHADER_UNIFORM_FLOAT);
+  SetShaderValue(e->shader, e->randomnessLoc, &cfg->randomness,
+                 SHADER_UNIFORM_FLOAT);
   SetShaderValue(e->shader, e->ringSpacingLoc, &cfg->ringSpacing,
                  SHADER_UNIFORM_FLOAT);
   SetShaderValue(e->shader, e->baseDivisionsLoc, &cfg->baseDivisions,
                  SHADER_UNIFORM_INT);
   SetShaderValue(e->shader, e->ringFrequencyLoc, &cfg->ringFrequency,
                  SHADER_UNIFORM_FLOAT);
-  SetShaderValue(e->shader, e->radialDriftLoc, &cfg->radialDrift,
-                 SHADER_UNIFORM_FLOAT);
   SetShaderValue(e->shader, e->spinPhaseLoc, &e->spinPhase,
                  SHADER_UNIFORM_FLOAT);
-  SetShaderValue(e->shader, e->differentialTwistLoc, &cfg->differentialTwist,
+  SetShaderValue(e->shader, e->twistPhaseLoc, &e->twistPhase,
                  SHADER_UNIFORM_FLOAT);
   SetShaderValue(e->shader, e->driftPhaseLoc, &e->driftPhase,
-                 SHADER_UNIFORM_FLOAT);
-  SetShaderValue(e->shader, e->wedgeWidthLoc, &cfg->wedgeWidth,
                  SHADER_UNIFORM_FLOAT);
 }
 
@@ -108,18 +107,17 @@ void RotorGridRegisterParams(RotorGridConfig *cfg) {
   ModEngineRegisterParam("rotorGrid.gain", &cfg->gain, 0.1f, 10.0f);
   ModEngineRegisterParam("rotorGrid.curve", &cfg->curve, 0.1f, 3.0f);
   ModEngineRegisterParam("rotorGrid.baseBright", &cfg->baseBright, 0.0f, 1.0f);
+  ModEngineRegisterParam("rotorGrid.density", &cfg->density, 0.0f, 1.0f);
+  ModEngineRegisterParam("rotorGrid.randomness", &cfg->randomness, 0.0f, 1.0f);
   ModEngineRegisterParam("rotorGrid.ringSpacing", &cfg->ringSpacing, 0.05f,
                          0.5f);
   ModEngineRegisterParam("rotorGrid.ringFrequency", &cfg->ringFrequency, 1.0f,
                          6.283f);
-  ModEngineRegisterParam("rotorGrid.radialDrift", &cfg->radialDrift,
-                         -ROTATION_OFFSET_MAX, ROTATION_OFFSET_MAX);
   ModEngineRegisterParam("rotorGrid.spinSpeed", &cfg->spinSpeed,
                          -ROTATION_SPEED_MAX, ROTATION_SPEED_MAX);
   ModEngineRegisterParam("rotorGrid.differentialTwist", &cfg->differentialTwist,
                          -2.0f, 2.0f);
   ModEngineRegisterParam("rotorGrid.driftRate", &cfg->driftRate, 0.0f, 1.0f);
-  ModEngineRegisterParam("rotorGrid.wedgeWidth", &cfg->wedgeWidth, 0.0f, PI_F);
   ModEngineRegisterParam("rotorGrid.blendIntensity", &cfg->blendIntensity, 0.0f,
                          5.0f);
 }
@@ -159,10 +157,12 @@ static void DrawRotorGridParams(EffectConfig *e, const ModSources *modSources,
   ModulatableSlider("Base Bright##rotorgrid", &cfg->baseBright,
                     "rotorGrid.baseBright", "%.2f", modSources);
 
-  // Mode
-  ImGui::SeparatorText("Mode");
-  const char *modes[] = {"Smooth", "Wedge", "Random"};
-  ImGui::Combo("Mode##rotorgrid", &cfg->mode, modes, 3);
+  // Cells
+  ImGui::SeparatorText("Cells");
+  ModulatableSlider("Density##rotorgrid", &cfg->density, "rotorGrid.density",
+                    "%.2f", modSources);
+  ModulatableSlider("Randomness##rotorgrid", &cfg->randomness,
+                    "rotorGrid.randomness", "%.2f", modSources);
 
   // Geometry
   ImGui::SeparatorText("Geometry");
@@ -171,15 +171,6 @@ static void DrawRotorGridParams(EffectConfig *e, const ModSources *modSources,
   ImGui::SliderInt("Base Divisions##rotorgrid", &cfg->baseDivisions, 1, 8);
   ModulatableSlider("Ring Frequency##rotorgrid", &cfg->ringFrequency,
                     "rotorGrid.ringFrequency", "%.2f", modSources);
-  ModulatableSliderAngleDeg("Radial Drift##rotorgrid", &cfg->radialDrift,
-                            "rotorGrid.radialDrift", modSources);
-
-  // Mode Options
-  ImGui::SeparatorText("Mode Options");
-  ModulatableSlider("Wedge Width##rotorgrid", &cfg->wedgeWidth,
-                    "rotorGrid.wedgeWidth", "%.2f", modSources);
-  ModulatableSlider("Drift Rate##rotorgrid", &cfg->driftRate,
-                    "rotorGrid.driftRate", "%.2f", modSources);
 
   // Animation
   ImGui::SeparatorText("Animation");
@@ -187,6 +178,8 @@ static void DrawRotorGridParams(EffectConfig *e, const ModSources *modSources,
                             "rotorGrid.spinSpeed", modSources);
   ModulatableSlider("Differential Twist##rotorgrid", &cfg->differentialTwist,
                     "rotorGrid.differentialTwist", "%.2f", modSources);
+  ModulatableSlider("Drift Rate##rotorgrid", &cfg->driftRate,
+                    "rotorGrid.driftRate", "%.2f", modSources);
 }
 
 // clang-format off

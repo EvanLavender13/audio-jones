@@ -332,3 +332,69 @@ e->driftPhase += cfg->driftRate * deltaTime;
 - [ ] Modulation routing works on every registered parameter
 - [ ] Preset save/load round-trips all settings including mode
 - [ ] No tonemap, no global summed-FFT brightness, no magic scalars
+
+---
+
+## Implementation Notes
+
+The shipped effect diverges from the plan above. Changes made during implementation:
+
+### Three modes collapsed into Density + Randomness sliders
+
+The plan specified a `mode` enum (SMOOTH / WEDGE / RANDOM) with mode-specific params. In play-testing, this read as three separate effects sharing geometry rather than a unified control surface, and "Wedge" was opaque as a name. Replaced with two continuous sliders:
+
+- **Density** (0..1, modulatable): fraction of cells lit. Each cell hashes to a value, lit if `cellHash < density`. `density=1` lights all cells (old SMOOTH/RANDOM behavior); `density<1` produces sparse highlights against a dim field (old WEDGE behavior).
+- **Randomness** (0..1, modulatable): blends ordered position-based `t` with per-cell hash `t`. `randomness=0` = ordered rainbow flowing around the ring (old SMOOTH); `randomness=1` = per-cell random color (old RANDOM); intermediate values mix.
+
+Dropped: `mode` field, `wedgeWidth` field, `RotorGridMode` enum.
+
+### Per-cell discrete `t` (not continuous)
+
+The plan's per-mode `t` formulas were continuous in `a` (`t = fract(a / (TWO_PI * baseDivisions))`), which meant `t` varied within a single cell — gradient bled across the cell instead of one color per cell. Fixed by computing discrete cell IDs:
+
+- `radIdx = round(ringFrequency * l / PI)` — radial cell index aligned with `cos(ringFrequency*l)` lobes
+- `angIdx = mod(round(a / PI), cellsPerRing)` — angular cell index, wrapped mod `cellsPerRing = 2 * baseDivisions * ringIdx`
+- `t_ordered = fract(angIdx / (2 * baseDivisions))` — discrete per-cell, matches reference's `cos(a/baseDivisions)` color cycle rate (one rainbow per `ringIdx` revolutions per ring)
+- `t_random = fract(cellHash + driftPhase)` — discrete per-cell hash with optional drift
+
+The `mod(angIdx, cellsPerRing)` wrap fixes a discontinuity bug at the negative x-axis where `atan(U.y, U.x)` jumps from `+PI` to `-PI`. Without the wrap, cells straddling the negative x-axis would split into two halves with different `angIdx` values, hence different hashes — visible as cells fading in/out as if a static mask were rotating through the field.
+
+### Ring frequency now redistributes both radial and angular cells coherently
+
+The plan computed `ringIdx = round(l)` (independent of `ringFrequency`), which decoupled the radial cell boundaries from the angular subdivision count. Changing `ringFrequency` slid the radial cell lines but left the per-ring angular subdivisions unchanged. Fixed by deriving `ringIdx` from `radIdx` so both scale together.
+
+### `radialDrift` removed
+
+The plan included `radialDrift` to shift the radial cell phase for "ring breathing" modulation. With the per-cell-ID system, modulating it reshuffled cell IDs (hence colors and lit states) instead of breathing — undesirable. Dropped entirely.
+
+### Smooth differential twist via separate accumulator
+
+The plan formula `ringSpin = spinPhase * (1 + differentialTwist * ringIdx)` retroactively scaled the already-accumulated `spinPhase` whenever `differentialTwist` changed, producing a visual snap. Replaced with a dedicated CPU-accumulated phase:
+
+- `twistPhase += spinSpeed * differentialTwist * deltaTime`
+- `ringSpin = spinPhase + twistPhase * ringIdx`
+
+Slider changes only affect future accumulation. When `differentialTwist` returns to zero, `twistPhase` freezes (rather than snapping back) — kept as a feature: the accumulated offset persists like physical inertia, and the user can drift it back by setting twist negative.
+
+### `spinSpeed` default
+
+Plan default was `5.0` rad/s, which exceeds `ROTATION_SPEED_MAX = PI`. Changed to `1.0` (matches sibling generators).
+
+### Final shipped parameters
+
+| Parameter | Range | Default | Modulatable |
+|-----------|-------|---------|-------------|
+| baseFreq | 27.5..440 | 55.0 | Yes |
+| maxFreq | 1000..16000 | 14000 | Yes |
+| gain | 0.1..10 | 2.0 | Yes |
+| curve | 0.1..3 | 1.5 | Yes |
+| baseBright | 0..1 | 0.15 | Yes |
+| density | 0..1 | 1.0 | Yes |
+| randomness | 0..1 | 0.0 | Yes |
+| ringSpacing | 0.05..0.5 | 0.1 | Yes |
+| baseDivisions | 1..8 | 4 | No |
+| ringFrequency | 1.0..6.283 | 3.14 | Yes |
+| spinSpeed | -PI..PI | 1.0 | Yes |
+| differentialTwist | -2.0..2.0 | 0.0 | Yes |
+| driftRate | 0..1 | 0.0 | Yes |
+| blendIntensity | 0..5 | 1.0 | Yes |
