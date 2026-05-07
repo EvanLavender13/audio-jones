@@ -112,6 +112,7 @@
 #include "effects/relativistic_doppler.h"
 #include "effects/ripple_tank.h"
 #include "effects/risograph.h"
+#include "effects/rotor_grid.h"
 #include "effects/scan_bars.h"
 #include "effects/scrawl.h"
 #include "effects/shake.h"
@@ -322,6 +323,7 @@ enum TransformEffectType {
   TRANSFORM_JELLYFISH_BLEND,
   TRANSFORM_FRAME_RECURSION_BLEND,
   TRANSFORM_CALLIGRAPH,
+  TRANSFORM_ROTOR_GRID_BLEND,
   TRANSFORM_ACCUM_COMPOSITE,
   TRANSFORM_EFFECT_COUNT
 };
@@ -905,6 +907,9 @@ struct EffectConfig {
 
   // Frame Recursion (raymarched platonic-solid wireframe tunnel generator)
   FrameRecursionConfig frameRecursion;
+
+  // Rotor Grid (radial cell-grid generator with three coloring modes)
+  RotorGridConfig rotorGrid;
 
   // Transform effect execution order
   TransformOrderConfig transformOrder;

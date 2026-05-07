@@ -116,6 +116,7 @@
 #include "effects/relativistic_doppler.h"
 #include "effects/ripple_tank.h"
 #include "effects/risograph.h"
+#include "effects/rotor_grid.h"
 #include "effects/scan_bars.h"
 #include "effects/scrawl.h"
 #include "effects/shake.h"
@@ -587,6 +588,8 @@ NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(
     RelativisticDopplerConfig, RELATIVISTIC_DOPPLER_CONFIG_FIELDS)
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(RisographConfig,
                                                 RISOGRAPH_CONFIG_FIELDS)
+NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(RotorGridConfig,
+                                                ROTOR_GRID_CONFIG_FIELDS)
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(ScanBarsConfig,
                                                 SCAN_BARS_CONFIG_FIELDS)
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(ScrawlConfig,
@@ -795,7 +798,8 @@ static void TransformOrderFromJson(const json &j, TransformOrderConfig &t) {
   X(calligraph) \
   X(spiralMarch) \
   X(apollonianTunnel) \
-  X(frameRecursion)
+  X(frameRecursion) \
+  X(rotorGrid)
 // clang-format on
 
 void to_json(json &j, const EffectConfig &e) {
