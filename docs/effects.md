@@ -186,6 +186,7 @@ Reorderable effects with sub-categories:
 | Multi-Scale Grid | Layered wavy tile grids at three zoom levels where bright cells glow like an LED wall and dark seams carve the boundaries |
 | Dot Matrix | LED billboard where bright pixels become glowing circles and dark areas vanish into black |
 | Fracture Grid | Mosaic of jumbled tile fragments like a puzzle dumped out of the box and slowly shifting |
+| Pillar Grid | Glossy rounded pillars rising from a grid where input brightness becomes height like a backlit toy brick wall |
 
 ### Motion
 
