@@ -137,6 +137,7 @@
 | Dream Zoom | Endless dive into a fractal coastline of ornate curls and spiral blossoms repeating at every scale |
 | Curl Advection | Flowing vein-like patterns that organically evolve and branch |
 | Calligraph | Glowing ink lines scribbling and folding across darkness like wet calligraphy smeared by an invisible breeze |
+| Quadtree | Recursive quadtree subdividing into tiny nested cells around drifting points, leaving wide tiles in empty zones |
 | Solid Color | Flat color fill blended onto the scene |
 
 ## TRANSFORMS
