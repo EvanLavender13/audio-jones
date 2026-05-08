@@ -232,6 +232,7 @@ Reorderable effects with sub-categories:
 |--------|-------------|
 | Disco Ball | Spinning mirror ball throwing dancing light spots across the walls like a 70s dance floor |
 | LEGO Bricks | Pixelated toy bricks with raised studs and merged colors |
+| Puzzle | Image broken into a grid of interlocking jigsaw pieces with tab-and-blank edges like a completed cardboard puzzle |
 
 ### Retro
 
