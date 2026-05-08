@@ -77,6 +77,8 @@ Turn a vague idea into a researched concept through collaborative dialogue. Expl
 
 2. Present classification with one sentence explaining why.
 
+3. Read memories from `MEMORY.md` matching the classified domain.
+
 **STOP**: Do not proceed until user confirms classification.
 
 ---
