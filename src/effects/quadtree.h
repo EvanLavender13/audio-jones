@@ -28,7 +28,6 @@ struct QuadtreeConfig {
 
   // Sources
   int pointCount = 6;            // 1-8
-  float baseRadius = 0.5f;       // 0.0-1.0
   DualLissajousConfig lissajous; // Shared Lissajous controls (motion)
 
   // Color
@@ -42,8 +41,8 @@ struct QuadtreeConfig {
 
 #define QUADTREE_CONFIG_FIELDS                                                 \
   enabled, baseFreq, maxFreq, gain, curve, baseBright, maxIterations,          \
-      lineWidth, cellFillAmount, pointCount, baseRadius, lissajous, colorMode, \
-      gradient, blendMode, blendIntensity
+      lineWidth, cellFillAmount, pointCount, lissajous, colorMode, gradient,   \
+      blendMode, blendIntensity
 
 typedef struct ColorLUT ColorLUT;
 

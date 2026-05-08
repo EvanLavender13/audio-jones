@@ -63,8 +63,8 @@ void QuadtreeEffectSetup(QuadtreeEffect *e, QuadtreeConfig *cfg,
   } else if (count > 8) {
     count = 8;
   }
-  DualLissajousUpdateCircular(&cfg->lissajous, deltaTime, cfg->baseRadius, 0.0f,
-                              0.0f, count, sources);
+  DualLissajousUpdateMulti(&cfg->lissajous, deltaTime, 0.5f, 0.5f, count,
+                           sources);
   SetShaderValueV(e->shader, e->sourcesLoc, sources, SHADER_UNIFORM_VEC2,
                   count);
   SetShaderValue(e->shader, e->pointCountLoc, &count, SHADER_UNIFORM_INT);
@@ -107,7 +107,6 @@ void QuadtreeRegisterParams(QuadtreeConfig *cfg) {
   ModEngineRegisterParam("quadtree.lineWidth", &cfg->lineWidth, 0.5f, 4.0f);
   ModEngineRegisterParam("quadtree.cellFillAmount", &cfg->cellFillAmount, 0.0f,
                          1.0f);
-  ModEngineRegisterParam("quadtree.baseRadius", &cfg->baseRadius, 0.0f, 1.0f);
   ModEngineRegisterParam("quadtree.lissajous.amplitude",
                          &cfg->lissajous.amplitude, 0.0f, 0.5f);
   ModEngineRegisterParam("quadtree.lissajous.motionSpeed",
@@ -158,10 +157,8 @@ static void DrawQuadtreeParams(EffectConfig *e, const ModSources *ms,
 
   ImGui::SeparatorText("Sources");
   ImGui::SliderInt("Source Count##quadtree", &cfg->pointCount, 1, 8);
-  ModulatableSlider("Base Radius##quadtree", &cfg->baseRadius,
-                    "quadtree.baseRadius", "%.2f", ms);
   DrawLissajousControls(&cfg->lissajous, "quadtree_liss", "quadtree.lissajous",
-                        ms, 0.2f);
+                        ms, 5.0f);
 
   ImGui::SeparatorText("Color");
   ImGui::Combo("Color Mode##quadtree", &cfg->colorMode, "Depth\0Hash\0");

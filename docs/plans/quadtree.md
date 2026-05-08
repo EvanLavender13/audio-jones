@@ -521,3 +521,13 @@ Do NOT modify `src/render/post_effect.h`. The descriptor system stores `Quadtree
 - [ ] All registered modulation IDs (`quadtree.baseFreq`, `quadtree.lineWidth`, `quadtree.lissajous.motionSpeed`, etc.) accept route assignments
 - [ ] Preset save/load round-trips all `QUADTREE_CONFIG_FIELDS` values
 - [ ] Disabling the effect clears the modulation routes for `quadtree.*` IDs
+
+## Implementation Notes
+
+Post-implementation deviations from the plan, in order of impact:
+
+- **`baseRadius` field/UI/registration removed**: turned out to be redundant once the shared `DualLissajousUpdateCircular` was rewritten. Source spread is now controlled by `lissajous.amplitude` alone.
+- **Sources passed in normalized `[0, 1]` space, not centered UV**: caller passes `(0.5, 0.5)` center to the multi function; the shader converts via `(s*2-1) * vec2(aspect, 1)`. Without the X-aspect stretch the horizontal screen edges never get a source inside their cells, so they never subdivide.
+- **`DualLissajousUpdateCircular` renamed to `DualLissajousUpdateMulti` and rewritten**: cross-cutting infrastructure change shared with Ripple Tank and Physarum. Sources now travel along a shared Lissajous path with subtle per-source Y-frequency variation (`freqMultY = 1 + 0.1*i`) instead of wobbling around static circle anchors. Defaults bumped (`freqX1` 0.05 -> 0.5, `freqY1` 0.08 -> 0.7) so the motion is visible without slider gymnastics.
+- **`Source Count` slider in UI is `pointCount`** (research/plan name kept consistent through registration as `quadtree.lissajous.*`); the cap-at-8 clamp in `Setup` is needed because the shader array is fixed-size.
+- **`DrawLissajousControls` `freqMax` set to 5.0** (initial copy from Ripple Tank's 0.2 was too tight). Broader parameter-range cleanup tracked in `docs/research/lissajous_param_standardization.md`.

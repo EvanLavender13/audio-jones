@@ -13,8 +13,8 @@ struct DualLissajousConfig {
   float motionSpeed = 1.0f; // Phase accumulation rate (0.0-5.0)
 
   // Shape params (not modulatable - cause discontinuities)
-  float freqX1 = 0.05f;   // Primary X frequency (Hz)
-  float freqY1 = 0.08f;   // Primary Y frequency (Hz)
+  float freqX1 = 0.5f;    // Primary X frequency (Hz)
+  float freqY1 = 0.7f;    // Primary Y frequency (Hz)
   float freqX2 = 0.0f;    // Secondary X frequency (Hz, 0 = disabled)
   float freqY2 = 0.0f;    // Secondary Y frequency (Hz, 0 = disabled)
   float offsetX2 = 0.3f;  // Phase offset for secondary X (radians)
@@ -60,26 +60,36 @@ inline void DualLissajousUpdate(DualLissajousConfig *cfg, float deltaTime,
   *outY = cfg->amplitude * y * scaleY;
 }
 
-// Compute N positions arranged in a circle with shared Lissajous motion.
-// First iteration advances phase; all others use the accumulated phase.
-// centerX/centerY: circle center (0,0 for centered UV, 0.5,0.5 for normalized)
-// outPositions: interleaved x,y pairs (must hold count*2 floats)
-inline void DualLissajousUpdateCircular(DualLissajousConfig *cfg,
-                                        float deltaTime, float baseRadius,
-                                        float centerX, float centerY, int count,
-                                        float *outPositions) {
+inline void DualLissajousUpdateMulti(DualLissajousConfig *cfg, float deltaTime,
+                                     float centerX, float centerY, int count,
+                                     float *outPositions) {
+  cfg->phase += deltaTime * cfg->motionSpeed;
+
+  const float scaleX = (cfg->freqX2 > 0.0f) ? 0.5f : 1.0f;
+  const float scaleY = (cfg->freqY2 > 0.0f) ? 0.5f : 1.0f;
+
   for (int i = 0; i < count; i++) {
-    const float angle = TWO_PI_F * (float)i / (float)count;
-    const float baseX = centerX + baseRadius * cosf(angle);
-    const float baseY = centerY + baseRadius * sinf(angle);
-    const float perSourceOffset = (float)i / (float)count * TWO_PI_F;
+    const float fi = (float)i;
+    const float perSourceOffset = fi / (float)count * TWO_PI_F;
+    const float freqMultY = 1.0f + 0.1f * fi;
 
-    const float dt = (i == 0) ? deltaTime : 0.0f;
-    float offsetX, offsetY;
-    DualLissajousUpdate(cfg, dt, perSourceOffset, &offsetX, &offsetY);
+    const float phaseX1 = cfg->phase * cfg->freqX1 + perSourceOffset;
+    const float phaseY1 =
+        cfg->phase * cfg->freqY1 * freqMultY + perSourceOffset;
 
-    outPositions[i * 2 + 0] = baseX + offsetX;
-    outPositions[i * 2 + 1] = baseY + offsetY;
+    float x = sinf(phaseX1);
+    float y = cosf(phaseY1);
+
+    if (cfg->freqX2 > 0.0f) {
+      x += sinf(cfg->phase * cfg->freqX2 + cfg->offsetX2 + perSourceOffset);
+    }
+    if (cfg->freqY2 > 0.0f) {
+      y += cosf(cfg->phase * cfg->freqY2 * freqMultY + cfg->offsetY2 +
+                perSourceOffset);
+    }
+
+    outPositions[i * 2 + 0] = centerX + cfg->amplitude * x * scaleX;
+    outPositions[i * 2 + 1] = centerY + cfg->amplitude * y * scaleY;
   }
 }
 

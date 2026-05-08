@@ -38,12 +38,15 @@ void main() {
     vec2 hi = ceil(uv);
     uv = mod(uv, vec2(1.0));
 
+    float aspect = resolution.x / resolution.y;
+
     int iters = 0;
     while (iters < maxIterations) {
         iters++;
         bool sub = false;
         for (int i = 0; i < pointCount; ++i) {
-            if (inBox(lo, hi, sources[i])) {
+            vec2 src = (sources[i] * 2.0 - 1.0) * vec2(aspect, 1.0);
+            if (inBox(lo, hi, src)) {
                 sub = true;
                 break;
             }

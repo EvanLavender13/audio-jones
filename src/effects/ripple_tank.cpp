@@ -205,8 +205,8 @@ void RippleTankEffectSetup(RippleTankEffect *e, RippleTankConfig *cfg,
   } else if (count > 8) {
     count = 8;
   }
-  DualLissajousUpdateCircular(&cfg->lissajous, deltaTime, cfg->baseRadius, 0.0f,
-                              0.0f, count, sources);
+  DualLissajousUpdateMulti(&cfg->lissajous, deltaTime, 0.0f, 0.0f, count,
+                           sources);
   SetShaderValueV(e->shader, e->sourcesLoc, sources, SHADER_UNIFORM_VEC2,
                   count);
   SetShaderValue(e->shader, e->sourceCountLoc, &count, SHADER_UNIFORM_INT);
@@ -284,7 +284,6 @@ void RippleTankRegisterParams(RippleTankConfig *cfg) {
                          0.1f);
   ModEngineRegisterParam("rippleTank.blendIntensity", &cfg->blendIntensity,
                          0.0f, 5.0f);
-  ModEngineRegisterParam("rippleTank.baseRadius", &cfg->baseRadius, 0.0f, 1.0f);
   ModEngineRegisterParam("rippleTank.reflectionGain", &cfg->reflectionGain,
                          0.0f, 1.0f);
   ModEngineRegisterParam("rippleTank.lissajous.amplitude",
@@ -377,10 +376,8 @@ static void DrawRippleTankParams(EffectConfig *e, const ModSources *ms,
 
   ImGui::SeparatorText("Sources");
   ImGui::SliderInt("Source Count##rt", &e->rippleTank.sourceCount, 1, 8);
-  ModulatableSlider("Base Radius##rt", &e->rippleTank.baseRadius,
-                    "rippleTank.baseRadius", "%.2f", ms);
   DrawLissajousControls(&e->rippleTank.lissajous, "rt_liss",
-                        "rippleTank.lissajous", ms, 0.2f);
+                        "rippleTank.lissajous", ms, 5.0f);
 
   ImGui::SeparatorText("Boundaries");
   ImGui::Checkbox("Boundaries##rt", &e->rippleTank.boundaries);

@@ -209,8 +209,6 @@ void PhysarumRegisterParams(PhysarumConfig *cfg) {
                          &cfg->lissajous.amplitude, 0.0f, 0.5f);
   ModEngineRegisterParam("physarum.lissajous.motionSpeed",
                          &cfg->lissajous.motionSpeed, 0.0f, 10.0f);
-  ModEngineRegisterParam("physarum.attractorBaseRadius",
-                         &cfg->attractorBaseRadius, 0.1f, 0.5f);
 }
 
 void PhysarumUpdate(Physarum *p, float deltaTime, Texture2D accumTexture,
@@ -224,9 +222,8 @@ void PhysarumUpdate(Physarum *p, float deltaTime, Texture2D accumTexture,
   // Compute attractor positions using shared Lissajous config
   float attractors[16]; // 8 attractors * 2 components
   const int count = p->config.attractorCount;
-  DualLissajousUpdateCircular(&p->config.lissajous, deltaTime,
-                              p->config.attractorBaseRadius, 0.5f, 0.5f, count,
-                              attractors);
+  DualLissajousUpdateMulti(&p->config.lissajous, deltaTime, 0.5f, 0.5f, count,
+                           attractors);
 
   rlEnableShader(p->computeProgram);
 
@@ -377,7 +374,9 @@ void PhysarumApplyConfig(Physarum *p, const PhysarumConfig *newConfig) {
   const bool needsHueReinit =
       !ColorConfigEquals(&p->config.color, &newConfig->color);
 
+  const float savedPhase = p->config.lissajous.phase;
   p->config = *newConfig;
+  p->config.lissajous.phase = savedPhase;
 
   if (needsBufferRealloc) {
     rlUnloadShaderBuffer(p->agentBuffer);
@@ -433,9 +432,7 @@ static void DrawPhysarumParams(EffectConfig *e, const ModSources *ms, ImU32) {
   if (boundsMode == PHYSARUM_BOUNDS_MULTI_HOME) {
     ImGui::SliderInt("Attractors", &e->physarum.attractorCount, 2, 8);
     DrawLissajousControls(&e->physarum.lissajous, "phys_liss",
-                          "physarum.lissajous", ms, 0.2f);
-    ModulatableSlider("Base Radius##phys", &e->physarum.attractorBaseRadius,
-                      "physarum.attractorBaseRadius", "%.2f", ms);
+                          "physarum.lissajous", ms, 5.0f);
   }
   if (boundsMode == PHYSARUM_BOUNDS_SPECIES_ORBIT) {
     ModulatableSlider("Orbit Offset", &e->physarum.orbitOffset,

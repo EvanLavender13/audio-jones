@@ -15,7 +15,6 @@ struct PostEffect;
 struct RippleTankConfig {
   bool enabled = false;
   int sourceCount = 5;           // Number of sources (1-8)
-  float baseRadius = 0.4f;       // Source orbit radius (0.0-1.0)
   DualLissajousConfig lissajous; // Source motion pattern
   bool boundaries = false;       // Enable edge reflections
   float reflectionGain = 0.5f;   // Mirror source attenuation (0.0-1.0)
@@ -56,9 +55,9 @@ struct RippleTankConfig {
 };
 
 #define RIPPLE_TANK_CONFIG_FIELDS                                              \
-  enabled, sourceCount, baseRadius, lissajous, boundaries, reflectionGain,     \
-      visualGain, decayHalfLife, diffusionScale, waveSource, waveShape,        \
-      waveScale, waveFreq, waveSpeed, layers, baseFreq, maxFreq, gain, curve,  \
+  enabled, sourceCount, lissajous, boundaries, reflectionGain, visualGain,     \
+      decayHalfLife, diffusionScale, waveSource, waveShape, waveScale,         \
+      waveFreq, waveSpeed, layers, baseFreq, maxFreq, gain, curve,             \
       spatialScale, falloffStrength, falloffType, visualMode, contourCount,    \
       colorMode, chromaSpread, blendMode, blendIntensity, gradient
 

@@ -66,7 +66,6 @@ typedef struct PhysarumConfig {
       0.0f; // Per-species angular separation in species orbit mode (0-1)
   int attractorCount =
       4; // Number of attractor points for multi-home mode (2-8)
-  float attractorBaseRadius = 0.3f;
   DualLissajousConfig lissajous = {
       .amplitude = 0.1f,
       .motionSpeed = 6.28318f, // TWO_PI (was multiplied by TWO_PI)
@@ -89,8 +88,7 @@ typedef struct PhysarumConfig {
       gradientBoost, depositAmount, decayHalfLife, diffusionScale,             \
       boostIntensity, blendMode, accumSenseBlend, repulsionStrength,           \
       samplingExponent, vectorSteering, respawnMode, gravityStrength,          \
-      orbitOffset, attractorCount, attractorBaseRadius, lissajous, color,      \
-      debugOverlay
+      orbitOffset, attractorCount, lissajous, color, debugOverlay
 
 typedef struct Physarum {
   unsigned int agentBuffer;
