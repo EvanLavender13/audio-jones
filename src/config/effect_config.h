@@ -106,6 +106,7 @@
 #include "effects/prism_shatter.h"
 #include "effects/protean_clouds.h"
 #include "effects/puzzle.h"
+#include "effects/quadtree.h"
 #include "effects/radial_ifs.h"
 #include "effects/radial_pulse.h"
 #include "effects/radial_streak.h"
@@ -328,6 +329,7 @@ enum TransformEffectType {
   TRANSFORM_ROTOR_GRID_BLEND,
   TRANSFORM_PILLAR_GRID,
   TRANSFORM_PUZZLE,
+  TRANSFORM_QUADTREE,
   TRANSFORM_ACCUM_COMPOSITE,
   TRANSFORM_EFFECT_COUNT
 };
@@ -920,6 +922,9 @@ struct EffectConfig {
 
   // Puzzle (jigsaw piece tiling with SDF tabs/blanks)
   PuzzleConfig puzzle;
+
+  // Quadtree (recursive quadtree subdivision generator)
+  QuadtreeConfig quadtree;
 
   // Transform effect execution order
   TransformOrderConfig transformOrder;
