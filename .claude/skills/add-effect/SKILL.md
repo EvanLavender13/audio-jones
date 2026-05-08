@@ -9,13 +9,13 @@ Follow this checklist when adding a new transform effect to AudioJones. Effects 
 
 ## Checklist Overview
 
-Transform effects require changes across 7 files. The `REGISTER_EFFECT` macro at the bottom of the `.cpp` file handles lifecycle registration, descriptor metadata, UI dispatch, and pipeline integration — no central lists to edit.
+Transform effects require changes across 5 files. The `REGISTER_EFFECT` macro at the bottom of the `.cpp` file handles lifecycle registration, descriptor metadata, UI dispatch, and pipeline integration — no central lists to edit. Per-effect runtime state lives in a file-local `static <Name>Effect g_<field>State` declared by the macro and accessed through `pe->effectStates[TRANSFORM_<NAME>]`; no `PostEffect` changes are needed.
 
 Steps commonly missed:
 
 1. **TransformOrderConfig::order array** - Effect won't appear in reorder UI
 2. **REGISTER_EFFECT macro** at bottom of `.cpp` - Effect won't init, won't appear in pipeline
-3. **Effect member in PostEffect struct** - No runtime state for the effect
+3. **`Get<Name>Effect()` accessor and non-static `Setup<Name>()` bridge** - Macro can't link the setup binding
 
 ## Phase 1: Effect Module
 
@@ -89,6 +89,15 @@ void {EffectName}RegisterParams({EffectName}Config *cfg) {
   ModEngineRegisterParam("{effectName}.{param}", &cfg->{param}, {min}f, {max}f);
 }
 
+{EffectName}Effect *Get{EffectName}Effect(PostEffect *pe) {
+  return ({EffectName}Effect *)pe->effectStates[TRANSFORM_{EFFECT_NAME}];
+}
+
+void Setup{EffectName}(PostEffect *pe) {
+  {EffectName}EffectSetup(Get{EffectName}Effect(pe), &pe->effects.{effectName},
+                          pe->currentDeltaTime);
+}
+
 // === UI ===
 
 static void Draw{EffectName}Params(EffectConfig *e, const ModSources *ms,
@@ -98,10 +107,6 @@ static void Draw{EffectName}Params(EffectConfig *e, const ModSources *ms,
 
   ModulatableSlider("Param##{effectName}", &cfg->{param},
                     "{effectName}.{param}", "%.2f", ms);
-}
-
-static void Setup{EffectName}(PostEffect* pe) {
-  {EffectName}EffectSetup(&pe->{effectName}, &pe->effects.{effectName}, pe->currentDeltaTime);
 }
 
 // clang-format off
@@ -119,7 +124,7 @@ The `REGISTER_EFFECT` macro at the bottom handles:
 
 The `// === UI ===` section contains the colocated `Draw{EffectName}Params()` function with signature `(EffectConfig*, const ModSources*, ImU32)`. The dispatch system in `imgui_effects_dispatch.cpp` handles section begin/end, enable checkbox, and transform reordering — the draw function only renders effect-specific sliders.
 
-The setup function (`Setup{EffectName}`) is defined as `static` in the `.cpp` file just above the macro. It delegates to the module's `{EffectName}EffectSetup()` function, bridging the `PostEffect*` context to the module's own types.
+The setup function (`Setup{EffectName}`) is **non-static** (referenced by name in the registration macro) and lives just above the `// === UI ===` divider, alongside the non-static `Get{EffectName}Effect()` accessor. The accessor casts `pe->effectStates[TRANSFORM_{EFFECT_NAME}]` to the effect's type; the bridge calls the module's `{EffectName}EffectSetup()` with that pointer plus `&pe->effects.{effectName}`. The `Draw{EffectName}Params` UI callback is `static`.
 
 Use snake_case for filename, PascalCase for struct/function names.
 
@@ -226,23 +231,7 @@ void main() {
 }
 ```
 
-## Phase 4: PostEffect Struct
-
-Modify `src/render/post_effect.h`:
-
-1. **Add include**:
-   ```cpp
-   #include "effects/{effect_name}.h"
-   ```
-
-2. **Add effect member** in `PostEffect` struct (after simulation pointers section):
-   ```cpp
-   {EffectName}Effect {effectName};
-   ```
-
-No changes needed in `post_effect.cpp` — the descriptor loop handles init, uninit, resize, and registerParams automatically.
-
-## Phase 5: Preset Serialization
+## Phase 4: Preset Serialization
 
 Modify `src/config/effect_serialization.cpp`:
 
@@ -280,8 +269,7 @@ After implementation, verify:
 | File | Changes |
 |------|---------|
 | `src/effects/{effect}.h` | Config struct, Effect struct, lifecycle + RegisterParams declarations |
-| `src/effects/{effect}.cpp` | Init, Setup, Uninit, RegisterParams, colocated `Draw*Params`, setup bridge, `REGISTER_EFFECT` macro |
+| `src/effects/{effect}.cpp` | Init, Setup, Uninit, RegisterParams, `Get<Name>Effect()` accessor, non-static `Setup<Name>()` bridge, colocated `Draw*Params`, `REGISTER_EFFECT` macro |
 | `src/config/effect_config.h` | Include, enum, order array, config member |
 | `shaders/{effect}.fs` | Create fragment shader |
-| `src/render/post_effect.h` | Include, Effect member |
 | `src/config/effect_serialization.cpp` | JSON macro, X-macro field entry |
