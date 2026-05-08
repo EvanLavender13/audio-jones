@@ -300,25 +300,25 @@ void ImGuiDrawEffectsPanel(EffectConfig *e, const ModSources *modSources) {
 
   // Transform subcategories (extracted to imgui_effects_transforms.cpp)
   ImGui::Spacing();
-  DrawEffectCategory(e, modSources, 0);
+  DrawEffectCategory(e, modSources, 2); // Cellular
   ImGui::Spacing();
-  DrawEffectCategory(e, modSources, 1);
+  DrawEffectCategory(e, modSources, 8); // Color
   ImGui::Spacing();
-  DrawEffectCategory(e, modSources, 2);
+  DrawEffectCategory(e, modSources, 3); // Motion
   ImGui::Spacing();
-  DrawEffectCategory(e, modSources, 3);
+  DrawEffectCategory(e, modSources, 14); // Novelty
   ImGui::Spacing();
-  DrawEffectCategory(e, modSources, 4);
+  DrawEffectCategory(e, modSources, 7); // Optical
   ImGui::Spacing();
-  DrawEffectCategory(e, modSources, 5);
+  DrawEffectCategory(e, modSources, 4); // Painterly
   ImGui::Spacing();
-  DrawEffectCategory(e, modSources, 14);
+  DrawEffectCategory(e, modSources, 5); // Print
   ImGui::Spacing();
-  DrawEffectCategory(e, modSources, 6);
+  DrawEffectCategory(e, modSources, 6); // Retro
   ImGui::Spacing();
-  DrawEffectCategory(e, modSources, 7);
+  DrawEffectCategory(e, modSources, 0); // Symmetry
   ImGui::Spacing();
-  DrawEffectCategory(e, modSources, 8);
+  DrawEffectCategory(e, modSources, 1); // Warp
 
   ImGui::End();
 }
