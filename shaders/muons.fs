@@ -51,7 +51,7 @@ uniform float colorStretch;
 const float PHI = 1.6180339887;
 
 void main() {
-    // Screen coords centered at origin, matching original's (I+I - res.xyy) pattern
+    // Screen coords centered at origin
     vec2 fragCoord = fragTexCoord * resolution;
     vec3 rayDir = normalize(vec3(fragCoord * 2.0, 0.0) - vec3(resolution.x, resolution.y, resolution.y));
 

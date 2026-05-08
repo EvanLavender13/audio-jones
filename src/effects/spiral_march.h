@@ -38,8 +38,7 @@ struct SpiralMarchConfig {
   // Camera
   float fov = 0.15f;         // Field of view scalar (0.05-1.0)
   float pitchAngle = 0.53f;  // Camera pitch radians (-PI to +PI)
-  float rollAngle = -0.531f; // Camera roll radians; reference's 100.0 wrapped
-                             // to [-PI, PI] = 100 - 16*PI ~ -0.531
+  float rollAngle = -0.531f; // Camera roll radians
 
   // Audio (FFT)
   float baseFreq = 55.0f;

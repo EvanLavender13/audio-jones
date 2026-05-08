@@ -50,7 +50,7 @@ vec3 sampleInput(vec2 p) {
 void main() {
     float aspect = resolution.x / resolution.y;
 
-    // Centered, aspect-corrected coordinates (matches original space)
+    // Centered, aspect-corrected coordinates
     vec2 p = (fragTexCoord - 0.5) * vec2(aspect, 1.0);
 
     // Start from dark canvas - splats paint the image on top

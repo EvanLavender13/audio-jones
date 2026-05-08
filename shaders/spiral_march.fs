@@ -91,8 +91,6 @@ float sampleFFTBand(float freqT0, float freqT1) {
 
 void main() {
     // Centered coords: (0,0) at screen center, y in [-1, 1].
-    // Equivalent to the reference's `(fragCoord*2 - iResolution.xy)/iResolution.y`,
-    // adapted to raylib's normalized fragTexCoord (Shadertoy fragCoord doesn't exist here).
     vec2 uv = fragTexCoord * 2.0 - 1.0;
     uv.x *= resolution.x / resolution.y;
 

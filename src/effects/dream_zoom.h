@@ -26,16 +26,16 @@ struct DreamZoomConfig {
                             // 1 = pure z*z (Mandelbrot-like)
   int iterations = 128;     // Per-pixel iteration cap (16-1024)
 
-  // Per-pixel UV transform (reference iCoordinateScale, iOffset)
+  // Per-pixel UV transform
   float coordinateScale = 0.77f; // Pre-iteration scale exponent (0.0-2.0)
   float offsetX = -1252.38f;     // Pre-iteration UV shift X (-2000 to 2000)
   float offsetY = -1818.59f;     // Pre-iteration UV shift Y (-2000 to 2000)
 
-  // Coloring (reference iCMAPScale, iCMAPOffset)
+  // Coloring
   float cmapScale = 85.11f; // LUT remap amplitude on trap minimum (1-300)
   float cmapOffset = 5.43f; // LUT remap phase shift (0-10)
 
-  // Static fractal params (reference iTrapOffset, iOrigin, iConstantMapOffset)
+  // Static fractal params
   float trapOffsetX = 0.04f; // Moebius trap singularity X (-2.0 to 2.0)
   float trapOffsetY = -1.2f; // Moebius trap singularity Y (-2.0 to 2.0)
   float originX = 34.132f;   // Per-iter shift X, scaled by 0.01 (-100 to 100)

@@ -23,8 +23,7 @@ struct GeodeConfig {
 
   // Cut Field
   int cutMode = 0;                // 0=GYROID, 1=NOISE
-  float cutScale = 0.05f;         // Cut-field wavelength (0.02-0.25); 0.05 =
-                                  // reference's 1/20 for gyroid
+  float cutScale = 0.05f;         // Cut-field wavelength (0.02-0.25)
   float cutThresholdBase = 0.0f;  // Static threshold offset (-2.0-2.0)
   float cutThresholdPulse = 0.0f; // Threshold oscillation amplitude (0.0-2.0)
   float cutPulseSpeed = 0.5f; // Threshold oscillation rate rad/sec (0.0-4.0)
@@ -33,10 +32,8 @@ struct GeodeConfig {
   float fieldDriftZ = 0.0f;   // Cut-field Z drift rate units/sec (-2.0-2.0)
 
   // Camera
-  float orbitSpeed =
-      0.06f; // Yaw orbit rate rad/sec (-1.0-1.0); reference's 2*pi*0.01
-  float orbitPitch = 2.094395f; // Fixed pitch radians (-PI to PI); default
-                                // 2*PI/3 from reference
+  float orbitSpeed = 0.06f;     // Yaw orbit rate rad/sec (-1.0-1.0)
+  float orbitPitch = 2.094395f; // Fixed pitch radians (-PI to PI)
   float cameraDistance = 50.0f; // Camera Z distance pre-rotation (30.0-80.0)
 
   // Lighting

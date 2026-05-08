@@ -81,8 +81,7 @@ void main() {
     float brightness;
 
     if (lit) {
-        // Ordered t: position around the ring (one rainbow per ringIdx revolutions
-        // per ring, matches reference's cos(a/baseDivisions) cycle rate)
+        // Ordered t: position around the ring (one rainbow per ringIdx revolutions per ring)
         float t_ordered = fract(angIdx / (2.0 * float(baseDivisions)));
         // Random t: per-cell hash drifted by driftPhase for shimmer
         float t_random = fract(cellHash + driftPhase);

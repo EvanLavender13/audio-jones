@@ -99,7 +99,7 @@ void main() {
     float aspect = resolution.x / resolution.y;
     vec2 uv = (fragTexCoord - 0.5) * vec2(aspect, 1.0);
 
-    // -0.25 z offset transcribed from reference; keeps fwd.z nonzero at pitch = HALF_PI.
+    // -0.25 z offset keeps fwd.z nonzero at pitch = HALF_PI.
     float R = max(density / 3.0 - 3.5, 5.0);
     vec3 lk = vec3(0.0);
     vec3 ro = vec3(0.0, R * sin(pitch), -R * cos(pitch) - 0.25);

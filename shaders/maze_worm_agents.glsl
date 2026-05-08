@@ -38,7 +38,7 @@ float hash(float n) {
     return fract(sin(n) * 43758.5453123);
 }
 
-// Single-point collision probe (same model as original Shadertoy)
+// Single-point collision probe
 // Probe reach = trailWidth + 1 (self-clear) + collisionGap
 bool isWall(vec2 probePos) {
     float margin = trailWidth + 1.0 + collisionGap;

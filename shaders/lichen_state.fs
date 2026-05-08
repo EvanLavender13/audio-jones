@@ -127,12 +127,12 @@ void main() {
         newHue          = fract(inherited + drift);
     }
 
-    // Cyclic coupling on the activator (.x) channel - matches reference's GLSL truncation
+    // Cyclic coupling on the activator (.x) channel relies on GLSL int truncation
     // of vec2(scalar, vec4) which takes .x of the vec4 expression.
     // species 0: predator = c2, prey = c1
     // species 1: predator = c0, prey = c2
     // species 2: predator = c1, prey = c0
-    // K is frozen across the reaction loop (just like hp/hn are sampled outside the loop in reference).
+    // K is frozen across the reaction loop.
     float k0 = couplingStrength * (c2Center - c1Center * predatorAdvantage) - killRateBase;
     float k1 = couplingStrength * (c0Center - c2Center * predatorAdvantage) - killRateBase;
     float k2 = couplingStrength * (c1Center - c0Center * predatorAdvantage) - killRateBase;

@@ -28,40 +28,37 @@ uniform float baseBright;
 
 const float E = 2.718281828459;
 
-// Hash from reference (kept verbatim)
 float RandFloat(int i) { return fract(sin(float(i)) * 43758.5453); }
 
 void main() {
-    // Center UV, normalize by height (from reference mainImage)
+    // Center UV, normalize by height
     vec2 uv = fragTexCoord * resolution - resolution * 0.5;
     uv /= resolution.y;
 
-    // Spin: 2x2 rotation by CPU-accumulated spinPhase (replaces no-op InitUV)
+    // Spin: 2x2 rotation by CPU-accumulated spinPhase
     float c = cos(spinPhase);
     float s = sin(spinPhase);
     uv = vec2(uv.x * c - uv.y * s, uv.x * s + uv.y * c);
 
-    // Per-pixel time with curvature warp (reference: time = iTime + curvature*pow(length(uv), 0.2))
+    // Per-pixel time with curvature warp
     // zoomPhase accumulated on CPU; curvature offset scaled by zoomSpeed for rate consistency
     float timePercent = zoomPhase + curvature * pow(length(uv), 0.2) * zoomSpeed;
     int iterations = int(floor(timePercent));
     timePercent -= float(iterations);
 
-    // Zoom math (kept verbatim: pow(e, -glyphSizeLog * timePercent) * zoomScale)
     float glyphSizeF = float(glyphSize);
     float glyphSizeLog = log(glyphSizeF);
     float zoom = pow(E, -glyphSizeLog * timePercent) * zoomScale;
 
     vec2 focusF = vec2(ivec2(glyphSize / 2));
 
-    // Offset convergence loop (kept verbatim, 13 iterations sufficient for glyphSize up to 8)
+    // Offset convergence loop (13 iterations sufficient for glyphSize up to 8)
     vec2 offset = vec2(0.0);
     float gsfi = 1.0 / glyphSizeF;
     for (int i = 0; i < 13; ++i) {
         offset += focusF * gsfi * pow(gsfi, float(i));
     }
 
-    // Apply zoom & offset (kept verbatim)
     vec2 pos = uv * zoom + offset;
 
     // Pass 1: accumulate gradient position from cell hashes (replaces HSV accumulation)

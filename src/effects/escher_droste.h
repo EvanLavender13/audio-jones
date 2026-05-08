@@ -36,7 +36,7 @@ typedef struct EscherDrosteEffect {
   int spiralStrengthLoc;
   int rotationOffsetLoc;
   int innerRadiusLoc;
-  float zoomPhase; // CPU-accumulated phase, replaces iTime*0.5 from reference
+  float zoomPhase; // CPU-accumulated phase
 } EscherDrosteEffect;
 
 // Returns true on success, false if shader fails to load

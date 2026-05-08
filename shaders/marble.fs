@@ -130,7 +130,7 @@ void main() {
         col += col * fre;
     }
 
-    // Log compression from reference -- not Reinhard, structurally required
+    // Log compression - not Reinhard, structurally required
     // for 64-step accumulation to resolve filaments without blowout
     col = 0.5 * log(1.0 + col);
     col = clamp(col, 0.0, 1.0);

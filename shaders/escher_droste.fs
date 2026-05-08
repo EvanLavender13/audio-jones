@@ -32,7 +32,7 @@ void main() {
 
     // Escher warp with parameterized strength
     // c = 0: warpU/V collapse to u/v (pure zoom-only tiling)
-    // c = L/TWO_PI: reference Escher spiral
+    // c = L/TWO_PI: Escher spiral
     float c = (L / TWO_PI) * spiralStrength;
     float warpU = u + v * c;
     float warpV = v - u * c;

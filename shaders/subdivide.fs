@@ -89,7 +89,6 @@ void main() {
         float k = float(i) + 1.0;
         float K = 1.0 / k;
 
-        // Squish: replaces original's intro-animated `to` variable
         float to = squish * (10.0 - k) * cos(t*k + (u.x+u.y)*k/2.0 + h12(ID)*10.0);
         float mx1 = catrom(t);
         float mx2 = catrom(t + to);
