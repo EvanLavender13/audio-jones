@@ -105,6 +105,7 @@
 #include "effects/polymorph.h"
 #include "effects/prism_shatter.h"
 #include "effects/protean_clouds.h"
+#include "effects/puzzle.h"
 #include "effects/radial_ifs.h"
 #include "effects/radial_pulse.h"
 #include "effects/radial_streak.h"
@@ -326,6 +327,7 @@ enum TransformEffectType {
   TRANSFORM_CALLIGRAPH,
   TRANSFORM_ROTOR_GRID_BLEND,
   TRANSFORM_PILLAR_GRID,
+  TRANSFORM_PUZZLE,
   TRANSFORM_ACCUM_COMPOSITE,
   TRANSFORM_EFFECT_COUNT
 };
@@ -915,6 +917,9 @@ struct EffectConfig {
 
   // Pillar Grid (3D voxel-pillar heightfield cellular transform)
   PillarGridConfig pillarGrid;
+
+  // Puzzle (jigsaw piece tiling with SDF tabs/blanks)
+  PuzzleConfig puzzle;
 
   // Transform effect execution order
   TransformOrderConfig transformOrder;
