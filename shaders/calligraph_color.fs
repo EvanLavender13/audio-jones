@@ -34,14 +34,15 @@ void main() {
     float t = texture(texture0, uv).r;
     vec3 lineColor = texture(gradientLUT, vec2(t, 0.5)).rgb;
 
+    float freq = baseFreq * pow(maxFreq / baseFreq, t);
+    float baseBin = freq / (sampleRate * 0.5);
+    float binStep = 1.0 / float(textureSize(fftTexture, 0).x);
+
     float energy = 0.0;
     const int BAND_SAMPLES = 4;
     for (int s = 0; s < BAND_SAMPLES; s++) {
-        float ts = t + (float(s) + 0.5) / float(BAND_SAMPLES) /
-                   float(textureSize(fftTexture, 0).x);
-        float freq = baseFreq * pow(maxFreq / baseFreq, ts);
-        float bin = freq / (sampleRate * 0.5);
-        if (bin <= 1.0) {
+        float bin = baseBin + (float(s) - 1.5) * binStep;
+        if (bin >= 0.0 && bin <= 1.0) {
             energy += texture(fftTexture, vec2(bin, 0.5)).r;
         }
     }

@@ -68,7 +68,7 @@ typedef struct PhysarumConfig {
       4; // Number of attractor points for multi-home mode (2-8)
   DualLissajousConfig lissajous = {
       .amplitude = 0.1f,
-      .motionSpeed = 6.28318f, // TWO_PI (was multiplied by TWO_PI)
+      .motionSpeed = 6.28318f, // TWO_PI
       .freqX1 = 0.05f,
       .freqY1 = 0.08f,
       .freqX2 = 0.0f,

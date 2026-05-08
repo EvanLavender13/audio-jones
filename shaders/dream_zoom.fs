@@ -126,16 +126,17 @@ vec4 pixelOf(vec2 uv, mat2 rot, float scale) {
     }
     float t = fract(cmapOffset - log(mix(exp(0.001), exp(1.0), tm)));
 
-    // BAND_SAMPLES standard - 4 adjacent FFT bins around t, log-spaced.
+    float freq = baseFreq * pow(maxFreq / baseFreq, t);
+    float baseBin = freq / (sampleRate * 0.5);
+    float binStep = 1.0 / float(textureSize(fftTexture, 0).x);
+
     float energy = 0.0;
     const int BAND_SAMPLES = 4;
     for (int s = 0; s < BAND_SAMPLES; s++) {
-        float ts = t + (float(s) + 0.5)
-                       / float(BAND_SAMPLES)
-                       / float(textureSize(fftTexture, 0).x);
-        float freq = baseFreq * pow(maxFreq / baseFreq, ts);
-        float bin = freq / (sampleRate * 0.5);
-        if (bin <= 1.0) { energy += texture(fftTexture, vec2(bin, 0.5)).r; }
+        float bin = baseBin + (float(s) - 1.5) * binStep;
+        if (bin >= 0.0 && bin <= 1.0) {
+            energy += texture(fftTexture, vec2(bin, 0.5)).r;
+        }
     }
     float mag = pow(clamp(energy / float(BAND_SAMPLES) * gain, 0.0, 1.0), curve);
     float bright = baseBright + mag;
