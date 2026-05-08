@@ -98,6 +98,7 @@
 #include "effects/perspective_tilt.h"
 #include "effects/phi_blur.h"
 #include "effects/phyllotaxis.h"
+#include "effects/pillar_grid.h"
 #include "effects/pitch_spiral.h"
 #include "effects/pixelation.h"
 #include "effects/plaid.h"
@@ -531,6 +532,8 @@ NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(SynapseTreeConfig,
                                                 SYNAPSE_TREE_CONFIG_FIELDS)
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(MultiScaleGridConfig,
                                                 MULTI_SCALE_GRID_CONFIG_FIELDS)
+NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(PillarGridConfig,
+                                                PILLAR_GRID_CONFIG_FIELDS)
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(NebulaConfig,
                                                 NEBULA_CONFIG_FIELDS)
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(JellyfishConfig,
@@ -799,7 +802,8 @@ static void TransformOrderFromJson(const json &j, TransformOrderConfig &t) {
   X(spiralMarch) \
   X(apollonianTunnel) \
   X(frameRecursion) \
-  X(rotorGrid)
+  X(rotorGrid) \
+  X(pillarGrid)
 // clang-format on
 
 void to_json(json &j, const EffectConfig &e) {

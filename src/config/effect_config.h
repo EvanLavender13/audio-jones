@@ -94,6 +94,7 @@
 #include "effects/perspective_tilt.h"
 #include "effects/phi_blur.h"
 #include "effects/phyllotaxis.h"
+#include "effects/pillar_grid.h"
 #include "effects/pitch_spiral.h"
 #include "effects/pixelation.h"
 #include "effects/plaid.h"
@@ -324,6 +325,7 @@ enum TransformEffectType {
   TRANSFORM_FRAME_RECURSION_BLEND,
   TRANSFORM_CALLIGRAPH,
   TRANSFORM_ROTOR_GRID_BLEND,
+  TRANSFORM_PILLAR_GRID,
   TRANSFORM_ACCUM_COMPOSITE,
   TRANSFORM_EFFECT_COUNT
 };
@@ -910,6 +912,9 @@ struct EffectConfig {
 
   // Rotor Grid (radial cell-grid generator with three coloring modes)
   RotorGridConfig rotorGrid;
+
+  // Pillar Grid (3D voxel-pillar heightfield cellular transform)
+  PillarGridConfig pillarGrid;
 
   // Transform effect execution order
   TransformOrderConfig transformOrder;
