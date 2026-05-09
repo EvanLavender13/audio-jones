@@ -63,7 +63,7 @@ void main() {
     float radIdx = round(ringFrequency * l / PI);
     float ringIdx = max(radIdx, 1.0);
 
-    float ringSpin = spinPhase + twistPhase * ringIdx;
+    float ringSpin = spinPhase + twistPhase * ringIdx * ringIdx;
     float a = atan(U.y, U.x) * float(baseDivisions) * ringIdx + ringSpin;
 
     float d = cos(a) * cos(ringFrequency * l);
