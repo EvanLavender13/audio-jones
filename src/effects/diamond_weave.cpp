@@ -110,13 +110,13 @@ void DiamondWeaveRegisterParams(DiamondWeaveConfig *cfg) {
                          200.0f);
   ModEngineRegisterParam("diamondWeave.baseAngle", &cfg->baseAngle,
                          -ROTATION_OFFSET_MAX, ROTATION_OFFSET_MAX);
-  ModEngineRegisterParam("diamondWeave.phaseSpeed", &cfg->phaseSpeed, 0.05f,
+  ModEngineRegisterParam("diamondWeave.phaseSpeed", &cfg->phaseSpeed, -1.0f,
                          1.0f);
   ModEngineRegisterParam("diamondWeave.rotationSpeed", &cfg->rotationSpeed,
                          -ROTATION_SPEED_MAX, ROTATION_SPEED_MAX);
   ModEngineRegisterParam("diamondWeave.twistSpeed", &cfg->twistSpeed,
                          -ROTATION_SPEED_MAX, ROTATION_SPEED_MAX);
-  ModEngineRegisterParam("diamondWeave.driftSpeed", &cfg->driftSpeed, 0.0f,
+  ModEngineRegisterParam("diamondWeave.driftSpeed", &cfg->driftSpeed, -0.5f,
                          0.5f);
   ModEngineRegisterParam("diamondWeave.glowIntensity", &cfg->glowIntensity,
                          0.0f, 2.0f);

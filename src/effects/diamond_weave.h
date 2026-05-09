@@ -19,10 +19,10 @@ struct DiamondWeaveConfig {
   float baseAngle = 0.777f; // Static rotation of grid (-PI to PI)
 
   // Animation
-  float phaseSpeed = 0.3f;    // Ring evolution rate (0.05-1.0)
+  float phaseSpeed = 0.3f;    // Ring evolution rate (-1.0 to 1.0)
   float rotationSpeed = 0.0f; // Uniform rotation rate, rad/s (-PI to PI)
   float twistSpeed = 0.02f;   // Differential swirl rate, rad/s (-PI to PI)
-  float driftSpeed = 0.1f;    // Gradient hue drift rate (0.0-0.5)
+  float driftSpeed = 0.1f;    // Gradient hue drift rate (-0.5 to 0.5)
 
   // Glow
   float glowIntensity = 1.0f; // Output brightness multiplier (0.0-2.0)
