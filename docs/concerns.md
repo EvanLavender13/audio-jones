@@ -1,31 +1,31 @@
 # Codebase Concerns
 
-> Last sync: 2026-05-03 | Commit: 633041d0
+> Last sync: 2026-05-09 | Commit: 757d6269
 
 ## Tech Debt
 
 **Duplicated GLSL Code:**
-- Issue: 5 shaders define their own `hsv2rgb` function, 32 shaders duplicate inline luminance/luma calculations with inconsistent weights. Additional shared math (PI, noise, transforms) duplicated across shaders.
-- Files with `hsv2rgb`: `shaders/color_grade.fs`, `shaders/physarum_agents.glsl`, `shaders/boids_agents.glsl`, `shaders/particle_life_agents.glsl`, `shaders/hue_remap.fs`
-- Files with luminance: `shaders/hue_remap.fs`, `shaders/glitch.fs`, `shaders/gradient_flow.fs`, `shaders/feedback.fs`, `shaders/false_color.fs`, `shaders/cross_hatching.fs`, `shaders/effect_blend.fs`, `shaders/fxaa.fs`, `shaders/dot_matrix.fs`, `shaders/synthwave.fs`, `shaders/woodblock.fs`, `shaders/ink_wash.fs`, `shaders/texture_warp.fs`, `shaders/ascii_art.fs`, `shaders/curl_flow_agents.glsl`, `shaders/boids_agents.glsl`, `shaders/physarum_agents.glsl`, `shaders/curl_advection_state.fs`, `shaders/byzantine_display.fs`, `shaders/crt.fs`, `shaders/disco_ball.fs`, `shaders/kuwahara.fs`, `shaders/curl_gradient.glsl`, `shaders/subdivide.fs`, `shaders/watercolor.fs`, `shaders/surface_depth.fs`, `shaders/stripe_shift.fs`, `shaders/toon.fs`, `shaders/color_grade.fs`, `shaders/polygon_subdivide.fs`, `shaders/dog_filter.fs`, `shaders/film_grain.fs`
+- Issue: 5 shaders define their own `hsv2rgb` function, 33 shaders duplicate inline luminance/luma calculations with inconsistent weights. Additional shared math (PI, noise, transforms) duplicated across shaders.
+- Files with `hsv2rgb`: `shaders/color_grade.fs`, `shaders/hue_remap.fs`, `shaders/boids_agents.glsl`, `shaders/particle_life_agents.glsl`, `shaders/physarum_agents.glsl`
+- Files with luminance/luma weights: 33 `.fs`/`.glsl` files (`shaders/hue_remap.fs`, `shaders/glitch.fs`, `shaders/feedback.fs`, `shaders/false_color.fs`, `shaders/cross_hatching.fs`, `shaders/effect_blend.fs`, `shaders/fxaa.fs`, `shaders/dot_matrix.fs`, `shaders/synthwave.fs`, `shaders/woodblock.fs`, `shaders/ink_wash.fs`, `shaders/ascii_art.fs`, `shaders/curl_flow_agents.glsl`, `shaders/boids_agents.glsl`, `shaders/physarum_agents.glsl`, `shaders/curl_advection_state.fs`, `shaders/byzantine_display.fs`, `shaders/crt.fs`, `shaders/disco_ball.fs`, `shaders/kuwahara.fs`, `shaders/curl_gradient.glsl`, `shaders/subdivide.fs`, `shaders/watercolor.fs`, `shaders/surface_depth.fs`, `shaders/stripe_shift.fs`, `shaders/toon.fs`, `shaders/color_grade.fs`, `shaders/polygon_subdivide.fs`, `shaders/dog_filter.fs`, `shaders/film_grain.fs`, plus 3 more)
 - Impact: Inconsistent behavior (BT.601 `vec3(0.299, 0.587, 0.114)` vs BT.709 `vec3(0.2126, 0.7152, 0.0722)` luma weights), maintenance burden when fixing shared functions
 - Fix approach: Shader include preprocessor per `docs/plans/shader-includes.md`
 
 **EffectConfig flat struct still grows per effect:**
-- Issue: `EffectConfig` in `src/config/effect_config.h` (898 lines) embeds one config field per effect. The `TransformEffectType` enum has 157 entries. Each new effect adds an enum row, a config field, and a serialization macro.
-- Files: `src/config/effect_config.h` (898 lines), `src/config/effect_serialization.cpp` (858 lines, 161 NLOHMANN macros)
+- Issue: `EffectConfig` in `src/config/effect_config.h` (938 lines) embeds one config field per effect. The `TransformEffectType` enum has 165 entries. Each new effect adds an enum row, a config field, and a serialization macro.
+- Files: `src/config/effect_config.h` (938 lines), `src/config/effect_serialization.cpp` (888 lines, 171 NLOHMANN macros)
 - Impact: Single header touched on every new effect; recompilation cascade across all `.cpp` files that include `effect_config.h`
 - Fix approach: Heterogeneous storage keyed by `TransformEffectType` (the descriptor refactor for runtime state has already proven the pattern; configs are next)
 
 **Static UI section state (nearly resolved):**
-- Issue: UI colocation replaced 90+ `static bool section*` variables across 16 category UI files with a single `g_effectSectionOpen[TRANSFORM_EFFECT_COUNT]` array in `src/ui/imgui_effects_dispatch.cpp`. 1 `static bool sectionFlowField` remains for a non-effect UI section (flow field).
+- Issue: UI colocation replaced 90+ `static bool section*` variables across 16 category UI files with a single `g_effectSectionOpen[TRANSFORM_EFFECT_COUNT]` array in `src/ui/imgui_effects_dispatch.cpp:13`. 1 `static bool sectionFlowField` remains for a non-effect UI section (flow field).
 - Files: `src/ui/imgui_effects.cpp:15`
 - Impact: Remaining state resets on hot reload; cannot persist user preferences
 - Fix approach: Move remaining flag into a UIState struct stored alongside app config
 
 **Preset serialization grows linearly with effects:**
-- Issue: `effect_serialization.cpp` defines 161 `NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT` macros plus 3 manual `to_json`/`from_json` pairs. Every new config struct requires a manual macro and field listing.
-- Files: `src/config/preset.cpp` (277 lines), `src/config/effect_serialization.cpp` (858 lines)
+- Issue: `effect_serialization.cpp` defines 171 `NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT` macros plus 3 manual `to_json`/`from_json` pairs (`ColorConfig` at line 180/216, `MoireGeneratorConfig` at 484/502, `EffectConfig` at 820/840). Every new config struct requires a manual macro and field listing.
+- Files: `src/config/preset.cpp` (285 lines), `src/config/effect_serialization.cpp` (888 lines)
 - Impact: Missing fields silently load as defaults (accepted tradeoff -- no schema versioning while solo-developing).
 - Fix approach: Code generation or reflection-based serialization
 
@@ -36,26 +36,26 @@ None detected.
 ## Performance Bottlenecks
 
 **param_registry string lookups:**
-- Problem: Modulation engine uses std::unordered_map with string keys for every param access
+- Problem: Modulation engine uses `std::unordered_map` with string keys for every param access
 - Files: `src/automation/modulation_engine.cpp`, `src/automation/param_registry.cpp`
-- Cause: String hashing on every ModEngineUpdate call (multiple times per frame)
+- Cause: String hashing on every `ModEngineUpdate` call (multiple times per frame)
 - Improvement path: Use integer IDs for hot paths; keep string lookup for UI/serialization only
 
 ## Fragile Areas
 
 **PostEffect feedback uniform location block:**
 - Files: `src/render/post_effect.h` (130 lines), `src/render/post_effect.cpp` (388 lines)
-- Why fragile: Effect-specific state is now a `void* effectStates[TRANSFORM_EFFECT_COUNT]` array driven by `EFFECT_DESCRIPTORS[]`, but the feedback shader still has ~30 named uniform location ints in `PostEffect`. Adding a feedback parameter requires touching the struct, the loc cache, and the shader bind site.
+- Why fragile: Effect-specific state is now a `void* effectStates[TRANSFORM_EFFECT_COUNT]` array driven by `EFFECT_DESCRIPTORS[]`, but the feedback shader still has 42 named `*Loc` uniform location ints in `PostEffect`. Adding a feedback parameter requires touching the struct, the loc cache, and the shader bind site.
 - Safe modification: Mirror the descriptor pattern only when feedback gains a clear sub-effect boundary; until then, keep all three sites in sync
 
 **Preset Serialization:**
-- Files: `src/config/effect_serialization.cpp` (858 lines), `src/config/preset.cpp` (277 lines)
-- Why fragile: Every config struct requires a NLOHMANN_DEFINE macro and manual field listing. Missing fields silently load as defaults.
+- Files: `src/config/effect_serialization.cpp` (888 lines), `src/config/preset.cpp` (285 lines)
+- Why fragile: Every config struct requires a `NLOHMANN_DEFINE` macro and manual field listing. Missing fields silently load as defaults.
 - Safe modification: Always test round-trip (save then load) when adding config fields
 
 **Simulation init/uninit with goto cleanup:**
-- Files: `src/simulation/physarum.cpp`, `src/simulation/boids.cpp`, `src/simulation/curl_flow.cpp`, `src/simulation/attractor_flow.cpp`, `src/simulation/particle_life.cpp`, `src/simulation/maze_worms.cpp`, `src/simulation/spatial_hash.cpp`
-- Why fragile: 29 goto statements across simulation files; each simulation uses goto-based cleanup. Missing a goto path on new allocation leaks resources.
+- Files: `src/simulation/physarum.cpp` (3 gotos), `src/simulation/boids.cpp` (4), `src/simulation/curl_flow.cpp` (6), `src/simulation/attractor_flow.cpp` (4), `src/simulation/particle_life.cpp` (3), `src/simulation/maze_worms.cpp` (4), `src/simulation/spatial_hash.cpp` (2)
+- Why fragile: 26 goto statements across simulation files; each simulation uses goto-based cleanup. Missing a goto path on new allocation leaks resources.
 - Safe modification: Add new allocations immediately before the corresponding goto check; uninit in reverse order
 
 **Drawable ID management:**
@@ -72,12 +72,12 @@ None detected.
 
 | File | Lines | Concern |
 |------|-------|---------|
-| `src/config/effect_config.h` | 898 | 157-entry `TransformEffectType` enum + one config field per effect |
-| `src/config/effect_serialization.cpp` | 858 | 161 NLOHMANN macros + 3 manual serializers |
+| `src/config/effect_config.h` | 938 | 165-entry `TransformEffectType` enum + one config field per effect |
+| `src/config/effect_serialization.cpp` | 888 | 171 NLOHMANN macros + 3 manual serializers |
 | `src/ui/imgui_analysis.cpp` | 614 | Audio visualization UI |
 | `src/simulation/particle_life.cpp` | 579 | GPU compute simulation |
 | `src/simulation/attractor_flow.cpp` | 530 | GPU compute simulation with colocated UI |
-| `src/simulation/physarum.cpp` | 527 | GPU compute simulation with colocated UI |
+| `src/simulation/physarum.cpp` | 524 | GPU compute simulation with colocated UI |
 | `src/ui/modulatable_slider.cpp` | 490 | LFO-modulatable slider widget |
 | `src/ui/imgui_widgets.cpp` | 487 | Custom ImGui widgets |
 | `src/simulation/curl_flow.cpp` | 482 | GPU compute simulation |
@@ -86,7 +86,7 @@ None detected.
 | `src/effects/lichen.cpp` | 464 | Multi-species reaction-diffusion generator with colocated UI |
 | `src/effects/glitch.cpp` | 430 | Multi-sub-effect module with colocated UI |
 | `src/ui/imgui_playlist.cpp` | 411 | Playlist management UI |
-| `src/effects/ripple_tank.cpp` | 403 | Cymatics simulation with colocated UI |
+| `src/effects/ripple_tank.cpp` | 400 | Cymatics simulation with colocated UI |
 | `src/render/post_effect.cpp` | 388 | Effect init/uninit/resize orchestration (descriptor-driven) |
 | `src/effects/polymorph.cpp` | 386 | Generator with colocated UI |
 | `src/main.cpp` | 384 | Application entry point and main loop |
@@ -94,15 +94,16 @@ None detected.
 | `src/simulation/maze_worms.cpp` | 377 | GPU compute simulation with colocated UI |
 | `src/effects/attractor_lines.cpp` | 377 | Generator with colocated UI |
 | `src/ui/gradient_editor.cpp` | 350 | Gradient editor widget |
+| `src/effects/data_traffic.cpp` | 332 | Generator with colocated UI |
 | `src/render/render_pipeline.cpp` | 331 | Frame rendering orchestration |
 | `src/ui/imgui_bus.cpp` | 330 | Mod bus management UI |
 | `src/ui/imgui_presets.cpp` | 328 | Preset management UI |
 | `src/effects/dream_zoom.cpp` | 328 | Generator with colocated UI |
-| `src/effects/data_traffic.cpp` | 325 | Generator with colocated UI |
-| `src/ui/imgui_effects.cpp` | 322 | Effects panel orchestration |
+| `src/ui/imgui_effects.cpp` | 324 | Effects panel orchestration |
 | `src/simulation/spatial_hash.cpp` | 318 | Spatial hash grid implementation |
 | `src/ui/imgui_drawables.cpp` | 317 | Drawable management UI |
 | `src/render/drawable.cpp` | 312 | Drawable rendering |
+| `src/effects/calligraph.cpp` | 310 | Generator with colocated UI |
 | `src/effects/muons.cpp` | 304 | Generator with colocated UI |
 | `src/effects/constellation.cpp` | 303 | Generator with colocated UI |
 | `src/effects/polyhedral_mirror.cpp` | 300 | Generator with colocated UI |
@@ -117,10 +118,10 @@ Functions with cyclomatic complexity > 15 (measured via lizard):
 | ImGuiDrawDrawablesPanel | `src/ui/imgui_drawables.cpp:22` | 37 | 228 | Drawable management with add/remove/reorder logic |
 | ModSourceGetName | `src/automation/mod_sources.cpp:55` | 27 | 58 | Switch over modulation source types |
 | ModSourceGetColor | `src/automation/mod_sources.cpp:114` | 27 | 50 | Switch over modulation source types |
-| from_json | `src/config/effect_serialization.cpp:209` | 25 | 76 | Deserializes 150+ config structs with fallback handling |
+| from_json | `src/config/effect_serialization.cpp:216` | 25 | 76 | Deserializes 150+ config structs with fallback handling |
 | DrawPresetList | `src/ui/imgui_presets.cpp:134` | 23 | 93 | Preset list UI with rename/delete/drag-reorder |
-| ColorConfigEquals | `src/render/color_config.cpp:38` | 23 | 34 | Field-by-field equality comparison for 23 color config fields |
-| ImGuiDrawEffectsPanel | `src/ui/imgui_effects.cpp:22` | 21 | 232 | Orchestrates effect category dispatch and simulation UI |
+| ColorConfigEquals | `src/render/color_config.cpp:38` | 23 | 34 | Field-by-field equality comparison for color config |
+| ImGuiDrawEffectsPanel | `src/ui/imgui_effects.cpp:22` | 21 | 234 | Orchestrates effect category dispatch and simulation UI |
 | DrawManageBar | `src/ui/imgui_playlist.cpp:287` | 20 | 88 | Playlist management bar with add/remove/reorder |
 | AudioFeaturesProcess | `src/analysis/audio_features.cpp:17` | 19 | 102 | Multi-stage audio feature extraction pipeline |
 | DrawSetlist | `src/ui/imgui_playlist.cpp:151` | 16 | 102 | Playlist setlist UI with drag-reorder |
