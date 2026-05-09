@@ -13,11 +13,11 @@
           "rainbowSat": 1.0,
           "rainbowVal": 1.0
         },
-        "drawInterval": 0,
+        "drawInterval": 0.0,
         "enabled": true,
         "opacity": 1.0,
         "rotationAngle": 0.0,
-        "rotationSpeed": -3.0,
+        "rotationSpeed": 0.0,
         "x": 0.5,
         "y": 0.5
       },
@@ -26,8 +26,12 @@
       "type": 0,
       "waveform": {
         "amplitudeScale": 0.5,
+        "colorShift": 0.0,
+        "colorShiftSpeed": 0.0,
+        "pointCount": 128.0,
         "radius": 0.44999998807907104,
         "smoothness": 100.0,
+        "style": 0,
         "thickness": 25.0,
         "waveformMotionScale": 1.0
       }
@@ -41,11 +45,11 @@
           "rainbowSat": 1.0,
           "rainbowVal": 1.0
         },
-        "drawInterval": 0,
+        "drawInterval": 0.0,
         "enabled": true,
         "opacity": 1.0,
         "rotationAngle": 0.0,
-        "rotationSpeed": 3.0,
+        "rotationSpeed": 0.0,
         "x": 0.5,
         "y": 0.5
       },
@@ -54,6 +58,8 @@
       "spectrum": {
         "barHeight": 0.5,
         "barWidth": 0.30000001192092896,
+        "colorShift": 0.0,
+        "colorShiftSpeed": 0.0,
         "innerRadius": 0.19411763548851013,
         "maxDb": 60.0,
         "minDb": 0.0,
@@ -63,10 +69,14 @@
     }
   ],
   "effects": {
+    "accumBlendIntensity": 1.0,
+    "accumBlendMode": 2,
     "blurScale": 1.0,
     "chromaticAberration": {
       "enabled": true,
-      "offset": 0.0
+      "falloff": 1.0,
+      "offset": 0.0,
+      "samples": 3.0
     },
     "clarity": 0.0,
     "feedbackDesaturate": 0.05000000074505806,
@@ -107,7 +117,9 @@
       "warpSpeed": 1.0
     },
     "transformOrder": [
-      "Voronoi"
+      "Accum Composite",
+      "Voronoi",
+      "Chromatic Aberration"
     ],
     "voronoi": {
       "edgeFalloff": 0.30000001192092896,
@@ -120,60 +132,27 @@
       "speed": 1.1058824062347412
     }
   },
-  "lfos": [
-    {
+  "lfos": {
+    "0": {
       "enabled": true,
+      "phaseOffset": 0.0,
       "rate": 0.009999999776482582,
       "waveform": 0
-    },
-    {
-      "enabled": false,
-      "rate": 0.10000000149011612,
-      "waveform": 0
-    },
-    {
-      "enabled": false,
-      "rate": 0.10000000149011612,
-      "waveform": 0
-    },
-    {
-      "enabled": false,
-      "rate": 0.10000000149011612,
-      "waveform": 0
-    },
-    {
-      "enabled": false,
-      "rate": 0.10000000149011612,
-      "waveform": 0
-    },
-    {
-      "enabled": false,
-      "rate": 0.10000000149011612,
-      "waveform": 0
-    },
-    {
-      "enabled": false,
-      "rate": 0.10000000149011612,
-      "waveform": 0
-    },
-    {
-      "enabled": false,
-      "rate": 0.10000000149011612,
-      "waveform": 0
     }
-  ],
+  },
+  "modBuses": {},
   "modulation": {
     "routes": [
       {
-        "amount": 0.004999999888241291,
+        "amount": 0.49000000953674316,
         "curve": 0,
-        "paramId": "flowField.rotationSpeed",
-        "source": 4
+        "paramId": "chromaticAberration.offset",
+        "source": 3
       },
       {
-        "amount": 0.10000000149011612,
+        "amount": -0.25,
         "curve": 0,
-        "paramId": "effects.blurScale",
+        "paramId": "flowField.zoomBase",
         "source": 0
       },
       {
@@ -183,16 +162,16 @@
         "source": 4
       },
       {
-        "amount": -0.25,
+        "amount": 0.10000000149011612,
         "curve": 0,
-        "paramId": "flowField.zoomBase",
+        "paramId": "effects.blurScale",
         "source": 0
       },
       {
-        "amount": 0.49000000953674316,
+        "amount": 0.004999999888241291,
         "curve": 0,
-        "paramId": "chromaticAberration.offset",
-        "source": 3
+        "paramId": "flowField.rotationSpeed",
+        "source": 4
       }
     ]
   },
