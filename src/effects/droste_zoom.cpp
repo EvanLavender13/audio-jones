@@ -24,6 +24,7 @@ bool DrosteZoomEffectInit(DrosteZoomEffect *e) {
   e->branchesLoc = GetShaderLocation(e->shader, "branches");
 
   e->time = 0.0f;
+  e->rotationPhase = 0.0f;
 
   return true;
 }
@@ -31,10 +32,13 @@ bool DrosteZoomEffectInit(DrosteZoomEffect *e) {
 void DrosteZoomEffectSetup(DrosteZoomEffect *e, const DrosteZoomConfig *cfg,
                            float deltaTime) {
   e->time += cfg->speed * deltaTime;
+  e->rotationPhase += cfg->rotationSpeed * deltaTime;
+
+  const float spiralAngle = cfg->spiralAngle + e->rotationPhase;
 
   SetShaderValue(e->shader, e->timeLoc, &e->time, SHADER_UNIFORM_FLOAT);
   SetShaderValue(e->shader, e->scaleLoc, &cfg->scale, SHADER_UNIFORM_FLOAT);
-  SetShaderValue(e->shader, e->spiralAngleLoc, &cfg->spiralAngle,
+  SetShaderValue(e->shader, e->spiralAngleLoc, &spiralAngle,
                  SHADER_UNIFORM_FLOAT);
   SetShaderValue(e->shader, e->shearCoeffLoc, &cfg->shearCoeff,
                  SHADER_UNIFORM_FLOAT);
@@ -51,6 +55,8 @@ void DrosteZoomRegisterParams(DrosteZoomConfig *cfg) {
   ModEngineRegisterParam("drosteZoom.scale", &cfg->scale, 1.5f, 10.0f);
   ModEngineRegisterParam("drosteZoom.spiralAngle", &cfg->spiralAngle,
                          -ROTATION_OFFSET_MAX, ROTATION_OFFSET_MAX);
+  ModEngineRegisterParam("drosteZoom.rotationSpeed", &cfg->rotationSpeed,
+                         -ROTATION_SPEED_MAX, ROTATION_SPEED_MAX);
   ModEngineRegisterParam("drosteZoom.shearCoeff", &cfg->shearCoeff, -1.0f,
                          1.0f);
   ModEngineRegisterParam("drosteZoom.innerRadius", &cfg->innerRadius, 0.0f,
@@ -68,6 +74,9 @@ static void DrawDrosteZoomParams(EffectConfig *e, const ModSources *ms,
                     "%.1f", ms);
   ModulatableSliderAngleDeg("Spiral Angle##droste", &e->drosteZoom.spiralAngle,
                             "drosteZoom.spiralAngle", ms);
+  ModulatableSliderSpeedDeg("Rotation Speed##droste",
+                            &e->drosteZoom.rotationSpeed,
+                            "drosteZoom.rotationSpeed", ms);
   ModulatableSlider("Shear##droste", &e->drosteZoom.shearCoeff,
                     "drosteZoom.shearCoeff", "%.2f", ms);
   ImGui::SeparatorText("Masking");

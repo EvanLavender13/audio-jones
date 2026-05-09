@@ -12,16 +12,18 @@ struct PostEffect;
 // mapping, and branches sets the rotational symmetry count.
 struct DrosteZoomConfig {
   bool enabled = false;
-  float speed = 1.0f;       // Animation rate (radians/second)
-  float scale = 2.5f;       // Zoom scale factor per layer
-  float spiralAngle = 0.0f; // Twist between layers (radians)
-  float shearCoeff = 0.0f;  // Mapping skew coefficient
-  float innerRadius = 0.0f; // Inner cutoff radius (0.0-1.0)
-  int branches = 1;         // Rotational symmetry count (1-8)
+  float speed = 1.0f;         // Animation rate (radians/second)
+  float scale = 2.5f;         // Zoom scale factor per layer
+  float spiralAngle = 0.0f;   // Twist between layers (radians)
+  float rotationSpeed = 0.0f; // Continuous rotation rate, rad/s
+  float shearCoeff = 0.0f;    // Mapping skew coefficient
+  float innerRadius = 0.0f;   // Inner cutoff radius (0.0-1.0)
+  int branches = 1;           // Rotational symmetry count (1-8)
 };
 
 #define DROSTE_ZOOM_CONFIG_FIELDS                                              \
-  enabled, speed, scale, spiralAngle, shearCoeff, innerRadius, branches
+  enabled, speed, scale, spiralAngle, rotationSpeed, shearCoeff, innerRadius,  \
+      branches
 
 typedef struct DrosteZoomEffect {
   Shader shader;
@@ -31,7 +33,8 @@ typedef struct DrosteZoomEffect {
   int shearCoeffLoc;
   int innerRadiusLoc;
   int branchesLoc;
-  float time; // Animation accumulator
+  float time;          // Animation accumulator
+  float rotationPhase; // CPU-accumulated rotation phase
 } DrosteZoomEffect;
 
 // Returns true on success, false if shader fails to load
