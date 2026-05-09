@@ -373,6 +373,8 @@ NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(DigitalShardConfig,
                                                 DIGITAL_SHARD_CONFIG_FIELDS)
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(
     DensityWaveSpiralConfig, DENSITY_WAVE_SPIRAL_CONFIG_FIELDS)
+NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(DiamondWeaveConfig,
+                                                DIAMOND_WEAVE_CONFIG_FIELDS)
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(DiscoBallConfig,
                                                 DISCO_BALL_CONFIG_FIELDS)
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(DogFilterConfig,
@@ -794,6 +796,7 @@ static void TransformOrderFromJson(const json &j, TransformOrderConfig &t) {
   X(infinityMatrix) \
   X(dreamZoom) \
   X(spiralNest) \
+  X(diamondWeave) \
   X(marble) X(butterflies) \
   X(dancingLines) \
   X(ledCube) \

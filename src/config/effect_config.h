@@ -28,6 +28,7 @@
 #include "effects/dancing_lines.h"
 #include "effects/data_traffic.h"
 #include "effects/density_wave_spiral.h"
+#include "effects/diamond_weave.h"
 #include "effects/digital_shard.h"
 #include "effects/disco_ball.h"
 #include "effects/dog_filter.h"
@@ -311,6 +312,7 @@ enum TransformEffectType {
   TRANSFORM_COLOR_STRETCH_BLEND,
   TRANSFORM_INFINITY_MATRIX_BLEND,
   TRANSFORM_SPIRAL_NEST_BLEND,
+  TRANSFORM_DIAMOND_WEAVE_BLEND,
   TRANSFORM_MARBLE_BLEND,
   TRANSFORM_SNAKE_SKIN_BLEND,
   TRANSFORM_LED_CUBE_BLEND,
@@ -881,6 +883,9 @@ struct EffectConfig {
 
   // Spiral Nest (nested spiral-of-spirals generator)
   SpiralNestConfig spiralNest;
+
+  // Diamond Weave (tiled diamond contours with radial swirl)
+  DiamondWeaveConfig diamondWeave;
 
   // Marble (fluid marble texture generator)
   MarbleConfig marble;
