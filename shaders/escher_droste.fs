@@ -14,7 +14,7 @@ uniform vec2 center;           // Pixel-space drift from screen center (0,0 = no
 uniform float scale;           // Tile scale factor k
 uniform float zoomPhase;       // CPU-accumulated phase (replaces iTime * 0.5)
 uniform float spiralStrength;  // 0 = zoom-only tiling, 1 = Escher spiral
-uniform float rotationOffset;  // Static angle added to warpV (radians)
+uniform float rotationOffset;  // Angle added to warpV (radians, includes accumulated phase)
 uniform float innerRadius;     // Fade mask radius (0 disables)
 
 const float TWO_PI = 6.28318530718;

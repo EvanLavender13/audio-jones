@@ -26,6 +26,7 @@ bool EscherDrosteEffectInit(EscherDrosteEffect *e) {
   e->innerRadiusLoc = GetShaderLocation(e->shader, "innerRadius");
 
   e->zoomPhase = 0.0f;
+  e->rotationPhase = 0.0f;
 
   return true;
 }
@@ -33,6 +34,7 @@ bool EscherDrosteEffectInit(EscherDrosteEffect *e) {
 void EscherDrosteEffectSetup(EscherDrosteEffect *e, EscherDrosteConfig *cfg,
                              float deltaTime) {
   e->zoomPhase += cfg->zoomSpeed * deltaTime;
+  e->rotationPhase += cfg->rotationSpeed * deltaTime;
 
   const float w = (float)GetScreenWidth();
   const float h = (float)GetScreenHeight();
@@ -43,6 +45,7 @@ void EscherDrosteEffectSetup(EscherDrosteEffect *e, EscherDrosteConfig *cfg,
 
   const float centerPix[2] = {cx * h, cy * h};
   const float resolution[2] = {w, h};
+  const float rotation = e->rotationPhase + cfg->rotationOffset;
 
   SetShaderValue(e->shader, e->resolutionLoc, resolution, SHADER_UNIFORM_VEC2);
   SetShaderValue(e->shader, e->centerLoc, centerPix, SHADER_UNIFORM_VEC2);
@@ -51,7 +54,7 @@ void EscherDrosteEffectSetup(EscherDrosteEffect *e, EscherDrosteConfig *cfg,
                  SHADER_UNIFORM_FLOAT);
   SetShaderValue(e->shader, e->spiralStrengthLoc, &cfg->spiralStrength,
                  SHADER_UNIFORM_FLOAT);
-  SetShaderValue(e->shader, e->rotationOffsetLoc, &cfg->rotationOffset,
+  SetShaderValue(e->shader, e->rotationOffsetLoc, &rotation,
                  SHADER_UNIFORM_FLOAT);
   SetShaderValue(e->shader, e->innerRadiusLoc, &cfg->innerRadius,
                  SHADER_UNIFORM_FLOAT);
@@ -69,6 +72,8 @@ void EscherDrosteRegisterParams(EscherDrosteConfig *cfg) {
                          -2.0f, 2.0f);
   ModEngineRegisterParam("escherDroste.rotationOffset", &cfg->rotationOffset,
                          -ROTATION_OFFSET_MAX, ROTATION_OFFSET_MAX);
+  ModEngineRegisterParam("escherDroste.rotationSpeed", &cfg->rotationSpeed,
+                         -ROTATION_SPEED_MAX, ROTATION_SPEED_MAX);
   ModEngineRegisterParam("escherDroste.center.amplitude",
                          &cfg->center.amplitude, 0.0f, 0.5f);
   ModEngineRegisterParam("escherDroste.center.motionSpeed",
@@ -97,6 +102,8 @@ static void DrawEscherDrosteParams(EffectConfig *e, const ModSources *ms,
   ImGui::SeparatorText("Animation");
   ModulatableSlider("Zoom Speed##escherDroste", &cfg->zoomSpeed,
                     "escherDroste.zoomSpeed", "%.2f", ms);
+  ModulatableSliderSpeedDeg("Rotation Speed##escherDroste", &cfg->rotationSpeed,
+                            "escherDroste.rotationSpeed", ms);
 
   ImGui::SeparatorText("Center");
   DrawLissajousControls(&cfg->center, "escherDroste_center",

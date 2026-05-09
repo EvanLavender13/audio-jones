@@ -19,13 +19,15 @@ struct EscherDrosteConfig {
       1.0f; // 0 = zoom-only Droste, 1 = Escher spiral (-2.0 - 2.0)
   float rotationOffset =
       0.0f; // Static rotation of tiling pattern, radians (-PI - PI)
+  float rotationSpeed = 0.0f; // Continuous rotation rate, rad/s
   DualLissajousConfig center = {.amplitude =
                                     0.0f}; // 2D drift of vanishing point
   float innerRadius = 0.05f; // Fade mask around singular center (0.0 - 0.5)
 };
 
 #define ESCHER_DROSTE_CONFIG_FIELDS                                            \
-  enabled, scale, zoomSpeed, spiralStrength, rotationOffset, center, innerRadius
+  enabled, scale, zoomSpeed, spiralStrength, rotationOffset, rotationSpeed,    \
+      center, innerRadius
 
 typedef struct EscherDrosteEffect {
   Shader shader;
@@ -36,7 +38,8 @@ typedef struct EscherDrosteEffect {
   int spiralStrengthLoc;
   int rotationOffsetLoc;
   int innerRadiusLoc;
-  float zoomPhase; // CPU-accumulated phase
+  float zoomPhase;     // CPU-accumulated zoom phase
+  float rotationPhase; // CPU-accumulated rotation phase
 } EscherDrosteEffect;
 
 // Returns true on success, false if shader fails to load
