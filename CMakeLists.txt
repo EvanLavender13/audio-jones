@@ -8,31 +8,31 @@ include(FetchContent)
 
 # Fetch raylib with OpenGL 4.3 for compute shader support
 set(OPENGL_VERSION "4.3" CACHE STRING "OpenGL version for raylib")
-FetchContent_Declare(
+fetchcontent_declare(
     raylib
     GIT_REPOSITORY https://github.com/raysan5/raylib.git
     GIT_TAG 5.5
 )
-FetchContent_MakeAvailable(raylib)
+fetchcontent_makeavailable(raylib)
 target_compile_options(raylib PRIVATE -w)
 
 # Fetch Dear ImGui (docking branch for dockable windows)
-FetchContent_Declare(
+fetchcontent_declare(
     imgui
     GIT_REPOSITORY https://github.com/ocornut/imgui.git
     GIT_TAG docking
     EXCLUDE_FROM_ALL
 )
-FetchContent_MakeAvailable(imgui)
+fetchcontent_makeavailable(imgui)
 
 # Fetch rlImGui (Dear ImGui + raylib integration)
-FetchContent_Declare(
+fetchcontent_declare(
     rlimgui
     GIT_REPOSITORY https://github.com/raylib-extras/rlImGui.git
     GIT_TAG main
     EXCLUDE_FROM_ALL
 )
-FetchContent_MakeAvailable(rlimgui)
+fetchcontent_makeavailable(rlimgui)
 
 # Build rlImGui as a static library (no native CMake support)
 add_library(rlImGui STATIC
@@ -51,23 +51,23 @@ target_link_libraries(rlImGui PUBLIC raylib)
 target_compile_options(rlImGui PRIVATE -w)
 
 # Fetch nlohmann/json for preset serialization
-FetchContent_Declare(
+fetchcontent_declare(
     nlohmann_json
     GIT_REPOSITORY https://github.com/nlohmann/json.git
     GIT_TAG v3.11.3
 )
-FetchContent_MakeAvailable(nlohmann_json)
+fetchcontent_makeavailable(nlohmann_json)
 
 # Fetch miniaudio (header-only)
-FetchContent_Declare(
+fetchcontent_declare(
     miniaudio
     GIT_REPOSITORY https://github.com/mackron/miniaudio.git
     GIT_TAG 0.11.21
 )
-FetchContent_MakeAvailable(miniaudio)
+fetchcontent_makeavailable(miniaudio)
 
 # Fetch kiss_fft for beat detection
-FetchContent_Declare(
+fetchcontent_declare(
     kissfft
     GIT_REPOSITORY https://github.com/mborgerding/kissfft.git
     GIT_TAG 131.1.0
@@ -76,7 +76,7 @@ set(KISSFFT_PKGCONFIG OFF CACHE BOOL "" FORCE)
 set(KISSFFT_STATIC ON CACHE BOOL "" FORCE)
 set(KISSFFT_TEST OFF CACHE BOOL "" FORCE)
 set(KISSFFT_TOOLS OFF CACHE BOOL "" FORCE)
-FetchContent_MakeAvailable(kissfft)
+fetchcontent_makeavailable(kissfft)
 
 # Source file groups by domain (auto-discovered)
 file(GLOB AUDIO_SOURCES      CONFIGURE_DEPENDS "src/audio/*.cpp")
