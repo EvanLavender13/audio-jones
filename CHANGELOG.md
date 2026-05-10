@@ -1,5 +1,30 @@
 # Changelog
 
+## 2026-05-09 — INKWEAVE
+
+### New Effects
+- **Diamond Weave** generator — tiled grid of nested diamond rings with corner-pulling perspective warp
+- **Quadtree** generator — recursive screen subdivision around moving Lissajous source points, with optional cell fill, per-cell gradient sampling, and per-cell FFT brightness
+- **Puzzle** transform — slices the input into a grid of interlocking jigsaw pieces with tab-and-blank edges
+- **Pillar Grid** transform — samples the input on a grid and renders each cell as a glossy 3D rounded-box pillar with luminance-driven height
+- **Rotor Grid** generator — spinning radial cell-grid where outer rings carry more angular cells than inner; three coloring modes (Smooth, Wedge, Random) share one geometric scaffold
+- **Calligraph** generator — two-pass ping-pong ink simulation stamping a Lissajous-traced curve into a mask field advected by curl noise, with edge-detected gradient coloring
+- **Frame Recursion** generator — raymarched kaleidoscopic plane-fold IFS wireframe polyhedron (Octa/Dodeca/Icosa) with fract(log) self-similar recursion and three color modes
+- **Jellyfish** generator — drifting bioluminescent jellyfish swarm with marine snow, Worley caustics, and depth-gradient backdrop; per-jellyfish hashed gradient hue and FFT-band brightness boost
+
+### Enhancements
+- New presets: ZAZIZ, GELLO
+- Rotation speed param added to Droste Zoom and Escher Droste
+- Data Traffic gains per-lane size variation and cell seam/rim controls
+- Lissajous source distribution reworked so shared sources travel along a Lissajous path instead of wobbling around static circle anchors (affects Ripple Tank and Physarum)
+- New Sculpture generator subcategory; Marble and Geode moved there; Neon Lattice moved to Field; curl advection moved to Texture
+- Transform category headers sort alphabetically
+- Preset JSON skips disabled LFO and mod bus slots, shrinking preset files
+
+### Fixes
+- BAND_SAMPLES now spans 4 adjacent FFT bins instead of collapsing onto one
+- Physarum lissajous phase no longer resets to zero every frame (attractors now actually move)
+
 ## 2026-05-03 — LICHRUS
 
 ### New Effects
