@@ -5,9 +5,23 @@
   "drawableCount": 0,
   "drawables": [],
   "effects": {
-    "blurScale": 1.0,
+    "accumBlendIntensity": 1.0,
+    "accumBlendMode": 2,
+    "bilateral": {
+      "enabled": true,
+      "rangeSigma": 0.5,
+      "spatialSigma": 10.0
+    },
+    "bloom": {
+      "enabled": true,
+      "intensity": 0.5,
+      "iterations": 5,
+      "knee": 0.5,
+      "threshold": 0.800000011920929
+    },
+    "blurScale": 0.0,
     "clarity": 0.0,
-    "feedbackDesaturate": 0.05000000074505806,
+    "feedbackDesaturate": 0.0,
     "feedbackFlow": {
       "flowAngle": 0.0,
       "scale": 1.0,
@@ -37,43 +51,157 @@
       "zoomRadial": 0.0
     },
     "gamma": 1.0,
+    "glyphField": {
+      "bandStrength": 0.0,
+      "baseBright": 0.0,
+      "baseFreq": 55.0,
+      "blendIntensity": 1.0,
+      "blendMode": 2,
+      "charAmount": 0.10000000149011612,
+      "charSpeed": 0.10000000149011612,
+      "curve": 3.0,
+      "driftAmount": 0.0,
+      "driftSpeed": 0.5,
+      "enabled": true,
+      "gain": 10.0,
+      "gradient": {
+        "mode": 0,
+        "solid": {
+          "a": 255,
+          "b": 255,
+          "g": 255,
+          "r": 255
+        }
+      },
+      "gridSize": 48.0,
+      "inversionRate": 0.10000000149011612,
+      "inversionSpeed": 0.0,
+      "layerCount": 4,
+      "layerOpacity": 0.5,
+      "layerScaleSpread": 2.0,
+      "layerSpeedSpread": 0.5,
+      "maxFreq": 14000.0,
+      "scrollDirection": 0,
+      "scrollSpeed": 0.0,
+      "stutterAmount": 1.0,
+      "stutterDiscrete": 0.0,
+      "stutterSpeed": 0.10000000149011612
+    },
     "halfLife": 0.5,
+    "infiniteZoom": {
+      "blendMode": 1,
+      "centerLissajous": {
+        "amplitude": 0.0,
+        "freqX1": 0.5,
+        "freqX2": 0.0,
+        "freqY1": 0.699999988079071,
+        "freqY2": 0.0,
+        "motionSpeed": 1.0,
+        "offsetX2": 0.30000001192092896,
+        "offsetY2": 2.0899999141693115
+      },
+      "centerX": 0.5,
+      "centerY": 0.5,
+      "enabled": true,
+      "layerRotate": 0.7853981256484985,
+      "layers": 4,
+      "offsetLissajous": {
+        "amplitude": 0.5,
+        "freqX1": 0.5,
+        "freqX2": 0.0,
+        "freqY1": 0.699999988079071,
+        "freqY2": 0.0,
+        "motionSpeed": 0.0,
+        "offsetX2": 0.30000001192092896,
+        "offsetY2": 2.0899999141693115
+      },
+      "offsetX": 0.0,
+      "offsetY": 0.0,
+      "parallaxStrength": 1.0,
+      "speed": -0.20000000298023224,
+      "spiralAngle": 0.7853981256484985,
+      "spiralTwist": 0.0,
+      "warpFreq": 1.0,
+      "warpSpeed": 0.10000000149011612,
+      "warpStrength": 1.0,
+      "warpType": 1,
+      "zoomDepth": 5.0
+    },
     "motionScale": 1.0,
     "physarum": {
       "accumSenseBlend": 0.0,
-      "agentCount": 1000000,
-      "attractorCount": 4,
-      "blendMode": 2,
-      "boostIntensity": 1.5199999809265137,
-      "boundsMode": 0,
+      "agentCount": 5000000,
+      "attractorCount": 2,
+      "blendMode": 7,
+      "boostIntensity": 1.0,
+      "boundsMode": 2,
+      "cauchyScale": 2.0,
       "color": {
-        "mode": 1,
-        "rainbowHue": 0.0,
-        "rainbowRange": 360.0,
-        "rainbowSat": 1.0,
-        "rainbowVal": 1.0
+        "gradientStopCount": 3,
+        "gradientStops": [
+          {
+            "color": {
+              "a": 255,
+              "b": 255,
+              "g": 255,
+              "r": 0
+            },
+            "position": 0.0
+          },
+          {
+            "color": {
+              "a": 255,
+              "b": 0,
+              "g": 0,
+              "r": 253
+            },
+            "position": 0.5
+          },
+          {
+            "color": {
+              "a": 255,
+              "b": 255,
+              "g": 0,
+              "r": 255
+            },
+            "position": 1.0
+          }
+        ],
+        "mode": 2
       },
       "debugOverlay": false,
-      "decayHalfLife": 0.10000000149011612,
-      "depositAmount": 0.25999999046325684,
-      "diffusionScale": 1,
+      "decayHalfLife": 0.25,
+      "densityResponse": 5.0,
+      "depositAmount": 1.0,
+      "diffusionScale": 4,
       "enabled": true,
+      "expScale": 1.0,
+      "gaussianVariance": 1.0,
+      "gradientBoost": 10.0,
       "gravityStrength": 0.0,
-      "levyAlpha": 0.0,
-      "lissajousAmplitude": 0.10000000149011612,
-      "lissajousBaseRadius": 0.30000001192092896,
-      "lissajousFreqX": 0.05000000074505806,
-      "lissajousFreqY": 0.07999999821186066,
-      "orbitOffset": 0.0,
-      "repulsionStrength": 0.0,
-      "respawnMode": false,
+      "levyAlpha": 2.0,
+      "lissajous": {
+        "amplitude": 0.5,
+        "freqX1": 0.05000000074505806,
+        "freqX2": 0.28999999165534973,
+        "freqY1": 0.07999999821186066,
+        "freqY2": 0.17000000178813934,
+        "motionSpeed": 0.36000001430511475,
+        "offsetX2": 0.30000001192092896,
+        "offsetY2": 3.4800000190734863
+      },
+      "orbitOffset": 1.0,
+      "repulsionStrength": 1.0,
+      "respawnMode": true,
       "samplingExponent": 10.0,
-      "sensorAngle": 0.9651670455932617,
+      "sensorAngle": 0.0,
       "sensorDistance": 100.0,
       "sensorDistanceVariance": 0.0,
-      "stepSize": 5.099999904632568,
-      "turningAngle": 0.27576202154159546,
-      "vectorSteering": true
+      "sprintFactor": 5.0,
+      "stepSize": 0.10000000149011612,
+      "turningAngle": 1.570796251296997,
+      "vectorSteering": true,
+      "walkMode": 0
     },
     "proceduralWarp": {
       "warp": 0.0,
@@ -81,53 +209,73 @@
       "warpSpeed": 1.0
     },
     "transformOrder": [
-      "Physarum"
+      "Accum Composite",
+      "Glyph Field",
+      "Physarum",
+      "Infinite Zoom",
+      "Bloom",
+      "Bilateral"
     ]
   },
-  "lfos": [
-    {
-      "enabled": false,
-      "rate": 0.10000000149011612,
-      "waveform": 0
-    },
-    {
-      "enabled": false,
-      "rate": 0.10000000149011612,
-      "waveform": 0
-    },
-    {
-      "enabled": false,
-      "rate": 0.10000000149011612,
-      "waveform": 0
-    },
-    {
-      "enabled": false,
-      "rate": 0.10000000149011612,
-      "waveform": 0
-    },
-    {
-      "enabled": false,
-      "rate": 0.10000000149011612,
-      "waveform": 0
-    },
-    {
-      "enabled": false,
-      "rate": 0.10000000149011612,
-      "waveform": 0
-    },
-    {
-      "enabled": false,
-      "rate": 0.10000000149011612,
-      "waveform": 0
-    },
-    {
-      "enabled": false,
-      "rate": 0.10000000149011612,
-      "waveform": 0
-    }
-  ],
+  "lfos": {},
+  "modBuses": {},
   "modulation": {
-    "routes": []
+    "routes": [
+      {
+        "amount": 1.0,
+        "curve": 0,
+        "paramId": "glyphField.layerSpeedSpread",
+        "source": 0
+      },
+      {
+        "amount": 1.0,
+        "curve": 0,
+        "paramId": "glyphField.inversionSpeed",
+        "source": 0
+      },
+      {
+        "amount": 0.009999999776482582,
+        "curve": 0,
+        "paramId": "infiniteZoom.offsetLissajous.motionSpeed",
+        "source": 0
+      },
+      {
+        "amount": 1.0,
+        "curve": 0,
+        "paramId": "glyphField.charSpeed",
+        "source": 0
+      },
+      {
+        "amount": 1.0,
+        "curve": 0,
+        "paramId": "glyphField.scrollSpeed",
+        "source": 0
+      },
+      {
+        "amount": 1.0,
+        "curve": 0,
+        "paramId": "glyphField.stutterDiscrete",
+        "source": 0
+      },
+      {
+        "amount": 1.0,
+        "curve": 0,
+        "paramId": "glyphField.stutterSpeed",
+        "source": 0
+      },
+      {
+        "amount": 1.0,
+        "curve": 0,
+        "paramId": "physarum.sensorAngle",
+        "source": 0
+      },
+      {
+        "amount": 1.0,
+        "curve": 0,
+        "paramId": "physarum.stepSize",
+        "source": 0
+      }
+    ]
   },
   "name": "LINKY"
 }

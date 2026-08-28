@@ -1,0 +1,229 @@
+{
+  "audio": {
+    "channelMode": 5
+  },
+  "drawableCount": 1,
+  "drawables": [
+    {
+      "base": {
+        "color": {
+          "mode": 0,
+          "solid": {
+            "a": 255,
+            "b": 255,
+            "g": 255,
+            "r": 255
+          }
+        },
+        "drawInterval": 0.0,
+        "enabled": true,
+        "opacity": 1.0,
+        "rotationAngle": 0.0,
+        "rotationSpeed": 0.0,
+        "x": 0.5,
+        "y": 0.5
+      },
+      "id": 1,
+      "path": 0,
+      "type": 0,
+      "waveform": {
+        "amplitudeScale": 0.25,
+        "colorShift": 0.0,
+        "colorShiftSpeed": 0.0,
+        "pointCount": 128.0,
+        "radius": 0.25,
+        "smoothness": 0.0,
+        "style": 0,
+        "thickness": 2.0,
+        "waveformMotionScale": 0.5
+      }
+    }
+  ],
+  "effects": {
+    "accumBlendIntensity": 1.0,
+    "accumBlendMode": 2,
+    "arcStrobe": {
+      "baseBright": 0.0,
+      "baseFreq": 55.0,
+      "blendIntensity": 1.0,
+      "blendMode": 10,
+      "curve": 3.0,
+      "enabled": true,
+      "gain": 10.0,
+      "glowIntensity": 2.0,
+      "gradient": {
+        "gradientStopCount": 2,
+        "gradientStops": [
+          {
+            "color": {
+              "a": 255,
+              "b": 255,
+              "g": 255,
+              "r": 0
+            },
+            "position": 0.0
+          },
+          {
+            "color": {
+              "a": 255,
+              "b": 255,
+              "g": 0,
+              "r": 255
+            },
+            "position": 1.0
+          }
+        ],
+        "mode": 2
+      },
+      "layers": 256,
+      "lineThickness": 0.0010000000474974513,
+      "lissajous": {
+        "amplitude": 2.0,
+        "freqX1": 3.2100000381469727,
+        "freqX2": 4.360000133514404,
+        "freqY1": 5.789999961853027,
+        "freqY2": 1.8899999856948853,
+        "motionSpeed": 0.0,
+        "offsetX2": 0.30000001192092896,
+        "offsetY2": -2.799999952316284
+      },
+      "maxFreq": 14000.0,
+      "orbitOffset": 0.009999999776482582,
+      "strobeBoost": 5.0,
+      "strobeDecay": 5.0,
+      "strobeSpeed": 0.0,
+      "strobeStride": 12
+    },
+    "bloom": {
+      "enabled": true,
+      "intensity": 0.5,
+      "iterations": 5,
+      "knee": 0.0,
+      "threshold": 0.800000011920929
+    },
+    "blurScale": 0.0,
+    "bokeh": {
+      "brightnessPower": 4.0,
+      "enabled": true,
+      "iterations": 150,
+      "radius": 0.0,
+      "shape": 0,
+      "shapeAngle": 0.0,
+      "starInnerRadius": 0.4000000059604645,
+      "starPoints": 5
+    },
+    "clarity": 0.0,
+    "escherDroste": {
+      "center": {
+        "amplitude": 0.10000000149011612,
+        "freqX1": 0.5,
+        "freqX2": 0.23999999463558197,
+        "freqY1": 0.699999988079071,
+        "freqY2": 0.46000000834465027,
+        "motionSpeed": 0.0,
+        "offsetX2": 0.30000001192092896,
+        "offsetY2": 2.0899999141693115
+      },
+      "enabled": true,
+      "innerRadius": 0.05000000074505806,
+      "rotationOffset": 0.0,
+      "rotationSpeed": 0.0,
+      "scale": 1024.0,
+      "spiralStrength": 1.0,
+      "zoomSpeed": 0.0
+    },
+    "feedbackDesaturate": 0.20000000298023224,
+    "feedbackFlow": {
+      "flowAngle": 0.0,
+      "scale": 1.0,
+      "strength": 0.0,
+      "threshold": 0.0010000000474974513
+    },
+    "flowField": {
+      "cx": 0.5,
+      "cy": 0.5,
+      "dxAngular": 0.0,
+      "dxAngularFreq": 2,
+      "dxBase": 0.0,
+      "dxRadial": 0.0,
+      "dyAngular": 0.0,
+      "dyAngularFreq": 2,
+      "dyBase": 0.0,
+      "dyRadial": 0.0,
+      "rotAngular": 0.0,
+      "rotAngularFreq": 2,
+      "rotationSpeed": 0.0,
+      "rotationSpeedRadial": 0.0,
+      "sx": 1.0,
+      "sy": 1.0,
+      "zoomAngular": 0.0,
+      "zoomAngularFreq": 2,
+      "zoomBase": 1.0,
+      "zoomRadial": 0.0
+    },
+    "gamma": 1.0,
+    "halfLife": 0.10000000149011612,
+    "motionScale": 1.0,
+    "proceduralWarp": {
+      "warp": 0.0,
+      "warpScale": 1.0,
+      "warpSpeed": 1.0
+    },
+    "transformOrder": [
+      "Accum Composite",
+      "Arc Strobe",
+      "Escher Droste",
+      "Bokeh",
+      "Bloom"
+    ]
+  },
+  "lfos": {},
+  "modBuses": {},
+  "modulation": {
+    "routes": [
+      {
+        "amount": 0.10000000149011612,
+        "curve": 0,
+        "paramId": "bokeh.radius",
+        "source": 0
+      },
+      {
+        "amount": 0.5,
+        "curve": 0,
+        "paramId": "escherDroste.rotationSpeed",
+        "source": 0
+      },
+      {
+        "amount": 0.10000000149011612,
+        "curve": 0,
+        "paramId": "arcStrobe.orbitOffset",
+        "source": 0
+      },
+      {
+        "amount": 1.0,
+        "curve": 0,
+        "paramId": "arcStrobe.strobeSpeed",
+        "source": 0
+      },
+      {
+        "amount": 0.5,
+        "curve": 0,
+        "paramId": "escherDroste.center.motionSpeed",
+        "source": 0
+      },
+      {
+        "amount": 0.5,
+        "curve": 0,
+        "paramId": "escherDroste.zoomSpeed",
+        "source": 0
+      },
+      {
+        "amount": 1.0,
+        "curve": 0,
+        "paramId": "arcStrobe.lissajous.motionSpeed",
+        "source": 0
+      }
+    ]
+  },
+  "name": "LOUDEN"
+}

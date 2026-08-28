@@ -1,0 +1,273 @@
+{
+  "audio": {
+    "channelMode": 5
+  },
+  "drawableCount": 1,
+  "drawables": [
+    {
+      "base": {
+        "color": {
+          "mode": 0,
+          "solid": {
+            "a": 255,
+            "b": 255,
+            "g": 255,
+            "r": 255
+          }
+        },
+        "drawInterval": 0.0,
+        "enabled": true,
+        "opacity": 1.0,
+        "rotationAngle": 0.0,
+        "rotationSpeed": 0.0,
+        "x": 0.5,
+        "y": 0.5
+      },
+      "id": 1,
+      "path": 0,
+      "type": 0,
+      "waveform": {
+        "amplitudeScale": 0.5,
+        "colorShift": 0.0,
+        "colorShiftSpeed": 0.0,
+        "pointCount": 128.0,
+        "radius": 0.5,
+        "smoothness": 0.0,
+        "style": 2,
+        "thickness": 25.0,
+        "waveformMotionScale": 1.0
+      }
+    }
+  ],
+  "effects": {
+    "accumBlendIntensity": 1.0,
+    "accumBlendMode": 2,
+    "anamorphicStreak": {
+      "enabled": true,
+      "intensity": 0.5,
+      "iterations": 7,
+      "knee": 0.0,
+      "stretch": 1.0,
+      "threshold": 0.800000011920929,
+      "tintB": 1.0,
+      "tintG": 0.6499999761581421,
+      "tintR": 0.550000011920929
+    },
+    "bitCrush": {
+      "baseBright": 0.0,
+      "baseFreq": 55.0,
+      "blendIntensity": 1.0,
+      "blendMode": 7,
+      "cellSize": 8.0,
+      "curve": 3.0,
+      "enabled": true,
+      "gain": 10.0,
+      "glowIntensity": 1.0,
+      "gradient": {
+        "gradientStopCount": 2,
+        "gradientStops": [
+          {
+            "color": {
+              "a": 255,
+              "b": 255,
+              "g": 255,
+              "r": 0
+            },
+            "position": 0.0
+          },
+          {
+            "color": {
+              "a": 255,
+              "b": 255,
+              "g": 0,
+              "r": 255
+            },
+            "position": 1.0
+          }
+        ],
+        "mode": 2
+      },
+      "iterations": 32,
+      "maxFreq": 14000.0,
+      "scale": 0.05000000074505806,
+      "speed": 0.10000000149011612,
+      "walkMode": 4
+    },
+    "bloom": {
+      "enabled": true,
+      "intensity": 0.5,
+      "iterations": 5,
+      "knee": 0.0,
+      "threshold": 0.800000011920929
+    },
+    "blurScale": 1.0,
+    "clarity": 0.0,
+    "feedbackDesaturate": 0.05000000074505806,
+    "feedbackFlow": {
+      "flowAngle": 0.0,
+      "scale": 1.0,
+      "strength": 0.0,
+      "threshold": 0.0010000000474974513
+    },
+    "flipBook": {
+      "enabled": true,
+      "fps": 24.0,
+      "jitter": 2.0
+    },
+    "flowField": {
+      "cx": 0.5,
+      "cy": 0.5,
+      "dxAngular": 0.0,
+      "dxAngularFreq": 2,
+      "dxBase": 0.0,
+      "dxRadial": 0.0,
+      "dyAngular": 0.0,
+      "dyAngularFreq": 2,
+      "dyBase": 0.0,
+      "dyRadial": 0.0,
+      "rotAngular": 0.0,
+      "rotAngularFreq": 2,
+      "rotationSpeed": 0.0,
+      "rotationSpeedRadial": 0.0,
+      "sx": 1.0,
+      "sy": 1.0,
+      "zoomAngular": 0.0,
+      "zoomAngularFreq": 2,
+      "zoomBase": 1.0,
+      "zoomRadial": 0.0
+    },
+    "gamma": 1.0,
+    "halfLife": 0.5,
+    "hueRemap": {
+      "blendAngular": 0.0,
+      "blendAngularFreq": 2,
+      "blendAngularSpeed": 0.0,
+      "blendLinear": 0.0,
+      "blendLinearAngle": 0.0,
+      "blendLinearSpeed": 0.0,
+      "blendLuminance": 0.0,
+      "blendNoise": 0.0,
+      "blendRadial": 0.0,
+      "cx": 0.5,
+      "cy": 0.5,
+      "enabled": true,
+      "gradient": {
+        "mode": 1,
+        "rainbowHue": 0.0,
+        "rainbowRange": 360.0,
+        "rainbowSat": 1.0,
+        "rainbowVal": 1.0
+      },
+      "intensity": 1.0,
+      "noiseScale": 5.0,
+      "noiseSpeed": 0.5,
+      "shift": 0.5,
+      "shiftAngular": 0.0,
+      "shiftAngularFreq": 2,
+      "shiftAngularSpeed": 0.0,
+      "shiftLinear": 0.0,
+      "shiftLinearAngle": 0.0,
+      "shiftLinearSpeed": 0.0,
+      "shiftLuminance": 0.0,
+      "shiftMode": true,
+      "shiftNoise": 1.0,
+      "shiftRadial": 0.0
+    },
+    "motionScale": 1.0,
+    "poincareDisk": {
+      "diskScale": 1.0,
+      "enabled": true,
+      "rotationSpeed": 0.0,
+      "tileP": 4,
+      "tileQ": 5,
+      "tileR": 3,
+      "translationAmplitude": 0.8999999761581421,
+      "translationSpeed": 0.0,
+      "translationX": 0.0,
+      "translationY": 0.0
+    },
+    "proceduralWarp": {
+      "warp": 0.0,
+      "warpScale": 1.0,
+      "warpSpeed": 1.0
+    },
+    "radialStreak": {
+      "enabled": true,
+      "intensity": 0.0,
+      "samples": 32,
+      "streakLength": 0.30000001192092896
+    },
+    "transformOrder": [
+      "Accum Composite",
+      "Bit Crush",
+      "Hue Remap",
+      "Poincare Disk",
+      "Flip Book",
+      "Radial Blur",
+      "Bloom",
+      "Anamorphic Streak"
+    ]
+  },
+  "lfos": {
+    "0": {
+      "enabled": true,
+      "phaseOffset": 0.0,
+      "rate": 0.0010000000474974513,
+      "waveform": 0
+    }
+  },
+  "modBuses": {},
+  "modulation": {
+    "routes": [
+      {
+        "amount": 0.5,
+        "curve": 0,
+        "paramId": "radialStreak.intensity",
+        "source": 0
+      },
+      {
+        "amount": 0.05000000074505806,
+        "curve": 0,
+        "paramId": "hueRemap.shiftLinearSpeed",
+        "source": 0
+      },
+      {
+        "amount": 0.5,
+        "curve": 0,
+        "paramId": "hueRemap.shift",
+        "source": 4
+      },
+      {
+        "amount": 0.009999999776482582,
+        "curve": 0,
+        "paramId": "lfo1.rate",
+        "source": 0
+      },
+      {
+        "amount": 0.5,
+        "curve": 0,
+        "paramId": "bitCrush.speed",
+        "source": 0
+      },
+      {
+        "amount": 0.5,
+        "curve": 0,
+        "paramId": "hueRemap.shiftLinear",
+        "source": 4
+      },
+      {
+        "amount": 0.009999999776482582,
+        "curve": 0,
+        "paramId": "poincareDisk.translationSpeed",
+        "source": 0
+      },
+      {
+        "amount": 0.009999999776482582,
+        "curve": 0,
+        "paramId": "poincareDisk.rotationSpeed",
+        "source": 0
+      }
+    ]
+  },
+  "name": "NOTIT"
+}

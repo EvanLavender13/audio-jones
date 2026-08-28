@@ -1,0 +1,222 @@
+{
+  "audio": {
+    "channelMode": 0
+  },
+  "drawableCount": 0,
+  "drawables": [],
+  "effects": {
+    "accumBlendIntensity": 1.0,
+    "accumBlendMode": 2,
+    "bilateral": {
+      "enabled": true,
+      "rangeSigma": 0.009999999776482582,
+      "spatialSigma": 1.0
+    },
+    "bloom": {
+      "enabled": true,
+      "intensity": 1.0,
+      "iterations": 5,
+      "knee": 0.0,
+      "threshold": 0.800000011920929
+    },
+    "blurScale": 1.0,
+    "clarity": 2.0,
+    "crossHatching": {
+      "enabled": true,
+      "noise": 1.0,
+      "outline": 1.0,
+      "threshold": 2.0,
+      "width": 0.5
+    },
+    "escherDroste": {
+      "center": {
+        "amplitude": 0.5,
+        "freqX1": 0.5,
+        "freqX2": 0.0,
+        "freqY1": 0.699999988079071,
+        "freqY2": 0.0,
+        "motionSpeed": 0.10000000149011612,
+        "offsetX2": 0.30000001192092896,
+        "offsetY2": 2.0899999141693115
+      },
+      "enabled": true,
+      "innerRadius": 0.05000000074505806,
+      "rotationOffset": 0.0,
+      "rotationSpeed": 0.0,
+      "scale": 1024.0,
+      "spiralStrength": 2.0,
+      "zoomSpeed": 1.0
+    },
+    "feedbackDesaturate": 0.05000000074505806,
+    "feedbackFlow": {
+      "flowAngle": 0.0,
+      "scale": 1.0,
+      "strength": 0.0,
+      "threshold": 0.0010000000474974513
+    },
+    "flowField": {
+      "cx": 0.5,
+      "cy": 0.5,
+      "dxAngular": 0.0,
+      "dxAngularFreq": 2,
+      "dxBase": 0.0,
+      "dxRadial": 0.0,
+      "dyAngular": 0.0,
+      "dyAngularFreq": 2,
+      "dyBase": 0.0,
+      "dyRadial": 0.0,
+      "rotAngular": 0.0,
+      "rotAngularFreq": 2,
+      "rotationSpeed": 0.0,
+      "rotationSpeedRadial": 0.0,
+      "sx": 1.0,
+      "sy": 1.0,
+      "zoomAngular": 0.0,
+      "zoomAngularFreq": 2,
+      "zoomBase": 0.9950000047683716,
+      "zoomRadial": 0.0
+    },
+    "gamma": 2.5,
+    "halfLife": 0.5,
+    "kaleidoscope": {
+      "enabled": true,
+      "rotationSpeed": 0.0,
+      "segments": 12,
+      "smoothing": 0.0,
+      "twistAngle": 0.0
+    },
+    "motionScale": 1.0,
+    "physarum": {
+      "accumSenseBlend": 0.0,
+      "agentCount": 5000000,
+      "attractorCount": 8,
+      "blendMode": 2,
+      "boostIntensity": 1.0,
+      "boundsMode": 8,
+      "cauchyScale": 0.10000000149011612,
+      "color": {
+        "gradientStopCount": 3,
+        "gradientStops": [
+          {
+            "color": {
+              "a": 255,
+              "b": 255,
+              "g": 255,
+              "r": 0
+            },
+            "position": 0.0
+          },
+          {
+            "color": {
+              "a": 255,
+              "b": 43,
+              "g": 51,
+              "r": 252
+            },
+            "position": 0.4950738847255707
+          },
+          {
+            "color": {
+              "a": 255,
+              "b": 255,
+              "g": 0,
+              "r": 222
+            },
+            "position": 1.0
+          }
+        ],
+        "mode": 2
+      },
+      "debugOverlay": false,
+      "decayHalfLife": 0.10000000149011612,
+      "densityResponse": 0.10000000149011612,
+      "depositAmount": 0.10000000149011612,
+      "diffusionScale": 1,
+      "enabled": true,
+      "expScale": 0.10000000149011612,
+      "gaussianVariance": 1.0,
+      "gradientBoost": 10.0,
+      "gravityStrength": 0.0,
+      "levyAlpha": 0.10000000149011612,
+      "lissajous": {
+        "amplitude": 0.5,
+        "freqX1": 0.05000000074505806,
+        "freqX2": 0.0,
+        "freqY1": 0.07999999821186066,
+        "freqY2": 0.0,
+        "motionSpeed": 0.0,
+        "offsetX2": 0.30000001192092896,
+        "offsetY2": 3.4800000190734863
+      },
+      "orbitOffset": 1.0,
+      "repulsionStrength": 1.0,
+      "respawnMode": false,
+      "samplingExponent": 0.0,
+      "sensorAngle": 4.1015238761901855,
+      "sensorDistance": 1.0,
+      "sensorDistanceVariance": 0.0,
+      "sprintFactor": 5.0,
+      "stepSize": 0.10000000149011612,
+      "turningAngle": 0.4363323152065277,
+      "vectorSteering": true,
+      "walkMode": 0
+    },
+    "proceduralWarp": {
+      "warp": 0.0,
+      "warpScale": 1.0,
+      "warpSpeed": 1.0
+    },
+    "transformOrder": [
+      "Accum Composite",
+      "Physarum",
+      "Bilateral",
+      "Cross-Hatching",
+      "Kaleidoscope",
+      "Escher Droste",
+      "Bloom"
+    ]
+  },
+  "lfos": {},
+  "modBuses": {},
+  "modulation": {
+    "routes": [
+      {
+        "amount": 1.0,
+        "curve": 0,
+        "paramId": "physarum.densityResponse",
+        "source": 0
+      },
+      {
+        "amount": 0.25,
+        "curve": 0,
+        "paramId": "physarum.stepSize",
+        "source": 0
+      },
+      {
+        "amount": 1.0,
+        "curve": 0,
+        "paramId": "physarum.lissajous.motionSpeed",
+        "source": 0
+      },
+      {
+        "amount": 1.0,
+        "curve": 0,
+        "paramId": "bilateral.rangeSigma",
+        "source": 0
+      },
+      {
+        "amount": 1.0,
+        "curve": 0,
+        "paramId": "bilateral.spatialSigma",
+        "source": 0
+      },
+      {
+        "amount": 1.0,
+        "curve": 0,
+        "paramId": "physarum.sensorDistance",
+        "source": 0
+      }
+    ]
+  },
+  "name": "JOHNSON"
+}

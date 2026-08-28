@@ -1,0 +1,246 @@
+{
+  "audio": {
+    "channelMode": 0
+  },
+  "drawableCount": 0,
+  "drawables": [],
+  "effects": {
+    "accumBlendIntensity": 1.0,
+    "accumBlendMode": 2,
+    "blurScale": 1.0,
+    "chromaticAberration": {
+      "enabled": true,
+      "falloff": 0.5,
+      "offset": 0.0,
+      "samples": 24.0
+    },
+    "clarity": 0.0,
+    "dogFilter": {
+      "enabled": true,
+      "phi": 0.5,
+      "sigma": 0.5,
+      "tau": 0.8999999761581421
+    },
+    "feedbackDesaturate": 0.05000000074505806,
+    "feedbackFlow": {
+      "flowAngle": 0.0,
+      "scale": 1.0,
+      "strength": 0.0,
+      "threshold": 0.0010000000474974513
+    },
+    "flowField": {
+      "cx": 0.5,
+      "cy": 0.5,
+      "dxAngular": 0.0,
+      "dxAngularFreq": 2,
+      "dxBase": 0.0,
+      "dxRadial": 0.0,
+      "dyAngular": 0.0,
+      "dyAngularFreq": 2,
+      "dyBase": 0.0,
+      "dyRadial": 0.0,
+      "rotAngular": 0.0,
+      "rotAngularFreq": 2,
+      "rotationSpeed": 0.0,
+      "rotationSpeedRadial": 0.0,
+      "sx": 1.0,
+      "sy": 1.0,
+      "zoomAngular": 0.0,
+      "zoomAngularFreq": 2,
+      "zoomBase": 0.9950000047683716,
+      "zoomRadial": 0.0
+    },
+    "gamma": 1.0,
+    "halfLife": 0.5,
+    "infiniteZoom": {
+      "blendMode": 1,
+      "centerLissajous": {
+        "amplitude": 0.0,
+        "freqX1": 0.5,
+        "freqX2": 0.0,
+        "freqY1": 0.699999988079071,
+        "freqY2": 0.0,
+        "motionSpeed": 1.0,
+        "offsetX2": 0.30000001192092896,
+        "offsetY2": 2.0899999141693115
+      },
+      "centerX": 0.5,
+      "centerY": 0.5,
+      "enabled": true,
+      "layerRotate": 3.141592502593994,
+      "layers": 2,
+      "offsetLissajous": {
+        "amplitude": 0.0,
+        "freqX1": 0.5,
+        "freqX2": 0.0,
+        "freqY1": 0.699999988079071,
+        "freqY2": 0.0,
+        "motionSpeed": 1.0,
+        "offsetX2": 0.30000001192092896,
+        "offsetY2": 2.0899999141693115
+      },
+      "offsetX": 0.0,
+      "offsetY": 0.0,
+      "parallaxStrength": 1.0,
+      "speed": -0.25,
+      "spiralAngle": -3.141592502593994,
+      "spiralTwist": 0.0,
+      "warpFreq": 1.0,
+      "warpSpeed": 0.5,
+      "warpStrength": 0.10000000149011612,
+      "warpType": 2,
+      "zoomDepth": 5.0
+    },
+    "inkWash": {
+      "bleedRadius": 10.0,
+      "bleedStrength": 1.0,
+      "enabled": true,
+      "granulation": 0.0,
+      "softness": 5.0,
+      "strength": 2.0
+    },
+    "motionScale": 1.0,
+    "plaid": {
+      "accentWidth": 0.15000000596046448,
+      "bandCount": 8,
+      "baseBright": 0.0,
+      "baseFreq": 55.0,
+      "blendIntensity": 1.0,
+      "blendMode": 2,
+      "curve": 3.0,
+      "enabled": true,
+      "gain": 10.0,
+      "glowIntensity": 1.0,
+      "gradient": {
+        "mode": 1,
+        "rainbowHue": 0.0,
+        "rainbowRange": 360.0,
+        "rainbowSat": 1.0,
+        "rainbowVal": 1.0
+      },
+      "maxFreq": 14000.0,
+      "morphAmount": 0.0,
+      "morphSpeed": 0.0,
+      "scale": 2.0,
+      "threadDetail": 128.0,
+      "twillRepeat": 4
+    },
+    "proceduralWarp": {
+      "warp": 0.0,
+      "warpScale": 1.0,
+      "warpSpeed": 1.0
+    },
+    "rotorGrid": {
+      "baseBright": 0.0,
+      "baseDivisions": 8,
+      "baseFreq": 55.0,
+      "blendIntensity": 1.0,
+      "blendMode": 15,
+      "curve": 3.0,
+      "density": 0.0,
+      "differentialTwist": -1.0,
+      "driftRate": 0.0,
+      "enabled": true,
+      "gain": 10.0,
+      "gradient": {
+        "mode": 1,
+        "rainbowHue": 0.0,
+        "rainbowRange": 360.0,
+        "rainbowSat": 1.0,
+        "rainbowVal": 1.0
+      },
+      "maxFreq": 14000.0,
+      "randomness": 0.0,
+      "ringFrequency": 6.28000020980835,
+      "ringSpacing": 0.05000000074505806,
+      "spinSpeed": -1.570796251296997
+    },
+    "solarize": {
+      "amount": 0.5,
+      "enabled": true,
+      "threshold": 0.5
+    },
+    "transformOrder": [
+      "Accum Composite",
+      "Plaid",
+      "Rotor Grid",
+      "Chromatic Aberration",
+      "Infinite Zoom",
+      "Wave Drift",
+      "Solarize",
+      "Ink Wash",
+      "DoG Filter"
+    ],
+    "waveDrift": {
+      "depthBlend": false,
+      "enabled": true,
+      "octaveRotation": 0.7853981256484985,
+      "octaves": 8,
+      "radialMode": false,
+      "speed": 0.0872664600610733,
+      "strength": 0.10000000149011612,
+      "waveType": 1
+    }
+  },
+  "lfos": {},
+  "modBuses": {},
+  "modulation": {
+    "routes": [
+      {
+        "amount": 1.0,
+        "curve": 0,
+        "paramId": "chromaticAberration.offset",
+        "source": 0
+      },
+      {
+        "amount": 0.5,
+        "curve": 0,
+        "paramId": "rotorGrid.spinSpeed",
+        "source": 0
+      },
+      {
+        "amount": 1.0,
+        "curve": 0,
+        "paramId": "plaid.morphSpeed",
+        "source": 0
+      },
+      {
+        "amount": 1.0,
+        "curve": 0,
+        "paramId": "dogFilter.tau",
+        "source": 0
+      },
+      {
+        "amount": 1.0,
+        "curve": 0,
+        "paramId": "plaid.morphAmount",
+        "source": 0
+      },
+      {
+        "amount": 1.0,
+        "curve": 0,
+        "paramId": "infiniteZoom.warpFreq",
+        "source": 0
+      },
+      {
+        "amount": 1.0,
+        "curve": 0,
+        "paramId": "rotorGrid.density",
+        "source": 0
+      },
+      {
+        "amount": 0.5,
+        "curve": 0,
+        "paramId": "rotorGrid.differentialTwist",
+        "source": 0
+      },
+      {
+        "amount": 1.0,
+        "curve": 0,
+        "paramId": "rotorGrid.driftRate",
+        "source": 0
+      }
+    ]
+  },
+  "name": "SATURNO"
+}

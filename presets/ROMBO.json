@@ -1,0 +1,296 @@
+{
+  "audio": {
+    "channelMode": 5
+  },
+  "drawableCount": 1,
+  "drawables": [
+    {
+      "base": {
+        "color": {
+          "mode": 3,
+          "paletteAB": 0.5,
+          "paletteAG": 0.5,
+          "paletteAR": 0.5,
+          "paletteBB": 0.5,
+          "paletteBG": 0.5,
+          "paletteBR": 0.5,
+          "paletteCB": 1.0,
+          "paletteCG": 1.0,
+          "paletteCR": 1.0,
+          "paletteDB": 0.6700000166893005,
+          "paletteDG": 0.33000001311302185,
+          "paletteDR": 0.0
+        },
+        "drawInterval": 0.0,
+        "enabled": true,
+        "opacity": 1.0,
+        "rotationAngle": 0.0,
+        "rotationSpeed": 0.0,
+        "x": 0.5,
+        "y": 0.5
+      },
+      "id": 3,
+      "path": 0,
+      "type": 0,
+      "waveform": {
+        "amplitudeScale": 0.5,
+        "colorShift": 0.0,
+        "colorShiftSpeed": 0.0,
+        "pointCount": 64.0,
+        "radius": 0.25,
+        "smoothness": 100.0,
+        "style": 0,
+        "thickness": 25.0,
+        "waveformMotionScale": 0.5
+      }
+    }
+  ],
+  "effects": {
+    "accumBlendIntensity": 1.0,
+    "accumBlendMode": 2,
+    "bilateral": {
+      "enabled": true,
+      "rangeSigma": 0.5,
+      "spatialSigma": 10.0
+    },
+    "bloom": {
+      "enabled": true,
+      "intensity": 0.5,
+      "iterations": 5,
+      "knee": 0.5,
+      "threshold": 0.800000011920929
+    },
+    "blurScale": 0.0,
+    "clarity": 0.0,
+    "dogFilter": {
+      "enabled": true,
+      "phi": 10.0,
+      "sigma": 5.0,
+      "tau": 1.0
+    },
+    "dotMatrix": {
+      "brightness": 8.0,
+      "dotScale": 32.0,
+      "enabled": true,
+      "rotationAngle": 0.0,
+      "rotationSpeed": 0.0,
+      "softness": 0.20000000298023224
+    },
+    "escherDroste": {
+      "center": {
+        "amplitude": 0.5,
+        "freqX1": 0.5,
+        "freqX2": 1.1399999856948853,
+        "freqY1": 0.699999988079071,
+        "freqY2": 0.8199999928474426,
+        "motionSpeed": 0.0,
+        "offsetX2": 0.30000001192092896,
+        "offsetY2": 2.0899999141693115
+      },
+      "enabled": true,
+      "innerRadius": 0.0,
+      "rotationOffset": 0.0,
+      "rotationSpeed": 0.0,
+      "scale": 1024.0,
+      "spiralStrength": 2.0,
+      "zoomSpeed": 0.0
+    },
+    "feedbackDesaturate": 0.02500000037252903,
+    "feedbackFlow": {
+      "flowAngle": 0.0,
+      "scale": 1.0,
+      "strength": 0.0,
+      "threshold": 0.0010000000474974513
+    },
+    "flipBook": {
+      "enabled": true,
+      "fps": 24.0,
+      "jitter": 0.0
+    },
+    "flowField": {
+      "cx": 0.5,
+      "cy": 0.5,
+      "dxAngular": 0.0,
+      "dxAngularFreq": 2,
+      "dxBase": 0.0,
+      "dxRadial": 0.0,
+      "dyAngular": 0.0,
+      "dyAngularFreq": 2,
+      "dyBase": 0.0,
+      "dyRadial": 0.0,
+      "rotAngular": 0.0,
+      "rotAngularFreq": 2,
+      "rotationSpeed": 0.0,
+      "rotationSpeedRadial": 0.0,
+      "sx": 1.0,
+      "sy": 1.0,
+      "zoomAngular": 0.0,
+      "zoomAngularFreq": 2,
+      "zoomBase": 1.0,
+      "zoomRadial": 0.0
+    },
+    "gamma": 1.0,
+    "glitch": {
+      "aberration": 0.0,
+      "analogIntensity": 0.0,
+      "blockMaskEnabled": false,
+      "blockMaskIntensity": 0.0,
+      "blockMaskMaxSize": 20,
+      "blockMaskMinSize": 4,
+      "blockMaskTintB": 0.5,
+      "blockMaskTintG": 0.0,
+      "blockMaskTintR": 1.0,
+      "blockMultiplyControl": 0.0,
+      "blockMultiplyEnabled": true,
+      "blockMultiplyIntensity": 0.0,
+      "blockMultiplyIterations": 8,
+      "blockMultiplySize": 4.0,
+      "blockOffset": 0.5,
+      "blockThreshold": 0.0,
+      "colSliceBurstFreq": 4.0,
+      "colSliceBurstPower": 7.0,
+      "colSliceEnabled": false,
+      "colSliceIntensity": 0.0,
+      "colSliceRows": 32.0,
+      "colorDriftIntensity": 1.0,
+      "datamoshBands": 8.0,
+      "datamoshEnabled": true,
+      "datamoshIntensity": 0.0,
+      "datamoshMax": 32.0,
+      "datamoshMin": 4.0,
+      "datamoshSpeed": 6.0,
+      "diagonalBandCount": 8.0,
+      "diagonalBandDisplace": 0.0,
+      "diagonalBandSpeed": 1.0,
+      "diagonalBandsEnabled": false,
+      "enabled": true,
+      "noiseAmount": 0.0,
+      "rowSliceBurstFreq": 4.0,
+      "rowSliceBurstPower": 7.0,
+      "rowSliceColumns": 32.0,
+      "rowSliceEnabled": false,
+      "rowSliceIntensity": 0.0,
+      "scanlineAmount": 0.5,
+      "scanlineNoiseIntensity": 0.009999999776482582,
+      "temporalJitterAmount": 0.0,
+      "temporalJitterEnabled": false,
+      "temporalJitterGate": 0.0,
+      "trackingBarIntensity": 0.019999999552965164,
+      "vhsEnabled": false
+    },
+    "halfLife": 2.0,
+    "motionScale": 1.0,
+    "proceduralWarp": {
+      "warp": 0.0,
+      "warpScale": 1.0,
+      "warpSpeed": 1.0
+    },
+    "transformOrder": [
+      "Accum Composite",
+      "Dot Matrix",
+      "Glitch",
+      "Escher Droste",
+      "Flip Book",
+      "Bloom",
+      "Bilateral",
+      "DoG Filter"
+    ]
+  },
+  "lfos": {},
+  "modBuses": {},
+  "modulation": {
+    "routes": [
+      {
+        "amount": 0.10000000149011612,
+        "curve": 0,
+        "paramId": "glitch.colSliceIntensity",
+        "source": 0
+      },
+      {
+        "amount": 0.10000000149011612,
+        "curve": 0,
+        "paramId": "glitch.rowSliceIntensity",
+        "source": 0
+      },
+      {
+        "amount": 0.10000000149011612,
+        "curve": 0,
+        "paramId": "glitch.datamoshIntensity",
+        "source": 0
+      },
+      {
+        "amount": 1.0,
+        "curve": 0,
+        "paramId": "glitch.aberration",
+        "source": 0
+      },
+      {
+        "amount": 0.05000000074505806,
+        "curve": 0,
+        "paramId": "escherDroste.center.motionSpeed",
+        "source": 0
+      },
+      {
+        "amount": 0.05000000074505806,
+        "curve": 0,
+        "paramId": "drawable.3.colorShiftSpeed",
+        "source": 0
+      },
+      {
+        "amount": 0.10000000149011612,
+        "curve": 0,
+        "paramId": "glitch.analogIntensity",
+        "source": 0
+      },
+      {
+        "amount": 0.5,
+        "curve": 0,
+        "paramId": "glitch.blockThreshold",
+        "source": 0
+      },
+      {
+        "amount": 1.0,
+        "curve": 0,
+        "paramId": "glitch.temporalJitterAmount",
+        "source": 0
+      },
+      {
+        "amount": 1.0,
+        "curve": 0,
+        "paramId": "glitch.blockMaskIntensity",
+        "source": 0
+      },
+      {
+        "amount": 0.25,
+        "curve": 0,
+        "paramId": "glitch.blockMultiplyIntensity",
+        "source": 0
+      },
+      {
+        "amount": 1.0,
+        "curve": 0,
+        "paramId": "glitch.blockMultiplyControl",
+        "source": 0
+      },
+      {
+        "amount": 0.10000000149011612,
+        "curve": 0,
+        "paramId": "escherDroste.zoomSpeed",
+        "source": 0
+      },
+      {
+        "amount": 0.10000000149011612,
+        "curve": 0,
+        "paramId": "escherDroste.rotationSpeed",
+        "source": 0
+      },
+      {
+        "amount": 1.0,
+        "curve": 0,
+        "paramId": "glitch.blockMultiplySize",
+        "source": 0
+      }
+    ]
+  },
+  "name": "ROMBO"
+}

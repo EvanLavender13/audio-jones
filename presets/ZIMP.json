@@ -1,0 +1,365 @@
+{
+  "audio": {
+    "channelMode": 5
+  },
+  "drawableCount": 1,
+  "drawables": [
+    {
+      "base": {
+        "color": {
+          "mode": 3,
+          "paletteAB": 0.5,
+          "paletteAG": 0.5,
+          "paletteAR": 0.5,
+          "paletteBB": 0.5,
+          "paletteBG": 0.5,
+          "paletteBR": 0.5,
+          "paletteCB": 1.0,
+          "paletteCG": 1.0,
+          "paletteCR": 1.0,
+          "paletteDB": 0.6700000166893005,
+          "paletteDG": 0.33000001311302185,
+          "paletteDR": 0.0
+        },
+        "drawInterval": 0.0,
+        "enabled": true,
+        "opacity": 1.0,
+        "rotationAngle": 0.0,
+        "rotationSpeed": 0.0,
+        "x": 0.5,
+        "y": 0.5
+      },
+      "id": 1,
+      "path": 0,
+      "type": 0,
+      "waveform": {
+        "amplitudeScale": 0.25,
+        "colorShift": 0.0,
+        "colorShiftSpeed": 0.0,
+        "pointCount": 128.0,
+        "radius": 0.4000000059604645,
+        "smoothness": 0.0,
+        "style": 0,
+        "thickness": 2.0,
+        "waveformMotionScale": 0.5
+      }
+    }
+  ],
+  "effects": {
+    "accumBlendIntensity": 1.0,
+    "accumBlendMode": 10,
+    "bloom": {
+      "enabled": true,
+      "intensity": 0.5,
+      "iterations": 5,
+      "knee": 0.0,
+      "threshold": 0.800000011920929
+    },
+    "blurScale": 0.0,
+    "chromaticAberration": {
+      "enabled": true,
+      "falloff": 0.5,
+      "offset": 0.0,
+      "samples": 24.0
+    },
+    "clarity": 0.0,
+    "feedbackDesaturate": 0.10000000149011612,
+    "feedbackFlow": {
+      "flowAngle": 0.0,
+      "scale": 1.0,
+      "strength": 0.0,
+      "threshold": 0.0010000000474974513
+    },
+    "flowField": {
+      "cx": 0.5,
+      "cy": 0.5,
+      "dxAngular": 0.0,
+      "dxAngularFreq": 2,
+      "dxBase": 0.0,
+      "dxRadial": 0.0,
+      "dyAngular": 0.0,
+      "dyAngularFreq": 2,
+      "dyBase": 0.0,
+      "dyRadial": 0.0,
+      "rotAngular": 0.0,
+      "rotAngularFreq": 2,
+      "rotationSpeed": -3.141592502593994,
+      "rotationSpeedRadial": 3.141592502593994,
+      "sx": 0.8999999761581421,
+      "sy": 0.8999999761581421,
+      "zoomAngular": 0.0,
+      "zoomAngularFreq": 2,
+      "zoomBase": 0.9800000190734863,
+      "zoomRadial": -0.019999999552965164
+    },
+    "gamma": 1.0,
+    "halfLife": 2.0,
+    "infiniteZoom": {
+      "blendMode": 1,
+      "centerLissajous": {
+        "amplitude": 0.0,
+        "freqX1": 0.5,
+        "freqX2": 0.0,
+        "freqY1": 0.699999988079071,
+        "freqY2": 0.0,
+        "motionSpeed": 1.0,
+        "offsetX2": 0.30000001192092896,
+        "offsetY2": 2.0899999141693115
+      },
+      "centerX": 0.5,
+      "centerY": 0.5,
+      "enabled": true,
+      "layerRotate": 0.7853981256484985,
+      "layers": 2,
+      "offsetLissajous": {
+        "amplitude": 0.0,
+        "freqX1": 0.5,
+        "freqX2": 0.0,
+        "freqY1": 0.699999988079071,
+        "freqY2": 0.0,
+        "motionSpeed": 1.0,
+        "offsetX2": 0.30000001192092896,
+        "offsetY2": 2.0899999141693115
+      },
+      "offsetX": 0.0,
+      "offsetY": 0.0,
+      "parallaxStrength": 1.0,
+      "speed": 0.5,
+      "spiralAngle": -0.7853981256484985,
+      "spiralTwist": 0.0,
+      "warpFreq": 1.0,
+      "warpSpeed": 0.0,
+      "warpStrength": 0.5,
+      "warpType": 1,
+      "zoomDepth": 5.0
+    },
+    "moireGenerator": {
+      "blendIntensity": 1.0,
+      "blendMode": 2,
+      "colorIntensity": 0.0,
+      "enabled": true,
+      "globalBrightness": 1.0,
+      "gradient": {
+        "gradientStopCount": 2,
+        "gradientStops": [
+          {
+            "color": {
+              "a": 255,
+              "b": 255,
+              "g": 255,
+              "r": 0
+            },
+            "position": 0.0
+          },
+          {
+            "color": {
+              "a": 255,
+              "b": 255,
+              "g": 0,
+              "r": 255
+            },
+            "position": 1.0
+          }
+        ],
+        "mode": 2
+      },
+      "layer0": {
+        "angle": 0.0,
+        "frequency": 20.0,
+        "phase": 0.0,
+        "rotationSpeed": 0.0,
+        "scale": 0.5,
+        "warpAmount": 0.10000000149011612
+      },
+      "layer1": {
+        "angle": 0.08730000257492065,
+        "frequency": 22.0,
+        "phase": 0.0,
+        "rotationSpeed": 0.0,
+        "scale": 1.0,
+        "warpAmount": 0.10000000149011612
+      },
+      "layer2": {
+        "angle": 0.1745000034570694,
+        "frequency": 24.0,
+        "phase": 0.0,
+        "rotationSpeed": 0.0,
+        "scale": 2.0,
+        "warpAmount": 0.10000000149011612
+      },
+      "layer3": {
+        "angle": 0.26179999113082886,
+        "frequency": 26.0,
+        "phase": 0.0,
+        "rotationSpeed": 0.0,
+        "scale": 4.0,
+        "warpAmount": 0.10000000149011612
+      },
+      "layerCount": 4,
+      "patternMode": 0,
+      "profileMode": 1
+    },
+    "motionScale": 0.009999999776482582,
+    "proceduralWarp": {
+      "warp": 0.0,
+      "warpScale": 1.0,
+      "warpSpeed": 1.0
+    },
+    "slitScan": {
+      "brightness": 1.0,
+      "enabled": true,
+      "fogStrength": 0.10000000149011612,
+      "glow": 0.0,
+      "mode": 1,
+      "perspective": 10.0,
+      "pushAccel": 0.0,
+      "rotationAngle": 0.0,
+      "rotationSpeed": 0.0,
+      "slitPosition": 0.5,
+      "slitWidth": 0.004999999888241291,
+      "speed": 10.0
+    },
+    "transformOrder": [
+      "Moire Generator",
+      "Accum Composite",
+      "Slit Scan",
+      "Infinite Zoom",
+      "Watercolor",
+      "Chromatic Aberration",
+      "Bloom"
+    ],
+    "watercolor": {
+      "edgePool": 0.30000001192092896,
+      "enabled": true,
+      "flowCenter": 0.8999999761581421,
+      "flowWidth": 0.20000000298023224,
+      "paperScale": 8.0,
+      "paperStrength": 0.4000000059604645,
+      "samples": 24,
+      "strokeStep": 1.0,
+      "washStrength": 1.0
+    }
+  },
+  "lfos": {
+    "0": {
+      "enabled": true,
+      "phaseOffset": 0.0,
+      "rate": 0.009999999776482582,
+      "waveform": 0
+    }
+  },
+  "modBuses": {},
+  "modulation": {
+    "routes": [
+      {
+        "amount": -1.0,
+        "curve": 0,
+        "paramId": "slitScan.speed",
+        "source": 0
+      },
+      {
+        "amount": 1.0,
+        "curve": 0,
+        "paramId": "chromaticAberration.offset",
+        "source": 0
+      },
+      {
+        "amount": 0.5,
+        "curve": 0,
+        "paramId": "slitScan.slitPosition",
+        "source": 4
+      },
+      {
+        "amount": -0.05000000074505806,
+        "curve": 0,
+        "paramId": "moireGenerator.layer3.rotationSpeed",
+        "source": 0
+      },
+      {
+        "amount": 0.05000000074505806,
+        "curve": 0,
+        "paramId": "moireGenerator.layer2.rotationSpeed",
+        "source": 0
+      },
+      {
+        "amount": -0.05000000074505806,
+        "curve": 0,
+        "paramId": "moireGenerator.layer1.rotationSpeed",
+        "source": 0
+      },
+      {
+        "amount": 1.0,
+        "curve": 0,
+        "paramId": "feedbackFlow.strength",
+        "source": 0
+      },
+      {
+        "amount": 1.0,
+        "curve": 0,
+        "paramId": "proceduralWarp.warp",
+        "source": 0
+      },
+      {
+        "amount": 1.0,
+        "curve": 0,
+        "paramId": "flowField.sy",
+        "source": 0
+      },
+      {
+        "amount": 1.0,
+        "curve": 0,
+        "paramId": "flowField.sx",
+        "source": 0
+      },
+      {
+        "amount": 0.05000000074505806,
+        "curve": 0,
+        "paramId": "moireGenerator.layer0.rotationSpeed",
+        "source": 0
+      },
+      {
+        "amount": 0.10000000149011612,
+        "curve": 0,
+        "paramId": "slitScan.rotationSpeed",
+        "source": 0
+      },
+      {
+        "amount": 1.0,
+        "curve": 0,
+        "paramId": "flowField.rotationSpeed",
+        "source": 0
+      },
+      {
+        "amount": 1.0,
+        "curve": 0,
+        "paramId": "flowField.zoomRadial",
+        "source": 0
+      },
+      {
+        "amount": 0.25,
+        "curve": 0,
+        "paramId": "effects.motionScale",
+        "source": 0
+      },
+      {
+        "amount": -1.0,
+        "curve": 0,
+        "paramId": "flowField.rotationSpeedRadial",
+        "source": 0
+      },
+      {
+        "amount": -0.10000000149011612,
+        "curve": 0,
+        "paramId": "drawable.1.colorShiftSpeed",
+        "source": 0
+      },
+      {
+        "amount": 1.0,
+        "curve": 0,
+        "paramId": "flowField.zoomBase",
+        "source": 0
+      }
+    ]
+  },
+  "name": "ZIMP"
+}

@@ -1,0 +1,323 @@
+{
+  "audio": {
+    "channelMode": 0
+  },
+  "drawableCount": 1,
+  "drawables": [
+    {
+      "base": {
+        "color": {
+          "gradientStopCount": 3,
+          "gradientStops": [
+            {
+              "color": {
+                "a": 255,
+                "b": 102,
+                "g": 0,
+                "r": 255
+              },
+              "position": 0.0
+            },
+            {
+              "color": {
+                "a": 255,
+                "b": 0,
+                "g": 255,
+                "r": 243
+              },
+              "position": 0.4876847267150879
+            },
+            {
+              "color": {
+                "a": 255,
+                "b": 255,
+                "g": 0,
+                "r": 255
+              },
+              "position": 1.0
+            }
+          ],
+          "mode": 2
+        },
+        "drawInterval": 0.10000000149011612,
+        "enabled": true,
+        "opacity": 1.0,
+        "rotationAngle": 0.0,
+        "rotationSpeed": -0.7853981256484985,
+        "x": 0.5,
+        "y": 0.5
+      },
+      "id": 2,
+      "path": 1,
+      "spectrum": {
+        "barHeight": 0.5,
+        "barWidth": 0.800000011920929,
+        "colorShift": 0.0,
+        "colorShiftSpeed": -0.7853981256484985,
+        "innerRadius": 0.4000000059604645,
+        "maxDb": 50.0,
+        "minDb": 10.0,
+        "smoothing": 0.800000011920929
+      },
+      "type": 1
+    }
+  ],
+  "effects": {
+    "accumBlendIntensity": 1.0,
+    "accumBlendMode": 2,
+    "bilateral": {
+      "enabled": true,
+      "rangeSigma": 0.05000000074505806,
+      "spatialSigma": 5.0
+    },
+    "blurScale": 1.0,
+    "clarity": 0.0,
+    "feedbackDesaturate": 0.0,
+    "feedbackFlow": {
+      "flowAngle": 0.0,
+      "scale": 1.0,
+      "strength": 0.0,
+      "threshold": 0.0
+    },
+    "flowField": {
+      "cx": 0.5,
+      "cy": 0.5,
+      "dxAngular": 0.0,
+      "dxAngularFreq": 2,
+      "dxBase": 0.0,
+      "dxRadial": 0.0,
+      "dyAngular": 0.0,
+      "dyAngularFreq": 2,
+      "dyBase": 0.0,
+      "dyRadial": 0.0,
+      "rotAngular": 0.0,
+      "rotAngularFreq": 8,
+      "rotationSpeed": 0.0,
+      "rotationSpeedRadial": 0.0,
+      "sx": 1.0,
+      "sy": 1.0,
+      "zoomAngular": -0.10000000149011612,
+      "zoomAngularFreq": 8,
+      "zoomBase": 1.0,
+      "zoomRadial": 0.0
+    },
+    "galaxy": {
+      "baseBright": 0.0,
+      "baseFreq": 55.0,
+      "blendIntensity": 5.0,
+      "blendMode": 11,
+      "bulgeBright": 0.25,
+      "bulgeSize": 20.0,
+      "curve": 2.0,
+      "diskThickness": 0.5,
+      "dustContrast": 0.10000000149011612,
+      "enabled": true,
+      "gain": 10.0,
+      "gradient": {
+        "gradientStopCount": 3,
+        "gradientStops": [
+          {
+            "color": {
+              "a": 255,
+              "b": 102,
+              "g": 0,
+              "r": 255
+            },
+            "position": 0.0
+          },
+          {
+            "color": {
+              "a": 255,
+              "b": 0,
+              "g": 255,
+              "r": 243
+            },
+            "position": 0.47783252596855164
+          },
+          {
+            "color": {
+              "a": 255,
+              "b": 255,
+              "g": 0,
+              "r": 255
+            },
+            "position": 1.0
+          }
+        ],
+        "mode": 2
+      },
+      "innerStretch": 2.0,
+      "layers": 25,
+      "maxFreq": 14000.0,
+      "orbitSpeed": -1.0,
+      "ringWidth": 45.0,
+      "rotation": 3.141592502593994,
+      "starBright": 0.10000000149011612,
+      "starDensity": 64.0,
+      "tilt": 0.30000001192092896,
+      "twist": 1.0
+    },
+    "gamma": 1.0,
+    "halfLife": 2.0,
+    "infiniteZoom": {
+      "blendMode": 1,
+      "centerLissajous": {
+        "amplitude": 0.0,
+        "freqX1": 0.5,
+        "freqX2": 0.0,
+        "freqY1": 0.699999988079071,
+        "freqY2": 0.0,
+        "motionSpeed": 1.0,
+        "offsetX2": 0.30000001192092896,
+        "offsetY2": 2.0899999141693115
+      },
+      "centerX": 0.5,
+      "centerY": 0.5,
+      "enabled": true,
+      "layerRotate": 0.0,
+      "layers": 2,
+      "offsetLissajous": {
+        "amplitude": 0.0,
+        "freqX1": 0.5,
+        "freqX2": 0.0,
+        "freqY1": 0.699999988079071,
+        "freqY2": 0.0,
+        "motionSpeed": 1.0,
+        "offsetX2": 0.30000001192092896,
+        "offsetY2": 2.0899999141693115
+      },
+      "offsetX": 0.0,
+      "offsetY": 0.0,
+      "parallaxStrength": 1.0,
+      "speed": -2.0,
+      "spiralAngle": -0.4363323152065277,
+      "spiralTwist": 0.0,
+      "warpFreq": 3.0,
+      "warpSpeed": 0.5,
+      "warpStrength": 0.10000000149011612,
+      "warpType": 1,
+      "zoomDepth": 1.0
+    },
+    "motionScale": 1.0,
+    "nebula": {
+      "backIter": 40,
+      "backScale": 6.0,
+      "baseBright": 0.0,
+      "baseFreq": 55.0,
+      "blendIntensity": 1.0,
+      "blendMode": 11,
+      "brightness": 1.0,
+      "curve": 3.0,
+      "driftSpeed": 0.009999999776482582,
+      "dustEdge": 0.05000000074505806,
+      "dustScale": 1.0,
+      "dustStrength": 0.0,
+      "enabled": true,
+      "fbmBackOct": 3,
+      "fbmFrontOct": 5,
+      "fbmMidOct": 4,
+      "frontIter": 40,
+      "frontScale": 5.0,
+      "gain": 10.0,
+      "glowIntensity": 10.0,
+      "glowWidth": 0.30000001192092896,
+      "gradient": {
+        "gradientStopCount": 3,
+        "gradientStops": [
+          {
+            "color": {
+              "a": 255,
+              "b": 102,
+              "g": 0,
+              "r": 255
+            },
+            "position": 0.0
+          },
+          {
+            "color": {
+              "a": 255,
+              "b": 0,
+              "g": 255,
+              "r": 243
+            },
+            "position": 0.4753694534301758
+          },
+          {
+            "color": {
+              "a": 255,
+              "b": 255,
+              "g": 0,
+              "r": 255
+            },
+            "position": 1.0
+          }
+        ],
+        "mode": 2
+      },
+      "maxFreq": 14000.0,
+      "midIter": 40,
+      "midScale": 3.0,
+      "noiseType": 0,
+      "spikeIntensity": 2.0,
+      "spikeSharpness": 40.0,
+      "starBins": 120,
+      "starDensity": 800.0,
+      "starSharpness": 10.0
+    },
+    "proceduralWarp": {
+      "warp": 0.0,
+      "warpScale": 1.0,
+      "warpSpeed": 1.0
+    },
+    "transformOrder": [
+      "Accum Composite",
+      "Nebula",
+      "Galaxy",
+      "Bilateral",
+      "Infinite Zoom"
+    ]
+  },
+  "lfos": {},
+  "modBuses": {},
+  "modulation": {
+    "routes": [
+      {
+        "amount": 1.0,
+        "curve": 0,
+        "paramId": "nebula.driftSpeed",
+        "source": 0
+      },
+      {
+        "amount": 1.0,
+        "curve": 0,
+        "paramId": "galaxy.orbitSpeed",
+        "source": 0
+      },
+      {
+        "amount": 1.0,
+        "curve": 0,
+        "paramId": "flowField.zoomAngular",
+        "source": 0
+      },
+      {
+        "amount": -0.10000000149011612,
+        "curve": 0,
+        "paramId": "flowField.zoomBase",
+        "source": 0
+      },
+      {
+        "amount": 0.25,
+        "curve": 0,
+        "paramId": "drawable.2.rotationSpeed",
+        "source": 0
+      },
+      {
+        "amount": 0.05000000074505806,
+        "curve": 0,
+        "paramId": "drawable.2.drawInterval",
+        "source": 16
+      }
+    ]
+  },
+  "name": "LOVEHER"
+}

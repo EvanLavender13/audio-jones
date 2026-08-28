@@ -1,0 +1,213 @@
+{
+  "audio": {
+    "channelMode": 0
+  },
+  "drawableCount": 0,
+  "drawables": [],
+  "effects": {
+    "accumBlendIntensity": 1.0,
+    "accumBlendMode": 2,
+    "bloom": {
+      "enabled": true,
+      "intensity": 0.5,
+      "iterations": 5,
+      "knee": 0.5,
+      "threshold": 0.800000011920929
+    },
+    "blurScale": 1.0,
+    "clarity": 0.0,
+    "digitalShard": {
+      "aberrationSpread": 0.0010000000474974513,
+      "baseBright": 0.0,
+      "baseFreq": 55.0,
+      "blendIntensity": 1.0,
+      "blendMode": 2,
+      "curve": 3.0,
+      "enabled": true,
+      "gain": 10.0,
+      "gradient": {
+        "mode": 3,
+        "paletteAB": 0.5,
+        "paletteAG": 0.5,
+        "paletteAR": 0.5,
+        "paletteBB": 0.5,
+        "paletteBG": 0.5,
+        "paletteBR": 0.5,
+        "paletteCB": 1.0,
+        "paletteCG": 1.0,
+        "paletteCR": 1.0,
+        "paletteDB": 0.6700000166893005,
+        "paletteDG": 0.33000001311302185,
+        "paletteDR": 0.0
+      },
+      "iterations": 100,
+      "maxFreq": 14000.0,
+      "noiseScale": 16.0,
+      "rotationLevels": 16.0,
+      "softness": 0.0,
+      "speed": 0.10000000149011612,
+      "zoom": 2.0
+    },
+    "feedbackDesaturate": 0.05000000074505806,
+    "feedbackFlow": {
+      "flowAngle": 0.0,
+      "scale": 1.0,
+      "strength": 0.0,
+      "threshold": 0.0010000000474974513
+    },
+    "flowField": {
+      "cx": 0.5,
+      "cy": 0.5,
+      "dxAngular": 0.0,
+      "dxAngularFreq": 2,
+      "dxBase": 0.0,
+      "dxRadial": 0.0,
+      "dyAngular": 0.0,
+      "dyAngularFreq": 2,
+      "dyBase": 0.0,
+      "dyRadial": 0.0,
+      "rotAngular": 0.0,
+      "rotAngularFreq": 2,
+      "rotationSpeed": 0.0,
+      "rotationSpeedRadial": 0.0,
+      "sx": 1.0,
+      "sy": 1.0,
+      "zoomAngular": 0.0,
+      "zoomAngularFreq": 2,
+      "zoomBase": 0.9950000047683716,
+      "zoomRadial": 0.0
+    },
+    "gamma": 1.0,
+    "halfLife": 0.5,
+    "infiniteZoom": {
+      "blendMode": 1,
+      "centerLissajous": {
+        "amplitude": 0.0,
+        "freqX1": 0.5,
+        "freqX2": 0.0,
+        "freqY1": 0.699999988079071,
+        "freqY2": 0.0,
+        "motionSpeed": 1.0,
+        "offsetX2": 0.30000001192092896,
+        "offsetY2": 2.0899999141693115
+      },
+      "centerX": 0.5,
+      "centerY": 0.5,
+      "enabled": true,
+      "layerRotate": 0.0,
+      "layers": 3,
+      "offsetLissajous": {
+        "amplitude": 0.5,
+        "freqX1": 0.5,
+        "freqX2": 0.0,
+        "freqY1": 0.699999988079071,
+        "freqY2": 0.0,
+        "motionSpeed": 0.0,
+        "offsetX2": 0.30000001192092896,
+        "offsetY2": 2.0899999141693115
+      },
+      "offsetX": 0.0,
+      "offsetY": 0.0,
+      "parallaxStrength": 0.10000000149011612,
+      "speed": 0.10000000149011612,
+      "spiralAngle": -3.141592502593994,
+      "spiralTwist": 0.0,
+      "warpFreq": 1.0,
+      "warpSpeed": 2.0,
+      "warpStrength": 0.0,
+      "warpType": 2,
+      "zoomDepth": 1.0
+    },
+    "motionScale": 1.0,
+    "pixelation": {
+      "cellCount": 256.0,
+      "ditherScale": 8.0,
+      "enabled": true,
+      "posterizeLevels": 16
+    },
+    "proceduralWarp": {
+      "warp": 0.0,
+      "warpScale": 1.0,
+      "warpSpeed": 1.0
+    },
+    "slashes": {
+      "barThickness": 0.004999999888241291,
+      "bars": 256,
+      "baseBright": 0.0,
+      "baseFreq": 55.0,
+      "blendIntensity": 1.0,
+      "blendMode": 13,
+      "curve": 3.0,
+      "enabled": true,
+      "envelopeSharp": 1.0,
+      "gain": 10.0,
+      "glowSoftness": 0.0010000000474974513,
+      "gradient": {
+        "mode": 3,
+        "paletteAB": 0.5,
+        "paletteAG": 0.5,
+        "paletteAR": 0.5,
+        "paletteBB": 0.5,
+        "paletteBG": 0.5,
+        "paletteBR": 0.5,
+        "paletteCB": 1.0,
+        "paletteCG": 1.0,
+        "paletteCR": 1.0,
+        "paletteDB": 0.6700000166893005,
+        "paletteDG": 0.33000001311302185,
+        "paletteDR": 0.0
+      },
+      "maxBarLength": 0.10000000149011612,
+      "maxFreq": 14000.0,
+      "rotationDepth": 1.0,
+      "scatter": 1.0,
+      "thicknessVariation": 1.0,
+      "tickRate": 0.5
+    },
+    "transformOrder": [
+      "Accum Composite",
+      "Digital Shard",
+      "Slashes",
+      "Infinite Zoom",
+      "Bloom",
+      "Pixelation"
+    ]
+  },
+  "lfos": {},
+  "modBuses": {},
+  "modulation": {
+    "routes": [
+      {
+        "amount": 0.5,
+        "curve": 0,
+        "paramId": "infiniteZoom.offsetLissajous.motionSpeed",
+        "source": 0
+      },
+      {
+        "amount": 0.25,
+        "curve": 0,
+        "paramId": "infiniteZoom.warpStrength",
+        "source": 0
+      },
+      {
+        "amount": 0.25,
+        "curve": 0,
+        "paramId": "slashes.tickRate",
+        "source": 0
+      },
+      {
+        "amount": 1.0,
+        "curve": 0,
+        "paramId": "digitalShard.aberrationSpread",
+        "source": 0
+      },
+      {
+        "amount": 1.0,
+        "curve": 0,
+        "paramId": "digitalShard.speed",
+        "source": 0
+      }
+    ]
+  },
+  "name": "NOBODY"
+}

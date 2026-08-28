@@ -31,9 +31,9 @@
         "pointCount": 128.0,
         "radius": 0.3441176414489746,
         "smoothness": 100.0,
-        "style": 0,
-        "thickness": 10.0,
-        "waveformMotionScale": 1.0
+        "style": 1,
+        "thickness": 25.0,
+        "waveformMotionScale": 0.5
       }
     }
   ],
@@ -42,6 +42,25 @@
     "accumBlendMode": 2,
     "blurScale": 4.0,
     "clarity": 0.0,
+    "escherDroste": {
+      "center": {
+        "amplitude": 0.5,
+        "freqX1": 0.5,
+        "freqX2": 0.28999999165534973,
+        "freqY1": 0.699999988079071,
+        "freqY2": 0.6000000238418579,
+        "motionSpeed": 0.0,
+        "offsetX2": -0.513126790523529,
+        "offsetY2": 1.186823844909668
+      },
+      "enabled": true,
+      "innerRadius": 0.05000000074505806,
+      "rotationOffset": 1.570796251296997,
+      "rotationSpeed": 0.0,
+      "scale": 1024.0,
+      "spiralStrength": 2.0,
+      "zoomSpeed": 0.0
+    },
     "feedbackDesaturate": 0.09700000286102295,
     "feedbackFlow": {
       "flowAngle": 0.0,
@@ -73,6 +92,45 @@
     },
     "gamma": 1.0,
     "halfLife": 2.0,
+    "infiniteZoom": {
+      "blendMode": 1,
+      "centerLissajous": {
+        "amplitude": 0.0,
+        "freqX1": 0.5,
+        "freqX2": 0.0,
+        "freqY1": 0.699999988079071,
+        "freqY2": 0.0,
+        "motionSpeed": 1.0,
+        "offsetX2": 0.30000001192092896,
+        "offsetY2": 2.0899999141693115
+      },
+      "centerX": 0.5,
+      "centerY": 0.5,
+      "enabled": true,
+      "layerRotate": 0.0,
+      "layers": 2,
+      "offsetLissajous": {
+        "amplitude": 0.0,
+        "freqX1": 0.5,
+        "freqX2": 0.0,
+        "freqY1": 0.699999988079071,
+        "freqY2": 0.0,
+        "motionSpeed": 1.0,
+        "offsetX2": 0.30000001192092896,
+        "offsetY2": 2.0899999141693115
+      },
+      "offsetX": 0.0,
+      "offsetY": 0.0,
+      "parallaxStrength": 1.0,
+      "speed": -0.10000000149011612,
+      "spiralAngle": 0.0,
+      "spiralTwist": 0.0,
+      "warpFreq": 3.0,
+      "warpSpeed": 0.5,
+      "warpStrength": 0.0,
+      "warpType": 0,
+      "zoomDepth": 1.0
+    },
     "kaleidoscope": {
       "enabled": true,
       "rotationSpeed": 0.12000000476837158,
@@ -82,27 +140,24 @@
     },
     "motionScale": 1.0,
     "physarum": {
-      "accumSenseBlend": 0.0,
-      "agentCount": 1000000,
-      "attractorBaseRadius": 0.30000001192092896,
+      "accumSenseBlend": 1.0,
+      "agentCount": 5000000,
       "attractorCount": 4,
-      "blendMode": 0,
-      "boostIntensity": 5.0,
-      "boundsMode": 0,
+      "blendMode": 12,
+      "boostIntensity": 1.0,
+      "boundsMode": 2,
       "cauchyScale": 0.5,
       "color": {
-        "mode": 0,
-        "solid": {
-          "a": 255,
-          "b": 255,
-          "g": 255,
-          "r": 255
-        }
+        "mode": 1,
+        "rainbowHue": 0.0,
+        "rainbowRange": 360.0,
+        "rainbowSat": 1.0,
+        "rainbowVal": 1.0
       },
       "debugOverlay": false,
       "decayHalfLife": 0.10000000149011612,
       "densityResponse": 1.5,
-      "depositAmount": 0.2669999897480011,
+      "depositAmount": 0.5,
       "diffusionScale": 4,
       "enabled": true,
       "expScale": 1.0,
@@ -122,15 +177,15 @@
       },
       "orbitOffset": 0.0,
       "repulsionStrength": 0.0,
-      "respawnMode": false,
-      "samplingExponent": 0.0,
+      "respawnMode": true,
+      "samplingExponent": 10.0,
       "sensorAngle": 0.41999998688697815,
-      "sensorDistance": 26.148000717163086,
-      "sensorDistanceVariance": 0.0,
+      "sensorDistance": 1.0,
+      "sensorDistanceVariance": 20.0,
       "sprintFactor": 2.0,
-      "stepSize": 2.990999937057495,
+      "stepSize": 0.10000000149011612,
       "turningAngle": 0.3799999952316284,
-      "vectorSteering": false,
+      "vectorSteering": true,
       "walkMode": 0
     },
     "proceduralWarp": {
@@ -140,9 +195,11 @@
     },
     "transformOrder": [
       "Accum Composite",
+      "Physarum",
+      "Escher Droste",
       "Kaleidoscope",
       "Voronoi",
-      "Physarum"
+      "Infinite Zoom"
     ],
     "voronoi": {
       "edgeFalloff": 0.30000001192092896,
@@ -155,50 +212,35 @@
       "speed": 1.0313725471496582
     }
   },
-  "lfos": [
-    {
-      "enabled": false,
-      "rate": 0.10000000149011612,
-      "waveform": 0
-    },
-    {
-      "enabled": false,
-      "rate": 0.10000000149011612,
-      "waveform": 0
-    },
-    {
-      "enabled": false,
-      "rate": 0.10000000149011612,
-      "waveform": 0
-    },
-    {
-      "enabled": false,
-      "rate": 0.10000000149011612,
-      "waveform": 0
-    },
-    {
-      "enabled": false,
-      "rate": 0.10000000149011612,
-      "waveform": 0
-    },
-    {
-      "enabled": false,
-      "rate": 0.10000000149011612,
-      "waveform": 0
-    },
-    {
-      "enabled": false,
-      "rate": 0.10000000149011612,
-      "waveform": 0
-    },
-    {
-      "enabled": false,
-      "rate": 0.10000000149011612,
-      "waveform": 0
-    }
-  ],
+  "lfos": {},
+  "modBuses": {},
   "modulation": {
-    "routes": []
+    "routes": [
+      {
+        "amount": 1.0,
+        "curve": 0,
+        "paramId": "escherDroste.zoomSpeed",
+        "source": 0
+      },
+      {
+        "amount": 0.05000000074505806,
+        "curve": 0,
+        "paramId": "escherDroste.center.motionSpeed",
+        "source": 0
+      },
+      {
+        "amount": 0.5,
+        "curve": 0,
+        "paramId": "physarum.sensorDistance",
+        "source": 0
+      },
+      {
+        "amount": 0.5,
+        "curve": 0,
+        "paramId": "physarum.stepSize",
+        "source": 0
+      }
+    ]
   },
   "name": "WINNY"
 }

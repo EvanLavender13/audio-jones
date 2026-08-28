@@ -1,0 +1,277 @@
+{
+  "audio": {
+    "channelMode": 5
+  },
+  "drawableCount": 1,
+  "drawables": [
+    {
+      "base": {
+        "color": {
+          "mode": 3,
+          "paletteAB": 0.5,
+          "paletteAG": 0.5,
+          "paletteAR": 0.5,
+          "paletteBB": 0.5,
+          "paletteBG": 0.5,
+          "paletteBR": 0.5,
+          "paletteCB": 1.0,
+          "paletteCG": 1.0,
+          "paletteCR": 1.0,
+          "paletteDB": 0.6700000166893005,
+          "paletteDG": 0.33000001311302185,
+          "paletteDR": 0.0
+        },
+        "drawInterval": 0.0,
+        "enabled": true,
+        "opacity": 1.0,
+        "rotationAngle": 0.0,
+        "rotationSpeed": 0.0,
+        "x": 0.5,
+        "y": 0.5
+      },
+      "id": 1,
+      "path": 0,
+      "type": 0,
+      "waveform": {
+        "amplitudeScale": 0.5,
+        "colorShift": 0.0,
+        "colorShiftSpeed": 0.0,
+        "pointCount": 128.0,
+        "radius": 0.25,
+        "smoothness": 0.0,
+        "style": 0,
+        "thickness": 2.0,
+        "waveformMotionScale": 1.0
+      }
+    }
+  ],
+  "effects": {
+    "accumBlendIntensity": 1.0,
+    "accumBlendMode": 2,
+    "bloom": {
+      "enabled": true,
+      "intensity": 0.5,
+      "iterations": 5,
+      "knee": 0.5,
+      "threshold": 0.800000011920929
+    },
+    "blurScale": 1.0,
+    "clarity": 0.0,
+    "drosteZoom": {
+      "branches": 1,
+      "enabled": true,
+      "innerRadius": 0.0,
+      "rotationSpeed": 0.0,
+      "scale": 10.0,
+      "shearCoeff": 0.0,
+      "speed": 0.5,
+      "spiralAngle": 0.0
+    },
+    "escherDroste": {
+      "center": {
+        "amplitude": 0.5,
+        "freqX1": 0.5,
+        "freqX2": 0.2800000011920929,
+        "freqY1": 0.4699999988079071,
+        "freqY2": 0.6100000143051147,
+        "motionSpeed": 0.0,
+        "offsetX2": 0.30000001192092896,
+        "offsetY2": 2.0899999141693115
+      },
+      "enabled": true,
+      "innerRadius": 0.0,
+      "rotationOffset": 0.0,
+      "rotationSpeed": 0.0,
+      "scale": 1024.0,
+      "spiralStrength": 2.0,
+      "zoomSpeed": 0.0
+    },
+    "feedbackDesaturate": 0.05000000074505806,
+    "feedbackFlow": {
+      "flowAngle": 0.0,
+      "scale": 1.0,
+      "strength": 0.0,
+      "threshold": 0.0010000000474974513
+    },
+    "flipBook": {
+      "enabled": true,
+      "fps": 24.0,
+      "jitter": 2.0
+    },
+    "flowField": {
+      "cx": 0.5,
+      "cy": 0.5,
+      "dxAngular": 0.0,
+      "dxAngularFreq": 2,
+      "dxBase": 0.0,
+      "dxRadial": 0.0,
+      "dyAngular": 0.0,
+      "dyAngularFreq": 2,
+      "dyBase": 0.0,
+      "dyRadial": 0.0,
+      "rotAngular": 0.0,
+      "rotAngularFreq": 2,
+      "rotationSpeed": 0.0,
+      "rotationSpeedRadial": 0.0,
+      "sx": 1.0,
+      "sy": 1.0,
+      "zoomAngular": 0.0,
+      "zoomAngularFreq": 2,
+      "zoomBase": 0.9800000190734863,
+      "zoomRadial": 0.019999999552965164
+    },
+    "gamma": 1.0,
+    "halfLife": 0.25,
+    "hueRemap": {
+      "blendAngular": 0.0,
+      "blendAngularFreq": 2,
+      "blendAngularSpeed": 0.0,
+      "blendLinear": 0.0,
+      "blendLinearAngle": 0.0,
+      "blendLinearSpeed": 0.0,
+      "blendLuminance": 0.0,
+      "blendNoise": 0.0,
+      "blendRadial": 0.0,
+      "cx": 0.5,
+      "cy": 0.5,
+      "enabled": true,
+      "gradient": {
+        "mode": 1,
+        "rainbowHue": 0.0,
+        "rainbowRange": 360.0,
+        "rainbowSat": 1.0,
+        "rainbowVal": 1.0
+      },
+      "intensity": 1.0,
+      "noiseScale": 5.0,
+      "noiseSpeed": 0.5,
+      "shift": 0.5,
+      "shiftAngular": 0.0,
+      "shiftAngularFreq": 2,
+      "shiftAngularSpeed": 0.0,
+      "shiftLinear": 0.0,
+      "shiftLinearAngle": 0.0,
+      "shiftLinearSpeed": 0.0,
+      "shiftLuminance": 0.0,
+      "shiftMode": true,
+      "shiftNoise": 0.0,
+      "shiftRadial": 0.0
+    },
+    "mandelbox": {
+      "boxIntensity": 1.0,
+      "boxLimit": 1.0,
+      "enabled": true,
+      "iterations": 2,
+      "offsetX": 1.0,
+      "offsetY": 1.0,
+      "polarFold": false,
+      "polarFoldSegments": 6,
+      "rotationSpeed": 0.1448623239994049,
+      "scale": 1.0,
+      "sphereIntensity": 1.0,
+      "sphereMax": 1.0,
+      "sphereMin": 0.5,
+      "twistSpeed": 0.0
+    },
+    "motionScale": 1.0,
+    "proceduralWarp": {
+      "warp": 0.0,
+      "warpScale": 1.0,
+      "warpSpeed": 1.0
+    },
+    "radialIfs": {
+      "enabled": true,
+      "iterations": 2,
+      "offset": 0.0,
+      "rotationSpeed": 0.0,
+      "scale": 2.5,
+      "segments": 12,
+      "smoothing": 0.5,
+      "twistSpeed": 0.0
+    },
+    "transformOrder": [
+      "Accum Composite",
+      "Radial IFS",
+      "Droste Zoom",
+      "Mandelbox",
+      "Escher Droste",
+      "Bloom",
+      "Flip Book",
+      "Hue Remap"
+    ]
+  },
+  "lfos": {
+    "0": {
+      "enabled": true,
+      "phaseOffset": 0.0,
+      "rate": 0.05000000074505806,
+      "waveform": 0
+    }
+  },
+  "modBuses": {},
+  "modulation": {
+    "routes": [
+      {
+        "amount": 0.009999999776482582,
+        "curve": 0,
+        "paramId": "lfo1.rate",
+        "source": 0
+      },
+      {
+        "amount": 0.5,
+        "curve": 0,
+        "paramId": "hueRemap.shift",
+        "source": 4
+      },
+      {
+        "amount": 0.05000000074505806,
+        "curve": 0,
+        "paramId": "drawable.1.colorShiftSpeed",
+        "source": 0
+      },
+      {
+        "amount": 0.25,
+        "curve": 0,
+        "paramId": "escherDroste.rotationSpeed",
+        "source": 0
+      },
+      {
+        "amount": 0.10000000149011612,
+        "curve": 0,
+        "paramId": "escherDroste.center.motionSpeed",
+        "source": 0
+      },
+      {
+        "amount": 0.25,
+        "curve": 0,
+        "paramId": "escherDroste.zoomSpeed",
+        "source": 0
+      },
+      {
+        "amount": -0.05000000074505806,
+        "curve": 0,
+        "paramId": "mandelbox.twistSpeed",
+        "source": 0
+      },
+      {
+        "amount": 0.05000000074505806,
+        "curve": 0,
+        "paramId": "mandelbox.rotationSpeed",
+        "source": 0
+      },
+      {
+        "amount": -0.05000000074505806,
+        "curve": 0,
+        "paramId": "radialIfs.twistSpeed",
+        "source": 0
+      },
+      {
+        "amount": 0.05000000074505806,
+        "curve": 0,
+        "paramId": "radialIfs.rotationSpeed",
+        "source": 0
+      }
+    ]
+  },
+  "name": "OIJIMBO"
+}

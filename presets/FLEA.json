@@ -1,0 +1,341 @@
+{
+  "audio": {
+    "channelMode": 5
+  },
+  "drawableCount": 2,
+  "drawables": [
+    {
+      "base": {
+        "color": {
+          "mode": 0,
+          "solid": {
+            "a": 255,
+            "b": 255,
+            "g": 255,
+            "r": 255
+          }
+        },
+        "drawInterval": 0.0,
+        "enabled": true,
+        "opacity": 1.0,
+        "rotationAngle": 0.0,
+        "rotationSpeed": 0.0,
+        "x": 0.5,
+        "y": 0.5
+      },
+      "id": 1,
+      "path": 0,
+      "type": 0,
+      "waveform": {
+        "amplitudeScale": 0.30000001192092896,
+        "colorShift": 0.0,
+        "colorShiftSpeed": 0.0,
+        "pointCount": 128.0,
+        "radius": 0.25,
+        "smoothness": 100.0,
+        "style": 0,
+        "thickness": 25.0,
+        "waveformMotionScale": 0.25
+      }
+    },
+    {
+      "base": {
+        "color": {
+          "mode": 1,
+          "rainbowHue": 0.0,
+          "rainbowRange": 360.0,
+          "rainbowSat": 1.0,
+          "rainbowVal": 1.0
+        },
+        "drawInterval": 0.0,
+        "enabled": true,
+        "opacity": 1.0,
+        "rotationAngle": 0.0,
+        "rotationSpeed": 0.0,
+        "x": 0.5,
+        "y": 0.5
+      },
+      "id": 2,
+      "path": 0,
+      "type": 0,
+      "waveform": {
+        "amplitudeScale": 0.30000001192092896,
+        "colorShift": 0.0,
+        "colorShiftSpeed": 0.0,
+        "pointCount": 128.0,
+        "radius": 0.5,
+        "smoothness": 0.0,
+        "style": 2,
+        "thickness": 25.0,
+        "waveformMotionScale": 0.25
+      }
+    }
+  ],
+  "effects": {
+    "accumBlendIntensity": 1.0,
+    "accumBlendMode": 2,
+    "blurScale": 0.0,
+    "chromaticAberration": {
+      "enabled": true,
+      "falloff": 0.5,
+      "offset": 0.0,
+      "samples": 24.0
+    },
+    "clarity": 0.0,
+    "escherDroste": {
+      "center": {
+        "amplitude": 0.5,
+        "freqX1": 3.369999885559082,
+        "freqX2": 1.7100000381469727,
+        "freqY1": 2.450000047683716,
+        "freqY2": 2.1700000762939453,
+        "motionSpeed": 0.0,
+        "offsetX2": -1.5393803119659424,
+        "offsetY2": 1.282817006111145
+      },
+      "enabled": true,
+      "innerRadius": 0.05000000074505806,
+      "rotationOffset": 0.0,
+      "rotationSpeed": -0.2617993950843811,
+      "scale": 1024.0,
+      "spiralStrength": -2.0,
+      "zoomSpeed": 0.25
+    },
+    "feedbackDesaturate": 0.004999999888241291,
+    "feedbackFlow": {
+      "flowAngle": 0.0,
+      "scale": 1.0,
+      "strength": 0.0,
+      "threshold": 0.0010000000474974513
+    },
+    "flowField": {
+      "cx": 0.5,
+      "cy": 0.5,
+      "dxAngular": 0.0,
+      "dxAngularFreq": 2,
+      "dxBase": 0.0,
+      "dxRadial": 0.0,
+      "dyAngular": 0.0,
+      "dyAngularFreq": 2,
+      "dyBase": 0.0,
+      "dyRadial": 0.0,
+      "rotAngular": 0.0,
+      "rotAngularFreq": 2,
+      "rotationSpeed": 0.2617993950843811,
+      "rotationSpeedRadial": 0.0,
+      "sx": 1.0,
+      "sy": 1.0,
+      "zoomAngular": 0.0,
+      "zoomAngularFreq": 2,
+      "zoomBase": 1.0,
+      "zoomRadial": 0.0
+    },
+    "fractureGrid": {
+      "enabled": true,
+      "flipChance": 0.0,
+      "offsetScale": 0.10000000149011612,
+      "propagationAngle": 0.0,
+      "propagationMode": 0,
+      "propagationSpeed": 20.0,
+      "rotationScale": 0.7853981256484985,
+      "skewScale": 0.10000000149011612,
+      "spatialBias": 1.0,
+      "stagger": 0.25,
+      "subdivision": 20.0,
+      "tessellation": 2,
+      "waveShape": 0.0,
+      "waveSpeed": 0.0,
+      "zoomScale": 1.0
+    },
+    "gamma": 1.0,
+    "halfLife": 2.0,
+    "hueRemap": {
+      "blendAngular": 0.0,
+      "blendAngularFreq": 2,
+      "blendAngularSpeed": 0.0,
+      "blendLinear": 0.0,
+      "blendLinearAngle": 0.0,
+      "blendLinearSpeed": 0.0,
+      "blendLuminance": 0.0,
+      "blendNoise": 0.0,
+      "blendRadial": 0.0,
+      "cx": 0.5,
+      "cy": 0.5,
+      "enabled": true,
+      "gradient": {
+        "mode": 1,
+        "rainbowHue": 0.0,
+        "rainbowRange": 360.0,
+        "rainbowSat": 1.0,
+        "rainbowVal": 1.0
+      },
+      "intensity": 1.0,
+      "noiseScale": 5.0,
+      "noiseSpeed": 0.5,
+      "shift": 0.5,
+      "shiftAngular": 0.0,
+      "shiftAngularFreq": 2,
+      "shiftAngularSpeed": 0.0,
+      "shiftLinear": 0.0,
+      "shiftLinearAngle": 0.0,
+      "shiftLinearSpeed": 0.0,
+      "shiftLuminance": 0.0,
+      "shiftMode": true,
+      "shiftNoise": 0.0,
+      "shiftRadial": 0.0
+    },
+    "motionScale": 0.009999999776482582,
+    "proceduralWarp": {
+      "warp": 0.0,
+      "warpScale": 1.0,
+      "warpSpeed": 1.0
+    },
+    "starTrail": {
+      "baseBright": 0.0,
+      "baseFreq": 55.0,
+      "blendIntensity": 5.0,
+      "blendMode": 6,
+      "curve": 3.0,
+      "decayHalfLife": 10.0,
+      "dotSize": 0.0010000000474974513,
+      "enabled": true,
+      "freqMapMode": 2,
+      "gain": 10.0,
+      "glowIntensity": 0.10000000149011612,
+      "gradient": {
+        "mode": 3,
+        "paletteAB": 0.5,
+        "paletteAG": 0.5,
+        "paletteAR": 0.5,
+        "paletteBB": 0.5,
+        "paletteBG": 0.5,
+        "paletteBR": 0.5,
+        "paletteCB": 1.0,
+        "paletteCG": 1.0,
+        "paletteCR": 1.0,
+        "paletteDB": 0.6700000166893005,
+        "paletteDG": 0.33000001311302185,
+        "paletteDR": 0.0
+      },
+      "maxFreq": 14000.0,
+      "orbitSpeed": 0.0,
+      "sharpness": 0.0,
+      "speedVariation": 0.0,
+      "speedWaviness": 0.0,
+      "spreadRadius": 2.0,
+      "starCount": 256
+    },
+    "transformOrder": [
+      "Accum Composite",
+      "Star Trail",
+      "Fracture Grid",
+      "Escher Droste",
+      "Chromatic Aberration",
+      "Hue Remap"
+    ]
+  },
+  "lfos": {
+    "0": {
+      "enabled": true,
+      "phaseOffset": 0.0,
+      "rate": 0.004999999888241291,
+      "waveform": 0
+    }
+  },
+  "modBuses": {},
+  "modulation": {
+    "routes": [
+      {
+        "amount": 1.0,
+        "curve": 0,
+        "paramId": "starTrail.speedVariation",
+        "source": 0
+      },
+      {
+        "amount": 1.0,
+        "curve": 0,
+        "paramId": "effects.motionScale",
+        "source": 0
+      },
+      {
+        "amount": 0.5,
+        "curve": 0,
+        "paramId": "flowField.zoomRadial",
+        "source": 0
+      },
+      {
+        "amount": 1.0,
+        "curve": 0,
+        "paramId": "fractureGrid.waveSpeed",
+        "source": 0
+      },
+      {
+        "amount": 0.009999999776482582,
+        "curve": 0,
+        "paramId": "escherDroste.center.motionSpeed",
+        "source": 0
+      },
+      {
+        "amount": 0.10000000149011612,
+        "curve": 0,
+        "paramId": "starTrail.dotSize",
+        "source": 0
+      },
+      {
+        "amount": 1.0,
+        "curve": 0,
+        "paramId": "starTrail.glowIntensity",
+        "source": 0
+      },
+      {
+        "amount": 1.0,
+        "curve": 0,
+        "paramId": "starTrail.speedWaviness",
+        "source": 0
+      },
+      {
+        "amount": 0.25,
+        "curve": 0,
+        "paramId": "chromaticAberration.offset",
+        "source": 0
+      },
+      {
+        "amount": 0.5,
+        "curve": 0,
+        "paramId": "hueRemap.shift",
+        "source": 4
+      },
+      {
+        "amount": 0.5,
+        "curve": 0,
+        "paramId": "flowField.rotationSpeedRadial",
+        "source": 0
+      },
+      {
+        "amount": -0.5,
+        "curve": 0,
+        "paramId": "starTrail.decayHalfLife",
+        "source": 0
+      },
+      {
+        "amount": 0.5,
+        "curve": 0,
+        "paramId": "flowField.zoomBase",
+        "source": 0
+      },
+      {
+        "amount": 0.15000000596046448,
+        "curve": 0,
+        "paramId": "drawable.1.colorShiftSpeed",
+        "source": 0
+      },
+      {
+        "amount": 0.5,
+        "curve": 0,
+        "paramId": "starTrail.orbitSpeed",
+        "source": 0
+      }
+    ]
+  },
+  "name": "FLEA"
+}

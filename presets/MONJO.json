@@ -1,0 +1,240 @@
+{
+  "audio": {
+    "channelMode": 5
+  },
+  "drawableCount": 1,
+  "drawables": [
+    {
+      "base": {
+        "color": {
+          "mode": 3,
+          "paletteAB": 0.5,
+          "paletteAG": 0.5,
+          "paletteAR": 0.5,
+          "paletteBB": 0.5,
+          "paletteBG": 0.5,
+          "paletteBR": 0.5,
+          "paletteCB": 1.0,
+          "paletteCG": 1.0,
+          "paletteCR": 1.0,
+          "paletteDB": 0.6700000166893005,
+          "paletteDG": 0.33000001311302185,
+          "paletteDR": 0.0
+        },
+        "drawInterval": 0.0,
+        "enabled": true,
+        "opacity": 1.0,
+        "rotationAngle": 0.0,
+        "rotationSpeed": 0.0,
+        "x": 0.5,
+        "y": 0.5
+      },
+      "id": 1,
+      "path": 0,
+      "type": 0,
+      "waveform": {
+        "amplitudeScale": 0.25,
+        "colorShift": 0.0,
+        "colorShiftSpeed": 0.0,
+        "pointCount": 512.0,
+        "radius": 0.3499999940395355,
+        "smoothness": 100.0,
+        "style": 0,
+        "thickness": 25.0,
+        "waveformMotionScale": 0.5
+      }
+    }
+  ],
+  "effects": {
+    "accumBlendIntensity": 1.0,
+    "accumBlendMode": 2,
+    "anamorphicStreak": {
+      "enabled": true,
+      "intensity": 0.5,
+      "iterations": 7,
+      "knee": 0.5,
+      "stretch": 1.0,
+      "threshold": 0.800000011920929,
+      "tintB": 1.0,
+      "tintG": 0.6499999761581421,
+      "tintR": 0.550000011920929
+    },
+    "bloom": {
+      "enabled": true,
+      "intensity": 0.5,
+      "iterations": 5,
+      "knee": 0.0,
+      "threshold": 0.800000011920929
+    },
+    "blurScale": 1.0,
+    "bokeh": {
+      "brightnessPower": 4.0,
+      "enabled": true,
+      "iterations": 150,
+      "radius": 0.0,
+      "shape": 0,
+      "shapeAngle": 0.0,
+      "starInnerRadius": 0.4000000059604645,
+      "starPoints": 5
+    },
+    "clarity": 0.0,
+    "feedbackDesaturate": 0.20000000298023224,
+    "feedbackFlow": {
+      "flowAngle": 0.0,
+      "scale": 1.0,
+      "strength": 0.0,
+      "threshold": 0.0010000000474974513
+    },
+    "flowField": {
+      "cx": 0.5,
+      "cy": 0.5,
+      "dxAngular": 0.0,
+      "dxAngularFreq": 2,
+      "dxBase": 0.0,
+      "dxRadial": 0.0,
+      "dyAngular": 0.0,
+      "dyAngularFreq": 2,
+      "dyBase": 0.0,
+      "dyRadial": 0.0,
+      "rotAngular": 0.0,
+      "rotAngularFreq": 2,
+      "rotationSpeed": 0.0,
+      "rotationSpeedRadial": 0.0,
+      "sx": 1.0,
+      "sy": 1.0,
+      "zoomAngular": 0.0,
+      "zoomAngularFreq": 2,
+      "zoomBase": 1.0199999809265137,
+      "zoomRadial": -0.019999999552965164
+    },
+    "gamma": 1.0,
+    "halfLife": 0.10000000149011612,
+    "infiniteZoom": {
+      "blendMode": 1,
+      "centerLissajous": {
+        "amplitude": 0.0,
+        "freqX1": 0.5,
+        "freqX2": 0.0,
+        "freqY1": 0.699999988079071,
+        "freqY2": 0.0,
+        "motionSpeed": 1.0,
+        "offsetX2": 0.30000001192092896,
+        "offsetY2": 2.0899999141693115
+      },
+      "centerX": 0.5,
+      "centerY": 0.5,
+      "enabled": true,
+      "layerRotate": 0.7853981256484985,
+      "layers": 4,
+      "offsetLissajous": {
+        "amplitude": 0.10000000149011612,
+        "freqX1": 0.5,
+        "freqX2": 0.28999999165534973,
+        "freqY1": 0.699999988079071,
+        "freqY2": 0.5699999928474426,
+        "motionSpeed": 1.0,
+        "offsetX2": 0.30000001192092896,
+        "offsetY2": 2.0899999141693115
+      },
+      "offsetX": 0.0,
+      "offsetY": 0.0,
+      "parallaxStrength": 1.0,
+      "speed": -1.0,
+      "spiralAngle": 0.2617993950843811,
+      "spiralTwist": 0.0,
+      "warpFreq": 3.0,
+      "warpSpeed": 0.5,
+      "warpStrength": 0.0,
+      "warpType": 0,
+      "zoomDepth": 1.0
+    },
+    "kifs": {
+      "enabled": true,
+      "iterations": 6,
+      "octantFold": true,
+      "offsetX": 1.0,
+      "offsetY": 1.0,
+      "polarFold": false,
+      "polarFoldSegments": 12,
+      "polarFoldSmoothing": 0.0,
+      "rotationSpeed": 0.0,
+      "scale": 1.5399999618530273,
+      "twistSpeed": 0.0
+    },
+    "motionScale": 0.009999999776482582,
+    "proceduralWarp": {
+      "warp": 0.0,
+      "warpScale": 1.0,
+      "warpSpeed": 1.0
+    },
+    "transformOrder": [
+      "Accum Composite",
+      "KIFS",
+      "Infinite Zoom",
+      "Bokeh",
+      "Bloom",
+      "Anamorphic Streak"
+    ]
+  },
+  "lfos": {},
+  "modBuses": {},
+  "modulation": {
+    "routes": [
+      {
+        "amount": 0.05000000074505806,
+        "curve": 0,
+        "paramId": "bokeh.radius",
+        "source": 0
+      },
+      {
+        "amount": -0.05000000074505806,
+        "curve": 0,
+        "paramId": "kifs.rotationSpeed",
+        "source": 0
+      },
+      {
+        "amount": 0.05000000074505806,
+        "curve": 0,
+        "paramId": "kifs.twistSpeed",
+        "source": 0
+      },
+      {
+        "amount": 0.5,
+        "curve": 0,
+        "paramId": "flowField.rotationSpeedRadial",
+        "source": 0
+      },
+      {
+        "amount": -0.5,
+        "curve": 0,
+        "paramId": "flowField.rotationSpeed",
+        "source": 0
+      },
+      {
+        "amount": 1.0,
+        "curve": 0,
+        "paramId": "flowField.zoomRadial",
+        "source": 0
+      },
+      {
+        "amount": 1.0,
+        "curve": 0,
+        "paramId": "effects.motionScale",
+        "source": 0
+      },
+      {
+        "amount": 0.05000000074505806,
+        "curve": 0,
+        "paramId": "drawable.1.colorShiftSpeed",
+        "source": 0
+      },
+      {
+        "amount": -1.0,
+        "curve": 0,
+        "paramId": "flowField.zoomBase",
+        "source": 0
+      }
+    ]
+  },
+  "name": "MONJO"
+}
